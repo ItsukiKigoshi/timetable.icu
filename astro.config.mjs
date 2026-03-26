@@ -13,11 +13,5 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
-    ssr: {
-      noExternal: ['better-auth']
-    },
-    optimizeDeps: {
-      include: ['better-auth/react']
-    }
   }
 });
