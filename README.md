@@ -30,6 +30,29 @@ All commands are run from the root of the project, from a terminal:
 | `bun preview`         | Preview your build locally, before deploying     |
 | `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `bun astro -- --help` | Get help using the Astro CLI                     |
+
+
+Create types from wrangler.jsonc
+```bash
+bunx wrangler types
+```
+
+Create schema for BetterAuth
+```bash
+bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/lib/auth-schema.ts
+```
+
+Create schema by Drizzle Kit
+```bash
+bun x drizzle-kit generate
+```
+
+Migration to D1
+```bash
+bun wrangler d1 migrations apply timetable_icu
+```
+
+---
 # 目標
 - [ ] ようこに卒業までつかってもらう
 - [ ] 100人のTermly Active UserをICU内で獲得する

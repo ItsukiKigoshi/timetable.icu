@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "timetable-icu",
+  "compatibility_date": "2026-03-25",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "timetable_icu",
+      "database_name": "timetable-icu",
+      "database_id": "8cc30ad7-e926-4318-bfc7-888691eeac9f",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
