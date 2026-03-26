@@ -54,8 +54,7 @@ bun wrangler d1 migrations apply timetable_icu
 
 Debug with Cloudflare Pages Environment
 ```bash
-bun run build
-
+bun run build && bun x wrangler dev
 ```
 
 ---

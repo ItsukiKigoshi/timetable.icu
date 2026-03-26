@@ -9448,7 +9448,7 @@ interface IncomingRequestCfPropertiesBotManagementBase {
      */
     corporateProxy: boolean;
     /**
-     * A boolean value that's true if the request matches [file extensions](https://developers.cloudflare.com/bots/reference/static-resources/) for many types of static resources.
+     * A boolean value that's true if the request matches [file extensions](https://developers.cloudflare.com/bots/reference/static-resources/) for many types of static assets.
      */
     staticResource: boolean;
     /**
@@ -11956,7 +11956,7 @@ interface DynamicDispatchLimits {
 }
 interface DynamicDispatchOptions {
     /**
-     * Limit resources of invoked Worker script.
+     * Limit assets of invoked Worker script.
      */
     limits?: DynamicDispatchLimits;
     /**
