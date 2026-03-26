@@ -17,6 +17,7 @@
     }
   ],
   "vars": {
-    "BETTER_AUTH_URL": "https://timetable-icu.itsukikigoshi.workers.dev"
+    "BETTER_AUTH_URL": "https://timetable-icu.itsukikigoshi.workers.dev",
+    "PUBLIC_BASE_URL": "https://timetable-icu.itsukikigoshi.workers.dev"
   }
 }
