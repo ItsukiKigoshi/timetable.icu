@@ -1,7 +1,11 @@
 import { createAuthClient } from "better-auth/react";
+import { passkeyClient } from "@better-auth/passkey/client"
 
 export const authClient = createAuthClient({
-    baseURL: import.meta.env.PUBLIC_BASE_URL
+    baseURL: import.meta.env.PUBLIC_BASE_URL,
+    plugins: [
+        passkeyClient()
+    ]
 });
 
 export const signInWithGoogle = async () => {

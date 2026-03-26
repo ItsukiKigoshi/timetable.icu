@@ -47,9 +47,9 @@ Create schema by Drizzle Kit
 bun x drizzle-kit generate
 ```
 
-Migration to D1
+Migration to D1 (--remote if applicable)
 ```bash
-bun wrangler d1 migrations apply timetable_icu
+bun wrangler d1 migrations apply timetable-icu
 ```
 
 Debug with Cloudflare Pages Environment
@@ -79,7 +79,7 @@ bun run build && bun x wrangler dev
     - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
 
 # ブランディング
-- [ ]   名前
+- [ ] 名前
 - [ ] Catalogue.icuはお名前comに奪われ3万の復旧費用. あくどい商売やで
 - [ ] timetable.icu
 - [ ] https://regi.icu/
@@ -136,9 +136,10 @@ bun run build && bun x wrangler dev
 
 ---
 # 工程表
-- [ ] Astro App Initialise
-- [ ] BetterAuth
-    - [ ] Google OAuth + Passkey
+- [x] Astro App Initialise
+- [x] BetterAuth
+    - [x] Google OAuth
+    - [ ] Passkey
 -  [ ] 保存機能
     - [ ] Drizzle ORM
     - [ ] Schema定義
