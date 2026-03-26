@@ -6,11 +6,11 @@ const { user } = Astro.locals;
 ---
 
 <Layout title="あいしーゆーのじかんわり">
-	<main class="p-4">
-		<h1 class="text-2xl font-bold mb-4">Timetable.icu (あいしーゆーのじかんわり)</h1>
+	<main>
+		<h1>Timetable.icu (あいしーゆーのじかんわり)</h1>
 
 		{user ? (
-			<div class="space-y-2">
+			<div>
 				<p>
 					ようこそ、<strong>{user.name}</strong>さん！ <br />
 					<span class="text-sm text-gray-500">({user.email})</span>
@@ -18,7 +18,7 @@ const { user } = Astro.locals;
 				<LoginButton client:load />
 			</div>
 		) : (
-			<div class="space-y-4">
+			<div>
 				<p>在学生であることを証明するためにICU Net IDでログインしてください。パスワードは取得されません!</p>
 				<LoginButton client:load />
 			</div>
