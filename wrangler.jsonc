@@ -6,7 +6,7 @@
     "nodejs_compat"
   ],
   "assets": {
-    "directory": "./dist/client"
+    "directory": "./dist/client/"
   },
   "d1_databases": [
     {
