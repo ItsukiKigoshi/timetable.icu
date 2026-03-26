@@ -5,6 +5,7 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "pages_build_output_dir": "dist",
   "d1_databases": [
     {
       "binding": "timetable_icu",
@@ -12,5 +13,8 @@
       "database_id": "8cc30ad7-e926-4318-bfc7-888691eeac9f",
       "migrations_dir": "migrations"
     }
-  ]
+  ],
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:4321"
+  }
 }

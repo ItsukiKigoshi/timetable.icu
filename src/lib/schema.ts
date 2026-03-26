@@ -1,7 +1,9 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlite-core";
 
-// --- Courses)---
+export * from "./auth-schema";
+
+// --- Courses ---
 // シラバスデータなどの基本情報を保持
 export const courses = sqliteTable("courses", {
     id: integer("id").primaryKey({ autoIncrement: true }),

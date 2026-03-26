@@ -52,6 +52,12 @@ Migration to D1
 bun wrangler d1 migrations apply timetable_icu
 ```
 
+Debug with Cloudflare Pages Environment
+```bash
+bun run build
+
+```
+
 ---
 # 目標
 - [ ] ようこに卒業までつかってもらう
