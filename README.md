@@ -109,10 +109,10 @@ All commands are run from the root of the project, from a terminal:
 ---
 # 工程表
 - [ ] Astro App Initialise
-    - [ ] Drizzle ORM
 - [ ] BetterAuth
     - [ ] Google OAuth + Passkey
 -  [ ] 保存機能
+    - [ ] Drizzle ORM
     - [ ] Schema定義
     - [ ] D1 Deploy
     - [ ] APIを書く on Astro or w/ Hono

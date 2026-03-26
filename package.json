@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.0.8"
+    "astro": "^6.0.8",
+    "better-auth": "^1.5.6"
   }
 }
