@@ -1,37 +1,17 @@
 import { authClient } from "@/lib/auth-client";
-import { useEffect } from "react";
 
 export function Passkey() {
     const { data: session } = authClient.useSession();
 
-    // ブラウザのオートフィル（Conditional UI）の有効化
-    useEffect(() => {
-        const setupAutoFill = async () => {
-            if (typeof window !== "undefined" &&
-                window.PublicKeyCredential &&
-                await window.PublicKeyCredential.isConditionalMediationAvailable?.()) {
-
-                await authClient.signIn.passkey({
-                    autoFill: true,
-                    fetchOptions: {
-                        onSuccess: () => {
-                            window.location.reload();
-                        }
-                    }
-                });
-            }
-        };
-        if (!session) setupAutoFill();
-    }, [session]);
-
-    const handlePasskeySignIn = async () => {
+    const handlePasskeySignIn = async (e: React.MouseEvent) => {
+        e.preventDefault();
         await authClient.signIn.passkey({
             fetchOptions: {
-                onSuccess: () => {
-                    window.location.reload();
+                onSuccess() {
+                    window.location.href = "/";
                 },
-                onError: (ctx) => {
-                    alert(ctx.error.message || "パスキーでのログインに失敗しました");
+                onError(ctx) {
+                    console.error("Authentication failed:", ctx.error.message);
                 }
             }
         });
@@ -57,11 +37,11 @@ export function Passkey() {
     return (
         <div className="flex gap-2">
             {session ? (
-                <button onClick={handleAddPasskey} className="btn-outline">
+                <button onClick={handleAddPasskey} type="button">
                     パスキーを追加
                 </button>
             ) : (
-                <button onClick={handlePasskeySignIn} className="btn-secondary">
+                <button onClick={handlePasskeySignIn} type="button">
                     パスキーでログイン
                 </button>
             )}

@@ -43,60 +43,79 @@ export default function Timetable() {
             .filter(c => c.day === day)
             .sort((a, b) => timeToMin(a.start) - timeToMin(b.start));
 
-        // 重複を計算して列(column)を割り当てる
-        const columns: any[][] = [];
-        dayCourses.forEach(course => {
-            let placed = false;
+        // 1. 各コマに「列番号(visualColumn)」を割り振る（左詰め）
+        const positionedCourses = dayCourses.map(course => {
             const start = timeToMin(course.start);
+            const end = timeToMin(course.end);
 
-            for (let i = 0; i < columns.length; i++) {
-                // この列の最後の要素と重なっていないか確認
-                const lastInCol = columns[i][columns[i].length - 1];
-                if (timeToMin(lastInCol.end) <= start) {
-                    columns[i].push(course);
-                    placed = true;
-                    break;
-                }
-            }
-            if (!placed) columns.push([course]);
+            // すでに位置が決まったコマの中で、自分と時間が重なっているものを探す
+            const overlaps = dayCourses.filter(other => {
+                if (other === course) return false;
+                return Math.max(start, timeToMin(other.start)) < Math.min(end, timeToMin(other.end));
+            });
+
+            return { ...course, startMin: start, endMin: end, overlaps };
         });
 
-        const numCols = columns.length;
+        // 列インデックスを決定
+        const courseWithCol: any[] = [];
+        positionedCourses.forEach(course => {
+            let col = 0;
+            while (courseWithCol.some(c =>
+                c.col === col &&
+                Math.max(course.startMin, c.startMin) < Math.min(course.endMin, c.endMin)
+            )) {
+                col++;
+            }
+            courseWithCol.push({ ...course, col });
+        });
 
         return (
-            <div key={day} style={{ flex: 1, borderRight: '1px solid black', position: 'relative', height: totalHeight }}>
-                <div style={{ textAlign: 'center', borderBottom: '1px solid black', fontSize: '12px', height: '20px' }}>{day}</div>
+            <div key={day} style={{ flex: 1, borderRight: '1px solid black', position: 'relative', height: totalHeight + 20 }}>
+                <div style={{ textAlign: 'center', borderBottom: '1px solid black', fontSize: '12px', height: '20px', backgroundColor: '#eee' }}>{day}</div>
 
-                {/* 背景線 */}
+                {/* 背景線（シンプルに開始線のみ） */}
                 {GRID_PERIODS.map(p => (
                     <div key={p.label} style={{
                         position: 'absolute', top: timeToMin(p.start) * MIN_HEIGHT + 20,
-                        width: '100%', height: (timeToMin(p.end) - timeToMin(p.start)) * MIN_HEIGHT,
-                        borderBottom: '1px dashed #ddd', pointerEvents: 'none'
+                        width: '100%', borderTop: '1px dashed #ccc', zIndex: 0
                     }} />
                 ))}
 
                 {/* コマの描画 */}
-                {columns.map((col, colIndex) =>
-                    col.map((course, i) => {
-                        const top = timeToMin(course.start) * MIN_HEIGHT + 20;
-                        const height = (timeToMin(course.end) - timeToMin(course.start)) * MIN_HEIGHT;
-                        const width = 100 / numCols;
-                        const left = width * colIndex;
+                {courseWithCol.map((course, i) => {
+                    // ここが重要：このコマの時間帯において、最大で何列存在するかを調べる
+                    const simultaneousCourses = courseWithCol.filter(other =>
+                        Math.max(course.startMin, other.startMin) < Math.min(course.endMin, other.endMin)
+                    );
+                    const maxColInThisPeriod = Math.max(...simultaneousCourses.map(c => c.col)) + 1;
 
-                        return (
-                            <div key={`${colIndex}-${i}`} style={{
-                                position: 'absolute',
-                                top, height, left: `${left}%`, width: `${width}%`,
-                                border: '1px solid black', backgroundColor: 'white',
-                                zIndex: 1, padding: '2px', fontSize: '10px', overflow: 'hidden', boxSizing: 'border-box'
-                            }}>
-                                <strong>{course.title}</strong><br/>
-                                {course.start}-{course.end}
-                            </div>
-                        );
-                    })
-                )}
+                    // ただし、もし後のコマがさらに多くの列を必要とする場合に対応するため、
+                    // 重なっているグループの中での最大列数を取得する
+                    const groupMaxCols = Math.max(...simultaneousCourses.map(c => {
+                        return courseWithCol.filter(o =>
+                            Math.max(c.startMin, o.startMin) < Math.min(c.endMin, o.endMin)
+                        ).length;
+                    }));
+
+                    const width = 100 / groupMaxCols;
+                    const left = course.col * width;
+                    const top = course.startMin * MIN_HEIGHT + 20;
+                    const height = (course.endMin - course.startMin) * MIN_HEIGHT;
+
+                    return (
+                        <div key={i} style={{
+                            position: 'absolute',
+                            top: `${top}px`, height: `${height}px`,
+                            left: `${left}%`, width: `${width}%`,
+                            border: '1px solid black', backgroundColor: 'white',
+                            zIndex: 10, padding: '2px', fontSize: '10px', boxSizing: 'border-box'
+                        }}>
+                            <strong>{course.title}</strong><br/>
+                            {course.start}-{course.end}
+                        </div>
+                    );
+                })}
             </div>
         );
     };

@@ -12,22 +12,6 @@ export const getAuth = (env: Env) => {
                 schema: schema,
             }
         ),
-        databaseHooks: {
-            user: {
-                create: {
-                    before: async (user) => {
-                        const allowedDomain = "icu.ac.jp";
-                        const email = user.email.toLowerCase();
-
-                        if (!email.endsWith(`@${allowedDomain}`)) {
-                            throw new APIError("UNAUTHORIZED", {
-                                message: `Access restricted to ${allowedDomain} accounts only.`
-                            });
-                        }
-                    },
-                },
-            },
-        },
         secret: env.BETTER_AUTH_SECRET,
         advanced: {
             cookiePrefix: "icu-auth",

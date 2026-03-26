@@ -3,6 +3,12 @@ import { defineMiddleware } from "astro:middleware";
 import { env } from "cloudflare:workers";
 
 export const onRequest = defineMiddleware(async (context, next) => {
+    const { pathname } = new URL(context.request.url);
+    console.log("Middleware trace", context.url.pathname)
+    if (pathname.startsWith("/api/auth")) {
+        return next();
+    }
+
     if (!env) {
         console.warn("Cloudflare environment variables are not available.");
         return next();
