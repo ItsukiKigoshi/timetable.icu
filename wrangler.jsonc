@@ -17,6 +17,7 @@
     }
   ],
   "vars": {
-    "BETTER_AUTH_URL": "http://localhost:4321"
+    "BETTER_AUTH_URL": "http://localhost:4321",
+    "PUBLIC_BASE_URL": "https://timetable-icu.itsukikigoshi.workers.dev"
   }
 }
