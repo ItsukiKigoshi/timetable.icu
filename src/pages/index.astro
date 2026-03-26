@@ -1,8 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import LoginButton from "@/components/LoginButton";
+import Timetable from "@/components/Timetable.tsx";
 
 const { user } = Astro.locals;
+
 ---
 
 <Layout title="あいしーゆーのじかんわり">
@@ -23,5 +25,7 @@ const { user } = Astro.locals;
 				<LoginButton client:load />
 			</div>
 		)}
+
+		<Timetable/>
 	</main>
 </Layout>

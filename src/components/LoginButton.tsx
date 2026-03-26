@@ -9,14 +9,14 @@ export default function LoginButton() {
         window.location.href = "/";
     };
 
-    if (isPending) return <div className="animate-pulse">Loading...</div>;
+    if (isPending) return <div>Loading...</div>;
 
     return (
-        <div className="flex flex-col gap-4 items-center">
-            <div className="flex gap-2">
+        <div>
+            <div>
                 {session ? (
                     <>
-                        <button onClick={handleLogout} className="btn-secondary">
+                        <button onClick={handleLogout}>
                             ログアウト
                         </button>
                         {/* ログイン後：パスキー追加ボタンを表示 */}
@@ -24,8 +24,8 @@ export default function LoginButton() {
                     </>
                 ) : (
                     <>
-                        <button onClick={() => signInWithGoogle()} className="btn-primary">
-                            Googleでログイン
+                        <button onClick={() => signInWithGoogle()}>
+                            Google (icu.ac.jp) でログイン
                         </button>
                         {/* ログイン前：パスキーログインボタンを表示 */}
                         <Passkey />

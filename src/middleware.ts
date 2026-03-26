@@ -4,21 +4,26 @@ import { env } from "cloudflare:workers";
 
 export const onRequest = defineMiddleware(async (context, next) => {
     if (!env) {
+        console.warn("Cloudflare environment variables are not available.");
         return next();
     }
 
-    const auth = getAuth(env);
+    try {
+        const auth = getAuth(env);
 
-    const sessionData = await auth.api
-        .getSession({
+        const sessionData = await auth.api.getSession({
             headers: context.request.headers,
-        })
-        .catch(() => null);
+        });
 
-    if (sessionData) {
-        context.locals.user = sessionData.user;
-        context.locals.session = sessionData.session;
-    } else {
+        if (sessionData) {
+            context.locals.user = sessionData.user;
+            context.locals.session = sessionData.session;
+        } else {
+            context.locals.user = null;
+            context.locals.session = null;
+        }
+    } catch (error) {
+        console.error("Auth Middleware Error:", error);
         context.locals.user = null;
         context.locals.session = null;
     }
