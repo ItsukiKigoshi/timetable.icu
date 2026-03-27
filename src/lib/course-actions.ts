@@ -2,7 +2,6 @@ import {and, eq} from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
 export async function toggleCourse(db: any, userId: string, courseId: number) {
-    // 既に登録されているか確認
     const existing = await db.query.userCourses.findFirst({
         where: and(
             eq(schema.userCourses.userId, userId),

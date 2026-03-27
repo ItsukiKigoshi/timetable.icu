@@ -140,10 +140,10 @@ bun db:deploy
 
 # できること
 
-- [ ] 時間割作成・保存
-    - [ ] Long4 (カレンダー化)
+- [x] 時間割作成・保存
+    - [x] Long4 (カレンダー化)
     - [ ] マニュアル登録
-    - [ ] Google Oauth + Passkey
+    - [x] Google Oauth + Passkey
     - [ ] Google Calendar / .icsエクスポート？
 - [ ] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
 - [ ] Feedback (他の人も見られる?)
@@ -210,8 +210,8 @@ bun db:deploy
     - [x] Schema定義
     - [x] D1 Deploy
 - [x] Calendar形式で表示
-    - [] Termセレクター
-    - [] 理系の選択式の演習UI
+    - [x] Termセレクター
+    - [ ] 理系の選択式の演習UI
 - [x] 授業検索
     - [ ] コマをクリックで
     - [ ] メジャーとそれ以外を分離, もしくはタグ形式で

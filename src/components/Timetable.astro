@@ -1,7 +1,7 @@
 ---
 import {drizzle} from "drizzle-orm/d1";
 import * as schema from "@/db/schema.ts";
-import type {FlatSchedule, Term} from "@/db/schema.ts";
+import type {Course, FlatSchedule} from "@/db/schema.ts";
 import TimetableInterface from "./TimetableInterface";
 import {env} from "cloudflare:workers";
 import {and, eq, getTableColumns} from "drizzle-orm";
@@ -12,7 +12,7 @@ const url = new URL(Astro.request.url);
 // デフォルト値を動的に設定（例: 現在の年）
 const currentYear = new Date().getFullYear();
 const selectedYear = parseInt(url.searchParams.get('year') || currentYear.toString());
-const selectedTerm = (url.searchParams.get('term') || 'Spring');
+const selectedTerm = (url.searchParams.get('term') || 'Spring') as Course['term'];
 
 let flatSchedules: FlatSchedule[] = [];
 

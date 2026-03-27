@@ -6,7 +6,6 @@ const {user} = Astro.locals;
 ---
 <Layout title="あいしーゆーのじかんわり">
     <main>
-        {user && <p class="mb-4">ログインすると自分の時間割を作成・表示できます。</p>}
         <Timetable/>
     </main>
 </Layout>
