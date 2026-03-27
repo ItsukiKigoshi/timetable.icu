@@ -3,7 +3,7 @@ import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "driz
 import { user } from "./auth-schema.ts";
 export * from "./auth-schema.ts";
 
-const daysEnum = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+export const daysEnum = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 // --- Courses ---
 // シラバスデータなどの基本情報を保持
@@ -130,3 +130,10 @@ export const customCoursesRelations = relations(customCourses, ({ one }) => ({
 export const courseRelations = relations(courses, ({ many }) => ({
     schedules: many(courseSchedules),
 }));
+
+export const courseSchedulesRelations = relations(courseSchedules, ({ one }) => ({
+    course: one(courses, {
+        fields: [courseSchedules.courseId],
+        references: [courses.id],
+    }),
+}))

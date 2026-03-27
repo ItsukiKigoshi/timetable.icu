@@ -1,0 +1,72 @@
+---
+import { drizzle } from 'drizzle-orm/d1';
+import { eq, and, exists, inArray, sql } from 'drizzle-orm';
+import * as schema from '../db/schema';
+import SearchInterface, { type SearchFilters, type CourseWithSchedules } from '@/components/SearchInterface';
+import {env} from "cloudflare:workers";
+
+const db = drizzle(env.timetable_icu, { schema });
+
+const url = new URL(Astro.request.url);
+const filters: SearchFilters = {
+    day: url.searchParams.get('day'),
+    period: url.searchParams.get('period'),
+    isLong: url.searchParams.get('isLong'),
+    categoryId: url.searchParams.get('category'),
+    page: Math.max(1, parseInt(url.searchParams.get('page') || '1')),
+};
+
+const limit = 20;
+const offset = (filters.page - 1) * limit;
+
+// --- 1. 条件配列の作成 (ここですべての条件を統合する) ---
+let conditions = [];
+
+// 曜日・時限・Longの条件
+if (filters.day) conditions.push(eq(schema.courseSchedules.dayOfWeek, filters.day as any));
+if (filters.period) conditions.push(eq(schema.courseSchedules.period, parseInt(filters.period)));
+if (filters.isLong === 'true' || filters.isLong === 'false') {
+    conditions.push(eq(schema.courseSchedules.isLong, filters.isLong === 'true'));
+}
+
+// カテゴリがある場合は exists 条件を配列に追加
+if (filters.categoryId) {
+    const categoryExists = exists(
+        db.select()
+            .from(schema.courseToCategories)
+            .where(and(
+                eq(schema.courseToCategories.categoryId, filters.categoryId),
+                eq(schema.courseToCategories.courseId, schema.courseSchedules.courseId)
+            ))
+    );
+    conditions.push(categoryExists);
+}
+
+// --- 2. クエリ実行 (whereはここで1回だけ呼ぶ) ---
+const idRows = await db
+    .selectDistinct({ id: schema.courseSchedules.courseId })
+    .from(schema.courseSchedules)
+    .where(and(...conditions)) // まとめた条件をスプレッドで渡す
+    .limit(limit)
+    .offset(offset)
+    .all();
+
+const targetIds = idRows.map(r => r.id);
+
+// --- 3. 詳細取得 ---
+let results: CourseWithSchedules[] = [];
+if (targetIds.length > 0) {
+    // relational queryを使用
+    const data = await db.query.courses.findMany({
+        where: inArray(schema.courses.id, targetIds),
+        with: {
+            schedules: true,
+        },
+    });
+    results = data as CourseWithSchedules[];
+}
+
+Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
+---
+
+<SearchInterface client:load initialResults={results} filters={filters} />
