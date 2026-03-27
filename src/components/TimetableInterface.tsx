@@ -38,14 +38,14 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
         return (
             <div
                 key={dayOfWeek}
-                className="flex-1 border-r border-gray-300 relative"
+                className="flex-1 border-r relative"
                 style={{ height: totalHeight + HEADER_HEIGHT }}
             >
                 {/* 背景グリッド描画 */}
                 {PERIODS.map(p => (
                     <div
                         key={p.label}
-                        className="absolute w-full border-t border-gray-100"
+                        className="absolute w-full border-t"
                         style={{
                             top: timeToMin(p.start) * MIN_HEIGHT + HEADER_HEIGHT,
                             height: (timeToMin(p.end) - timeToMin(p.start)) * MIN_HEIGHT,
@@ -55,7 +55,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
 
                 {/* 曜日ヘッダー */}
                 <div
-                    className="text-center border-b border-gray-300 text-[12px] font-bold"
+                    className="text-center border-b text-[12px] font-bold"
                     style={{ height: HEADER_HEIGHT, lineHeight: `${HEADER_HEIGHT}px` }}
                 >
                     {dayOfWeek}
@@ -71,7 +71,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                     return (
                         <div
                             key={`${sched.courseCode}-${i}`}
-                            className="absolute border border-[#444] bg-white z-10 p-1.5 text-[11px] flex flex-col overflow-hidden box-border"
+                            className="card card-xs card-border absolute z-10 flex flex-col overflow-hidden box-border bg-base-100 w-96 shadow-sm"
                             style={{
                                 top: `${top}px`,
                                 height: `${height - 1}px`,
@@ -79,10 +79,11 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                                 width: `${width}%`,
                             }}
                         >
-                            <div className="font-bold leading-[1.2]">{sched.titleJa}</div>
-                            <div className="text-[9px] text-gray-500 mt-auto">
-                                {sched.startTime}-{sched.endTime}
-                            </div>
+                                <div className="card-body">
+                                    <h1 className="card-title line-clamp-2">{sched.titleJa}</h1>
+                                    <p>{sched.startTime}-{sched.endTime}</p>
+                                </div>
+
                         </div>
                     );
                 })}
@@ -91,11 +92,11 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
     };
 
     return (
-        <div className="flex border border-gray-300 border-r-0 font-sans w-full bg-white">
+        <div className="flex border  border-r-0 font-sans w-full">
             {/* 時刻軸（左端のPeriod表示） */}
-            <div className="w-16.25 border-r border-gray-300 relative">
+            <div className="w-16.25 border-r relative">
                 <div
-                    className="border-b border-gray-300"
+                    className="border-b"
                     style={{ height: HEADER_HEIGHT }}
                 />
                 {PERIODS.map(p => {
@@ -107,7 +108,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                             className="absolute w-full flex flex-col items-center box-border"
                             style={{ top: `${top}px`, height: `${height}px` }}
                         >
-                            <div className="text-[10px] text-gray-800 font-bold absolute top-0 px-0.5 z-10">
+                            <div className="text-[10px] font-bold absolute top-0 px-0.5 z-10">
                                 {p.start}
                             </div>
                             <div className="flex items-center justify-center h-full w-full">

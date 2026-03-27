@@ -7,13 +7,12 @@ const isLoggedIn = !!user;
 <div>
     <h1>Timetable.icu</h1>
     <div>
-        <a href="/">Home</a>
-        <a href="/timetable">Timetable</a>
+        <a href="/">Timetable</a>
         <a href="/search">Search</a>
     </div>
     <nav>
         {user ? <span>Hi, {user.name}!</span> :
-                <span>ICU Net IDでログインしてください!Google OAuthを使うためパスワードは取得されません</span>}
+                <span>Login to Sync</span>}
         <LoginButton client:load isLoggedIn={isLoggedIn}/>
         <Passkey client:load isLoggedIn={isLoggedIn}/>
     </nav>
