@@ -6,13 +6,18 @@ import SearchInterface, {type SearchFilters} from '@/components/SearchInterface'
 import {env} from "cloudflare:workers";
 import {getAuth} from "@/lib/auth";
 import Layout from "@/layouts/Layout.astro";
-import type {CourseWithSchedules} from "@/db/schema";
+import type {Course, CourseWithSchedules, Term} from "@/db/schema";
 
 const db = drizzle(env.timetable_icu, {schema});
 const auth = getAuth(env);
 
 const url = new URL(Astro.request.url);
+
+const currentYear = new Date().getFullYear();
+
 const filters: SearchFilters = {
+    year: url.searchParams.get('year') || currentYear.toString(),
+    term: url.searchParams.get('term') || 'Spring',
     day: url.searchParams.get('day'),
     period: url.searchParams.get('period'),
     isLong: url.searchParams.get('isLong'),
@@ -26,6 +31,14 @@ const allCategories = await db.select().from(schema.categories).all();
 
 // 2. 検索条件の組み立て (coursesテーブル基準)
 let conditions = [];
+
+if (filters.year) {
+    conditions.push(eq(schema.courses.year, parseInt(filters.year)));
+}
+
+if (filters.term) {
+    conditions.push(eq(schema.courses.term, filters.term as Course['term']));
+}
 
 // キーワード検索
 if (filters.q) {

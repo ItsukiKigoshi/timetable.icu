@@ -154,7 +154,7 @@ export const courseSchedulesRelations = relations(courseSchedules, ({one}) => ({
 export type Course = InferSelectModel<typeof courses>;
 export type Schedule = InferSelectModel<typeof courseSchedules>;
 
-// リレーション込みの型 (Query APIの結果と一致させる)
+// リレーション込みの型
 export type CourseWithSchedules = Course & {
     schedules: Schedule[];
 };
