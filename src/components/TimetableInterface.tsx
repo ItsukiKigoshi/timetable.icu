@@ -100,9 +100,15 @@ export default function TimetableInterface({schedules}: TimetableProps) {
                         position: 'absolute',
                         top: timeToMin(p.start) * MIN_HEIGHT + HEADER_HEIGHT,
                         height: (timeToMin(p.end) - timeToMin(p.start)) * MIN_HEIGHT,
-                        width: '100%', borderBottom: '1px solid #eee', backgroundColor: '#fafafa'
+                        width: '100%', borderTop: '1px solid #eee'
                     }}/>
                 ))}
+                {/* 曜日ヘッダー */}
+                <div style={{
+                    textAlign: 'center', borderBottom: '1px solid #ccc', fontSize: '12px', fontWeight: 'bold',
+                    height: HEADER_HEIGHT, lineHeight: `${HEADER_HEIGHT}px`
+                }}>{dayOfWeek}</div>
+
 
                 {/* コマの描画 */}
                 {processedSchedules.map((sched, i) => {
@@ -142,14 +148,13 @@ export default function TimetableInterface({schedules}: TimetableProps) {
     return (
         <div style={{
             display: 'flex', border: '1px solid #ccc', borderRight: 'none',
-            fontFamily: 'sans-serif', backgroundColor: '#fff', width: '100%'
+            fontFamily: 'sans-serif', width: '100%'
         }}>
             {/* 時刻軸 */}
             <div style={{
                 width: '65px',
                 borderRight: '1px solid #ccc',
                 position: 'relative',
-                backgroundColor: '#fdfdfd'
             }}>
                 <div style={{height: HEADER_HEIGHT, borderBottom: '1px solid #ccc'}}/>
                 {GRID_PERIODS.map(p => {
@@ -171,7 +176,7 @@ export default function TimetableInterface({schedules}: TimetableProps) {
                             <div style={{
                                 fontSize: '10px', color: '#333', fontWeight: 'bold',
                                 position: 'absolute', top: 0,
-                                backgroundColor: '#fdfdfd', padding: '0 2px', zIndex: 1
+                                padding: '0 2px', zIndex: 1
                             }}>
                                 {p.start}
                             </div>
@@ -185,7 +190,7 @@ export default function TimetableInterface({schedules}: TimetableProps) {
                                 height: '100%',
                                 width: '100%'
                             }}>
-                                <div style={{fontSize: '15px', color: '#bbb', fontWeight: 'bold', lineHeight: 1}}>
+                                <div style={{fontSize: '15px', fontWeight: 'bold', lineHeight: 1}}>
                                     {p.label}
                                 </div>
                             </div>

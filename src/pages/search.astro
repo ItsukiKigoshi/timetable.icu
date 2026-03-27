@@ -6,7 +6,7 @@ import SearchInterface, {type SearchFilters} from '@/components/SearchInterface'
 import {env} from "cloudflare:workers";
 import {getAuth} from "@/lib/auth";
 import Layout from "@/layouts/Layout.astro";
-import type {Course, CourseWithSchedules, Term} from "@/db/schema";
+import type {Course, CourseWithSchedules} from "@/db/schema";
 
 const db = drizzle(env.timetable_icu, {schema});
 const auth = getAuth(env);
