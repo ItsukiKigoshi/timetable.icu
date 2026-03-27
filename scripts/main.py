@@ -1,0 +1,184 @@
+import re
+import json
+import os
+from bs4 import BeautifulSoup
+
+# --- 1. 定数・変換マップ ---
+DAY_MAP = {
+    'm': 'Mon', 'tu': 'Tue', 'w': 'Wed', 'th': 'Thu', 'f': 'Fri', 'sa': 'Sat', 'su': 'Sun',
+    'mon': 'Mon', 'tue': 'Tue', 'wed': 'Wed', 'thu': 'Thu', 'fri': 'Fri', 'sat': 'Sat', 'sun': 'Sun'
+}
+
+TERM_MAP = {
+    'Autumn': 'Autumn', 'Winter': 'Winter', 'Spring': 'Spring'
+}
+
+PERIOD_TIMES = {
+    1: ("08:45", "10:00"),
+    2: ("10:10", "11:25"),
+    3: ("11:35", "12:50"),
+    4: ("14:00", "15:15"),
+    5: ("15:25", "16:40"),
+    6: ("16:50", "18:05"),
+    7: ("18:15", "19:30"),
+}
+
+
+# --- 2. スケジュール解析ロジック ---
+def parse_full_schedule(schedule_raw):
+    if not schedule_raw or schedule_raw.strip() == "":
+        return []
+
+    alt_match = re.search(r'<(.*)>', schedule_raw)
+    core_str = schedule_raw
+    alt_groups_str = []
+
+    if alt_match:
+        core_str = schedule_raw.replace(alt_match.group(0), "").strip(', ')
+        alt_groups_str = [g.strip() for g in alt_match.group(1).split('or')]
+
+    raw_segments = []
+
+    # 共通コマ
+    for p in re.split(r',', core_str):
+        p = p.strip()
+        if '/' in p:
+            raw_segments.append({"text": p, "isAlternative": False, "altGroupId": None})
+
+    # 選択コマ (< > 内)
+    for i, group in enumerate(alt_groups_str):
+        group_id = i + 1
+        for p in re.split(r',', group):
+            p = p.strip()
+            if '/' in p:
+                raw_segments.append({"text": p, "isAlternative": True, "altGroupId": group_id})
+
+    final_schedules = []
+    for item in raw_segments:
+        text = item["text"].lower()
+        is_long = False
+        if text.startswith('*'):
+            is_long = True
+            text = text[1:]
+
+        try:
+            period_str, day_raw = text.split('/', 1)
+            period = int(period_str)
+            day_of_week = DAY_MAP.get(day_raw, "Mon")
+            start_t, end_t = PERIOD_TIMES.get(period, ("00:00", "00:00"))
+
+            final_schedules.append({
+                "dayOfWeek": day_of_week,
+                "startTime": start_t,
+                "endTime": end_t,
+                "period": period,
+                "isLong": is_long,
+                "isAlternative": item["isAlternative"],
+                "altGroupId": item["altGroupId"]
+            })
+        except (ValueError, KeyError):
+            continue
+
+    return final_schedules
+
+
+# --- 3. HTML解析メイン関数 ---
+from bs4 import BeautifulSoup
+
+def get_course_data_json(html_content):
+    soup = BeautifulSoup(html_content, 'lxml')
+    # テーブルの各行(tr)を取得
+    rows = soup.find_all('tr')
+
+    res_list = []
+    seen_rgno = set()  # 重複チェック用の集合
+
+    for row in rows:
+        # IDが "lbl_rgno" で終わる span を探す（インデックスに頼らない）
+        rgno_tag = row.select_one('span[id$="_lbl_rgno"]')
+
+        if not rgno_tag:
+            continue
+
+        rgno = rgno_tag.get_text(strip=True)
+
+        # 1. 重複チェック：すでに処理した rgNo はスキップ
+        if rgno in seen_rgno:
+            # デバッグ用に重複があったことを通知（必要なければ消してOK）
+            print(f"⚠️ Skipping duplicate rgNo: {rgno}")
+            continue
+
+        # 2. バリデーション：rgNo が空、または数字以外（ヘッダー行など）ならスキップ
+        if not rgno.isdigit():
+            continue
+
+        # 重複リストに登録
+        seen_rgno.add(rgno)
+
+        # 3. IDのプレフィックスを動的に作成 (例: ctl00_..._ctl02_lbl_)
+        base_id = rgno_tag['id'].replace('lbl_rgno', 'lbl_')
+
+        # 4. 開講中止(Cancelled)の判定
+        # 「日本語科目名」の span またはその親要素に 'word_line_through' クラスがあるか確認
+        title_ja_tag = row.find('span', id=base_id + "title_j")
+        is_cancelled = False
+        if title_ja_tag:
+            # span 自体のクラスを確認
+            has_strike_class = "word_line_through" in (title_ja_tag.get('class') or [])
+            # 親要素(divなど)のクラスを確認
+            parent_has_strike = "word_line_through" in (title_ja_tag.parent.get('class') or [])
+            is_cancelled = has_strike_class or parent_has_strike
+
+        # ヘルパー関数：指定したラベルのテキストを取得
+        def get_text(label):
+            tag = row.find('span', id=base_id + label)
+            return tag.get_text(strip=True) if tag else ""
+
+        # 5. オブジェクトの組み立て
+        course_obj = {
+            "rgNo": rgno,
+            "status": "cancelled" if is_cancelled else "active",
+            "year": int(get_text("ay") or 2026),
+            "term": get_text("season"),
+            "courseCode": get_text("course_no"),
+            "titleJa": get_text("title_j"),
+            "titleEn": get_text("title_e"),
+            "instructor": get_text("instructor"),
+            "room": get_text("room"),
+            "language": get_text("lang"),
+            # スケジュールが空文字でなければパース、空なら空配列
+            "schedules": parse_full_schedule(get_text("schedule")) if get_text("schedule") else []
+        }
+
+        res_list.append(course_obj)
+
+    return res_list
+
+# --- 4. メイン実行部分 ---
+if __name__ == "__main__":
+    html_data = ""
+
+    # 方法A: 既存の scrape モジュールを使う場合
+    # import scrape
+    # html_data = scrape.get_courses("all")
+
+    # 方法B: 保存済みのHTMLファイルを読み込む場合 (推奨: デバッグしやすいため)
+    file_path = "scripts/data/all_courses.html"  # ファイル名を合わせてください
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            html_data = f.read()
+    else:
+        print(f"Error: {file_path} が見つかりません。")
+        exit()
+
+    print(f"解析開始... 行数をスキャン中")
+    results = get_course_data_json(html_data)
+
+    # 結果をJSONとして保存
+    output_file = 'dist_courses.json'
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+
+    print(f"--- 解析完了 ---")
+    print(f"総科目数: {len(results)}")
+    print(f"出力先: {os.path.abspath(output_file)}")

@@ -1,0 +1,59 @@
+import json
+
+def escape_sql(val):
+    if val is None:
+        return "NULL"
+    if isinstance(val, bool):
+        return "1" if val else "0"
+    if isinstance(val, int):
+        return str(val)
+    # 文字列内の ' を '' に変換してエスケープ
+    safe_val = str(val).replace("'", "''")
+    return f"'{safe_val}'"
+
+def generate_sql():
+    try:
+        with open('dist_courses.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        print("❌ dist_courses.json が見つかりません。")
+        return
+
+    output = [
+        "-- Auto-generated SQL for D1 Sync (Simplified for Wrangler compatibility)"
+    ]
+
+    for item in data:
+        # 1. courses テーブルへの Upsert
+        # カラム名は適宜 Drizzle の schema (snake_case) に合わせてください
+        course_sql = f"""
+        INSERT INTO courses (year, term, course_code, rg_no, title_ja, title_en, instructor, room, language, status, updated_at)
+        VALUES ({item['year']}, {escape_sql(item['term'])}, {escape_sql(item['courseCode'])}, {escape_sql(item['rgNo'])}, 
+                {escape_sql(item['titleJa'])}, {escape_sql(item['titleEn'])}, {escape_sql(item['instructor'])}, 
+                {escape_sql(item['room'])}, {escape_sql(item['language'])}, {escape_sql(item['status'])}, CURRENT_TIMESTAMP)
+        ON CONFLICT(year, rg_no) DO UPDATE SET 
+            title_ja=excluded.title_ja, title_en=excluded.title_en, instructor=excluded.instructor, 
+            room=excluded.room, status=excluded.status, updated_at=CURRENT_TIMESTAMP;
+        """
+        output.append(course_sql.strip())
+
+        # 2. 既存スケジュールの削除
+        delete_sch = f"DELETE FROM course_schedules WHERE course_id = (SELECT id FROM courses WHERE year={item['year']} AND rg_no={escape_sql(item['rgNo'])});"
+        output.append(delete_sch)
+
+        # 3. スケジュールの挿入
+        for s in item.get('schedules', []):
+            sch_sql = f"""
+            INSERT INTO course_schedules (course_id, day_of_week, start_time, end_time, period, is_long, is_alternative, alt_group_id)
+            SELECT id, {escape_sql(s['dayOfWeek'])}, {escape_sql(s['startTime'])}, {escape_sql(s['endTime'])}, 
+                   {s['period']}, {1 if s.get('isLong') else 0}, {1 if s.get('isAlternative') else 0}, {escape_sql(s.get('altGroupId'))}
+            FROM courses WHERE year={item['year']} AND rg_no={escape_sql(item['rgNo'])};
+            """
+            output.append(sch_sql.strip())
+
+    with open('sync_remote.sql', 'w', encoding='utf-8') as f:
+        f.write("\n".join(output))
+    print(f"✅ Generated sync_remote.sql ({len(data)} courses)")
+
+if __name__ == "__main__":
+    generate_sql()

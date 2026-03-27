@@ -10,7 +10,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate-types": "wrangler types"
+    "generate-types": "wrangler types",
+    "db:scrape": "python3 scripts/main.py",
+    "db:seed:local": "find .wrangler -name '*.sqlite' -not -name '*shm' -not -name '*wal' -exec bun src/db/seed.ts {} +",
+    "db:sync": "bun run db:scrape && bun run db:seed:local",
+    "db:push:remote": "python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --remote --file=./sync_remote.sql"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.3",
@@ -27,7 +31,9 @@
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
+    "@types/bun": "^1.3.11",
     "@types/node": "^25.5.0",
+    "bun-types": "^1.3.11",
     "drizzle-kit": "^0.31.10",
     "wrangler": "^4.77.0"
   }

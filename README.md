@@ -5,15 +5,23 @@
 /
 ├── public/
 │   └── favicon.svg
+├── migrations/
+│   └── migration.sql
 ├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
+│   ├── assets
+│   │   └── astro.svg
+│   ├── components
+│   │   └── Component.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   ├── lib
+│   │   └── auth.ts // schema definitions, auth-related files
+│   ├── pages
+│   │   └── index.astro
+│   ├── styles
+│   │   └── global.css
+│   ├── env.d.ts // Type for Astro
+│   └── middleware.ts
 └── package.json
 ```
 

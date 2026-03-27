@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+.wrangler/
+
+dist_courses.json
+sync_remote.sql
+
+*.html
