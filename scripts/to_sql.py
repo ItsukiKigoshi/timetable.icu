@@ -1,5 +1,6 @@
 import json
 
+
 def escape_sql(val):
     if val is None:
         return "NULL"
@@ -10,6 +11,7 @@ def escape_sql(val):
     # 文字列内の ' を '' に変換してエスケープ
     safe_val = str(val).replace("'", "''")
     return f"'{safe_val}'"
+
 
 def generate_sql():
     try:
@@ -33,7 +35,7 @@ def generate_sql():
                 {escape_sql(item['room'])}, {escape_sql(item['language'])}, {escape_sql(item['status'])}, CURRENT_TIMESTAMP)
         ON CONFLICT(year, rg_no) DO UPDATE SET 
             title_ja=excluded.title_ja, title_en=excluded.title_en, instructor=excluded.instructor, 
-            room=excluded.room, status=excluded.status, updated_at=CURRENT_TIMESTAMP;
+            room=excluded.room, status=excluded.status, updated_at=strftime('%s', 'now');
         """
         output.append(course_sql.strip())
 
@@ -66,6 +68,7 @@ def generate_sql():
     with open('sync_remote.sql', 'w', encoding='utf-8') as f:
         f.write("\n".join(output))
     print(f"✅ Generated sync_remote.sql ({len(data)} courses)")
+
 
 if __name__ == "__main__":
     generate_sql()

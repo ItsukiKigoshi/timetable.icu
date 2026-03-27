@@ -1,10 +1,10 @@
-import { Database } from "bun:sqlite";
-import { drizzle } from "drizzle-orm/bun-sqlite";
+import {Database} from "bun:sqlite";
+import {drizzle} from "drizzle-orm/bun-sqlite";
 import * as schema from "./schema";
 import {courses, courseSchedules, courseToCategories} from "./schema";
 import fs from "fs";
 import path from "path";
-import { eq } from "drizzle-orm";
+import {eq} from "drizzle-orm";
 
 async function runSeed() {
     const dbPath = process.argv[2];
@@ -18,7 +18,7 @@ async function runSeed() {
 
     // Bun標準のDatabaseクラスを使用
     const sqlite = new Database(dbPath);
-    const db = drizzle(sqlite, { schema });
+    const db = drizzle(sqlite, {schema});
 
     const dataPath = path.resolve(process.cwd(), "dist_courses.json");
     if (!fs.existsSync(dataPath)) {
@@ -45,7 +45,7 @@ async function runSeed() {
                         room: item.room,
                         language: item.language,
                         status: item.status || "active",
-                        updatedAt: new Date(),
+                        updatedAt: new Date().getTime(),
                     })
                     .onConflictDoUpdate({
                         target: [courses.year, courses.rgNo],
@@ -55,10 +55,10 @@ async function runSeed() {
                             instructor: item.instructor,
                             room: item.room,
                             status: item.status || "active",
-                            updatedAt: new Date(),
+                            updatedAt: new Date().getTime(),
                         },
                     })
-                    .returning({ id: courses.id });
+                    .returning({id: courses.id});
 
                 const courseId = upserted.id;
 

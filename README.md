@@ -1,4 +1,5 @@
 # Timetable.icu (あいしーゆーのじかんわり)
+
 ## 🚀 Project Structure
 
 ```text
@@ -25,13 +26,12 @@
 └── package.json
 ```
 
-
 ## 🧞 Commands
 
 All commands are run from the root of the project, from a terminal:
 
 | Command               | Action                                           |
-|:----------------------| :----------------------------------------------- |
+|:----------------------|:-------------------------------------------------|
 | `bun install`         | Installs dependencies                            |
 | `bun dev`             | Starts local dev server at `localhost:4321`      |
 | `bun run build`       | Build your production site to `./dist/`          |
@@ -39,66 +39,78 @@ All commands are run from the root of the project, from a terminal:
 | `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `bun astro -- --help` | Get help using the Astro CLI                     |
 
-
 Create types from wrangler.jsonc
+
 ```bash
 bunx wrangler types
 ```
 
 Create schema for BetterAuth
+
 ```bash
 bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/lib/auth-schema.ts
 ```
 
 Create schema by Drizzle Kit
+
 ```bash
 bun x drizzle-kit generate
 ```
 
 Migration to D1 (--remote if applicable)
+
 ```bash
 bun wrangler d1 migrations apply timetable_icu
 bun wrangler d1 migrations apply timetable_icu --remote
 ```
 
-Debug with Cloudflare Pages Environment
+Debug with Cloudflare Environment
+
 ```bash
 bun run build && bun x wrangler dev
 ```
 
 Create JSON from HTML
+
 ```bash
 bun db:scrape
 ```
 
 Local DBにJSONからcorses/categoriesを入れる(seed.ts)
+
 ```bash
 bun db:seed:local
 ```
 
 HTML->JSON->Local DBを一括で実行
+
 ```bash
 bun db:sync
 ```
 
 Remote DBにJSONからcourses/categoriesを入れる(seed.ts)
+
 ```bash
 bun db:push:remote
 ```
 
 HTML->JSON->Remote DBを一括で実行
+
 ```bash
 bun db:deploy
 ```
 
 ---
+
 # 目標
+
 - [ ] ようこに卒業までつかってもらう
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」で1番目
     - [ ] iOSアプリ/Androidを作る (?)
 
 # 大切にしたいこと
+
 - [ ] とにかく時間割作成に使いやすいものである
     - [ ] long時間割対応 (しょうもないことだがアイデンティティ)
     - [ ] 軽量
@@ -113,6 +125,7 @@ bun db:deploy
     - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
 
 # ブランディング
+
 - [ ] 名前
 - [ ] Catalogue.icuはお名前comに奪われ3万の復旧費用. あくどい商売やで
 - [ ] timetable.icu
@@ -126,6 +139,7 @@ bun db:deploy
 - [ ] ちゃんとランディングページを作る: Astroのいいところ
 
 # できること
+
 - [ ] 時間割作成・保存
     - [ ] Long4 (カレンダー化)
     - [ ] マニュアル登録
@@ -135,7 +149,9 @@ bun db:deploy
 - [ ] Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
 - [ ] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
+
 # できないこと
+
 - [ ] 実際の履修登録 (リンク貼る)
 - [ ] 卒業要件との照らし合わせ (リンク貼る)
 - [ ] シラバスを見ること (リンク貼る)
@@ -143,54 +159,63 @@ bun db:deploy
     - [ ] 見やすくして掲載は要検討
 
 # 技術選定
+
 ## Frontend
+
 - Astro
     - shadcn/ui?
     - mui/base?
     - API (BetterAuthまわりなど)もAstroで完結すれば最高; できないならHono
 - BetterAuth (Google OAuth/Passkey)
+
 ## Infra
+
 - Cloudflare Pages with Functions (Worker)
 - D1
 
 # 挑戦したいこと
+
 - PR
     - 対面で宣伝
     - Instagram等でICU関連の団体/個人に宣伝してもらう
 - コンポーネントテスト
 - ちゃんとWebアナリティクスを取って開発の励みにする
 
-
 # ライバル
+
 - [ICUrriculum](https://icu-courses.com)
 - Timetable4ICU
 
 # 参考
+
 - [Hupass](https://hupass.hu-jagajaga.com/)
 
 ---
+
 # 工程表
+
 - [x] Astro App Initialise
 - [x] BetterAuth
     - [x] Google OAuth
     - [x] Passkey
 - [ ] Get Syllabi Data
-  - [ ] ブラウザ保存->Pythonパース？
-  - [ ] Pythonで完結
-  - [ ] 定期的に自動で: GitHub CI/CD
+    - [ ] ブラウザ保存->Pythonパース？
+    - [ ] Pythonで完結
+    - [ ] 定期的に自動で: GitHub CI/CD
 - [ ] 保存機能
-  - [x] Drizzle ORM
-  - [x] Schema定義
-  - [x] D1 Deploy
+    - [x] Drizzle ORM
+    - [x] Schema定義
+    - [x] D1 Deploy
 - [x] Calendar形式で表示
-  - [ ] 理系の選択式の演習UI
+    - [ ] 理系の選択式の演習UI
 - [ ] 授業検索
-  - [ ] コマをクリック
+    - [ ] コマをクリック
 
 - [x] Deploy to Workers
 - [ ] PR
 
 ## Schema案
+
 - auth関連 (BetterAuthに任せる)
     - users
 - user_courses (各ユーザの履修登録; もっと良いTable名は?)

@@ -22,7 +22,9 @@ export const courses = sqliteTable("courses", {
     instructor: text("instructor").notNull(),
     room: text("room"),
     language: text("language"), // J, E, J/E
-    updatedAt: integer("updated_at", {mode: "timestamp"}).default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: integer("updated_at")
+        .default(sql`(unixepoch()
+                     )`),
 }, (table) => [
     uniqueIndex("year_rgno_unique_idx").on(table.year, table.rgNo),
     index("year_term_idx").on(table.year, table.term),
@@ -59,7 +61,9 @@ export const userCourses = sqliteTable("user_courses", {
     colorCustom: text("color_custom"),
     memo: text("memo"),
 
-    createdAt: integer("created_at", {mode: "timestamp"}).default(sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at")
+        .default(sql`(unixepoch()
+                     )`),
 }, (table) => [
     index("user_courses_uid_idx").on(table.userId),
 ]);
@@ -94,7 +98,9 @@ export const customCourses = sqliteTable("custom_courses", {
     overriddenCourseId: integer("overridden_course_id")
         .references(() => courses.id),
 
-    createdAt: integer("created_at", {mode: "timestamp"}).default(sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at")
+        .default(sql`(unixepoch()
+                     )`),
 });
 
 // --- Categories & Tags ---
