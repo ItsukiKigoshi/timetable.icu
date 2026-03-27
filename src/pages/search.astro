@@ -1,11 +1,11 @@
 ---
-import { drizzle } from 'drizzle-orm/d1';
-import { eq, and, exists, inArray, sql } from 'drizzle-orm';
-import * as schema from '../db/schema';
-import SearchInterface, { type SearchFilters, type CourseWithSchedules } from '@/components/SearchInterface';
+import {drizzle} from 'drizzle-orm/d1';
+import {eq, and, exists, inArray, sql} from 'drizzle-orm';
+import * as schema from '@/db/schema';
+import SearchInterface, {type SearchFilters, type CourseWithSchedules} from '@/components/SearchInterface';
 import {env} from "cloudflare:workers";
 
-const db = drizzle(env.timetable_icu, { schema });
+const db = drizzle(env.timetable_icu, {schema});
 
 const url = new URL(Astro.request.url);
 const filters: SearchFilters = {
@@ -44,7 +44,7 @@ if (filters.categoryId) {
 
 // --- 2. クエリ実行 (whereはここで1回だけ呼ぶ) ---
 const idRows = await db
-    .selectDistinct({ id: schema.courseSchedules.courseId })
+    .selectDistinct({id: schema.courseSchedules.courseId})
     .from(schema.courseSchedules)
     .where(and(...conditions)) // まとめた条件をスプレッドで渡す
     .limit(limit)
@@ -69,4 +69,4 @@ if (targetIds.length > 0) {
 Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
 ---
 
-<SearchInterface client:load initialResults={results} filters={filters} />
+<SearchInterface client:load initialResults={results} filters={filters}/>
