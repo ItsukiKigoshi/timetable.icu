@@ -8,7 +8,7 @@ export const SELECTABLE_TERMS = [
     { value: 'Winter', label: '冬学期' },
 ] as const;
 
-export const DEFAULT_YEAR = new Date().getFullYear();
+export const DEFAULT_YEAR = 2026; // new Date().getFullYear() doesnt work on Workers
 export const DEFAULT_TERM: Course['term'] = 'Spring';
 
 export const START_TIME = 8 * 60 + 45; // 08:45
