@@ -30,13 +30,8 @@ if (user) {
     flatSchedules = results.flatMap((uc) => {
         const course = uc.course;
         return course.schedules.map((s) => ({
-            id: s.id,
-            dayOfWeek: s.dayOfWeek,
-            startTime: s.startTime,
-            endTime: s.endTime,
-            isAlternative: s.isAlternative,
-            title: course.titleJa,
-            room: course.room,
+            ...course,
+            ...s
         }));
     });
 }

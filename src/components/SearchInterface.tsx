@@ -106,37 +106,7 @@ export default function SearchInterface({
                 </select>
             </section>
 
-            <table border={1} style={{width: '100%', borderCollapse: 'collapse'}}>
-                <thead>
-                <tr>
-                    <th>RG No</th>
-                    <th>Title</th>
-                    <th>Schedule</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {initialResults.map((course) => {
-                    const isAdded = userCourseIds.has(course.id);
-                    return (
-                        <tr key={course.id}>
-                            <td>{course.rgNo}</td>
-                            <td>{course.titleJa}</td>
-                            <td>{course.schedules.map(s => `${s.isLong && "*"}${s.period}/${s.dayOfWeek}`).join(',')}</td>
-                            <td>
-                                <button
-                                    onClick={() => toggleRegistration(course.id)}
-                                    disabled={isSubmitting === course.id}
-                                >
-                                    {isAdded ? '削除' : '追加'}
-                                </button>
-                            </td>
-                        </tr>
-                    );
-                })}
-                </tbody>
-            </table>
-
+            {/*Pagination Controller*/}
             <div style={{
                 display: 'flex',
             }}>
@@ -157,6 +127,40 @@ export default function SearchInterface({
                     ＞
                 </button>
             </div>
+
+            <table border={1} style={{width: '100%', borderCollapse: 'collapse'}}>
+                <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>Title</th>
+                    <th>Schedule</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {initialResults.map((course) => {
+                    const isAdded = userCourseIds.has(course.id);
+                    return (
+                        <tr key={course.id}>
+                            <td>{course.term} {course.year}</td>
+                            <td>{course.titleJa}</td>
+                            <td>{course.schedules.map((s) =>
+                                `${s.period}${s.isLong ? "*" : ""}/${s.dayOfWeek}`
+                            ).join(',')}
+                            </td>
+                            <td>
+                                <button
+                                    onClick={() => toggleRegistration(course.id)}
+                                    disabled={isSubmitting === course.id}
+                                >
+                                    {isAdded ? '削除' : '追加'}
+                                </button>
+                            </td>
+                        </tr>
+                    );
+                })}
+                </tbody>
+            </table>
         </div>
     );
 }

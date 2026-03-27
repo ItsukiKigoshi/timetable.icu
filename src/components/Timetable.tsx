@@ -55,7 +55,7 @@ export default function Timetable({schedules}: TimetableProps) {
             scheduleWithCol.push({...sched, startMin, endMin, col});
         });
 
-        // 3. 重なりグループの幅計算（ロジックは以前のものを流用）
+        // 3. 重なりグループの幅計算
         const processedSchedules = scheduleWithCol.map(sched => {
             const group: typeof scheduleWithCol = [];
             const visited = new Set<number>();
@@ -131,7 +131,7 @@ export default function Timetable({schedules}: TimetableProps) {
                             boxShadow: '1px 1px 2px rgba(0,0,0,0.05)',
                             overflow: 'hidden'
                         }}>
-                            <div style={{fontWeight: 'bold', lineHeight: '1.2'}}>{sched.title}</div>
+                            <div style={{fontWeight: 'bold', lineHeight: '1.2'}}>{sched.titleJa}</div>
                             <div style={{
                                 fontSize: '9px',
                                 color: '#666',
@@ -160,7 +160,6 @@ export default function Timetable({schedules}: TimetableProps) {
                 {GRID_PERIODS.map(p => {
                     const top = timeToMin(p.start) * MIN_HEIGHT + HEADER_HEIGHT;
                     const height = (timeToMin(p.end) - timeToMin(p.start)) * MIN_HEIGHT;
-                    const isLunch = p.label === '昼';
 
                     return (
                         <div key={p.label} style={{

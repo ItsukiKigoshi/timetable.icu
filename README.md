@@ -76,7 +76,7 @@ Create JSON from HTML
 bun db:scrape
 ```
 
-Local DBにJSONからcorses/categoriesを入れる(seed.ts)
+Local DBにJSONからcourses/categoriesを入れる(seed.ts)
 
 ```bash
 bun db:seed:local
@@ -189,6 +189,7 @@ bun db:deploy
 # 参考
 
 - [Hupass](https://hupass.hu-jagajaga.com/)
+- [現在の時間割](https://www.icu.ac.jp/news/2406181000.html)
 
 ---
 
@@ -200,19 +201,20 @@ bun db:deploy
     - [x] Passkey
       ~~- [ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
       とりあえずはmiddlewareの情報を使って最適化できそう
-- [ ] Get Syllabi Data
-    - [ ] ブラウザ保存->Pythonパース？
-    - [ ] Pythonで完結
+- [x] Get Syllabi Data
+    - [x] ブラウザ保存->Pythonパース？
+    - [x] Pythonで完結
     - [ ] 定期的に自動で: GitHub CI/CD
-- [ ] 保存機能
+- [x] 保存機能
     - [x] Drizzle ORM
     - [x] Schema定義
     - [x] D1 Deploy
 - [x] Calendar形式で表示
-    - [ ] 理系の選択式の演習UI
-- [ ] 授業検索
-    - [ ] コマをクリック
-
+    - [] 時期セレクター
+    - [] 理系の選択式の演習UI
+- [x] 授業検索
+    - [ ] コマをクリックで
+    - [ ] メジャーとそれ以外を分離, もしくはタグ形式で
 - [x] Deploy to Workers
 - [ ] PR
 
