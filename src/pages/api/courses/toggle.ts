@@ -8,7 +8,7 @@ import * as schema from "@/db/schema.ts";
 const auth = getAuth(env);
 
 
-export const POST: APIRoute = async ({request, locals}) => {
+export const POST: APIRoute = async ({request}) => {
     const session = await auth.api.getSession({headers: request.headers});
     if (!session) return new Response(null, {status: 401});
 

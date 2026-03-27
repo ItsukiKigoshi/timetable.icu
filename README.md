@@ -198,6 +198,8 @@ bun db:deploy
 - [x] BetterAuth
     - [x] Google OAuth
     - [x] Passkey
+      ~~- [ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
+      とりあえずはmiddlewareの情報を使って最適化できそう
 - [ ] Get Syllabi Data
     - [ ] ブラウザ保存->Pythonパース？
     - [ ] Pythonで完結

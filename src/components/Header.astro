@@ -1,6 +1,8 @@
 ---
 import LoginButton from "./LoginButton";
-const {user} = Astro.props;
+import {Passkey} from "./Passkey";
+const {user} = Astro.locals;
+const isLoggedIn = !!user;
 ---
 <div>
     <h1>Timetable.icu</h1>
@@ -8,15 +10,10 @@ const {user} = Astro.props;
         <a href="/">Home</a>
         <a href="/search">Search</a>
     </div>
-    <div>
-        {user ? (
-                <div>
-                    <p>Hi! {user.name}</p>
-                    <LoginButton client:load/>
-                </div>
-        ) : (
-                <LoginButton client:load/>
-        )}
-    </div>
-
+    <nav>
+        {user ? <span>Hi, {user.name}!</span> :
+                <span>ICU Net IDでログインしてください!Google OAuthを使うためパスワードは取得されません</span>}
+        <LoginButton client:load isLoggedIn={isLoggedIn}/>
+        <Passkey client:load isLoggedIn={isLoggedIn}/>
+    </nav>
 </div>

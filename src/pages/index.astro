@@ -6,10 +6,5 @@ import Timetable from "@/components/Timetable.tsx";
 const {user} = Astro.locals;
 ---
 <Layout title="あいしーゆーのじかんわり">
-    {!user && (
-            <p class="p-4 bg-blue-50">
-                在学生であることを証明するためにICU Net IDでログインしてください。
-            </p>
-    )}
     <Timetable/>
 </Layout>
