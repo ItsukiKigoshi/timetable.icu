@@ -28,7 +28,7 @@ interface TimetableProps {
     schedules: FlatSchedule[]
 }
 
-export default function Timetable({schedules}: TimetableProps) {
+export default function TimetableInterface({schedules}: TimetableProps) {
     const totalHeight = (END_TIME - START_TIME) * MIN_HEIGHT;
     const HEADER_HEIGHT = 40; // 時刻+ラベルを表示するため少し高く設定
 

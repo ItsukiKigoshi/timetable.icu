@@ -1,4 +1,4 @@
-# Timetable.icu (あいしーゆーのじかんわり)
+# TimetableInterface.icu (あいしーゆーのじかんわり)
 
 ## 🚀 Project Structure
 
@@ -210,13 +210,22 @@ bun db:deploy
     - [x] Schema定義
     - [x] D1 Deploy
 - [x] Calendar形式で表示
-    - [] 時期セレクター
+    - [] Termセレクター
     - [] 理系の選択式の演習UI
 - [x] 授業検索
     - [ ] コマをクリックで
     - [ ] メジャーとそれ以外を分離, もしくはタグ形式で
+    - [ ] Issue: Co-Listに非対応
+- [ ] 独自スケジュール
+    - [x] DB定義
+    - [ ] 追加方法
+    - [ ] 表示方法
 - [x] Deploy to Workers
 - [ ] PR
+
+## 注意点
+
+- [ ] Roomはicu.ac.jpを持つユーザのみ
 
 ## Schema案
 

@@ -1,0 +1,69 @@
+---
+import {drizzle} from "drizzle-orm/d1";
+import * as schema from "@/db/schema.ts";
+import type {FlatSchedule} from "@/db/schema.ts";
+import TimetableInterface from "./TimetableInterface";
+import {env} from "cloudflare:workers";
+import {and, eq, getTableColumns} from "drizzle-orm";
+
+const {user} = Astro.locals;
+const url = new URL(Astro.request.url);
+
+// デフォルト値を動的に設定（例: 現在の年）
+const currentYear = new Date().getFullYear();
+const selectedYear = parseInt(url.searchParams.get('year') || currentYear.toString());
+const selectedTerm = (url.searchParams.get('term') || 'Spring') as "Spring" | "Autumn" | "Winter";
+
+let flatSchedules: FlatSchedule[] = [];
+
+if (user) {
+    const db = drizzle(env.timetable_icu, {schema});
+
+    const rows = await db
+        .select({
+            course: getTableColumns(schema.courses),
+        })
+        .from(schema.userCourses)
+        .innerJoin(
+            schema.courses,
+            eq(schema.userCourses.courseId, schema.courses.id)
+        )
+        .where(
+            and(
+                eq(schema.userCourses.userId, user.id),
+                eq(schema.courses.year, selectedYear),
+                eq(schema.courses.term, selectedTerm)
+            )
+        );
+
+    const courseIds = rows.map(r => r.course.id);
+
+    if (courseIds.length > 0) {
+        const coursesWithSchedules = await db.query.courses.findMany({
+            where: (c, {inArray}) => inArray(c.id, courseIds),
+            with: {schedules: true}
+        });
+
+        flatSchedules = coursesWithSchedules.flatMap((course) =>
+            course.schedules.map((s) => ({
+                ...course,
+                ...s,
+            }))
+        );
+    }
+}
+---
+
+<form method="GET" class="flex gap-2 mb-4">
+    <select name="year" onchange="this.form.submit()" class="border p-1 rounded">
+        <option value="2026" selected={selectedYear === 2026}>2026</option>
+        <option value="2027" selected={selectedYear === 2027}>2027</option>
+    </select>
+    <select name="term" onchange="this.form.submit()" class="border p-1 rounded">
+        <option value="Spring" selected={selectedTerm === 'Spring'}>春学期</option>
+        <option value="Autumn" selected={selectedTerm === 'Autumn'}>秋学期</option>
+        <option value="Winter" selected={selectedTerm === 'Winter'}>冬学期</option>
+    </select>
+</form>
+
+<TimetableInterface schedules={flatSchedules}/>

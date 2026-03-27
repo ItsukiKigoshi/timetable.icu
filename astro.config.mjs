@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import {defineConfig} from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 
@@ -7,16 +7,16 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
-  adapter: cloudflare(),
-  integrations: [react()],
+    output: 'server',
+    adapter: cloudflare(),
+    integrations: [react()],
 
-  vite: {
-    plugins: [tailwindcss()],
-    server: {
-      watch: {
-        ignored: ['**/.wrangler/**']
-      }
+    vite: {
+        plugins: [tailwindcss()],
+        server: {
+            watch: {
+                ignored: ['**/.wrangler/**', 'README.md'],
+            }
+        }
     }
-  }
 });

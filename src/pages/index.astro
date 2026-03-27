@@ -1,50 +1,17 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Timetable from "@/components/Timetable.tsx";
+import TimetableInterface from "@/components/TimetableInterface.tsx";
 import {drizzle} from "drizzle-orm/d1";
 import {env} from "cloudflare:workers";
 import * as schema from "@/db/schema.ts";
 import type {FlatSchedule} from "@/db/schema.ts";
+import Timetable from "@/components/Timetable.astro";
 
 const {user} = Astro.locals;
-
-// 1. user がいない場合は即座に空配列を定義して、DB問い合わせをスキップする
-let flatSchedules = [] as FlatSchedule[];
-
-if (user) {
-    const db = drizzle(env.timetable_icu, {schema});
-
-    // userCourses からコースとスケジュールを芋づる式に取得
-    const results = await db.query.userCourses.findMany({
-        where: (uc, {eq}) => eq(uc.userId, user.id),
-        with: {
-            course: {
-                with: {
-                    schedules: true,
-                },
-            },
-        },
-    });
-
-    // サーバーサイドでフラット化（型安全）
-    flatSchedules = results.flatMap((uc) => {
-        const course = uc.course;
-        return course.schedules.map((s) => ({
-            ...course,
-            ...s
-        }));
-    });
-}
 ---
 <Layout title="あいしーゆーのじかんわり">
     <main>
-        {user ? (
-                <Timetable schedules={flatSchedules}/>
-        ) : (
-                <div class="p-8 text-center">
-                    <p class="mb-4">ログインすると自分の時間割を作成・表示できます。</p>
-                    <Timetable schedules={[]}/>
-                </div>
-        )}
+        {user && <p class="mb-4">ログインすると自分の時間割を作成・表示できます。</p>}
+        <Timetable/>
     </main>
 </Layout>

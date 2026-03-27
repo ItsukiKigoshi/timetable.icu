@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 
 export interface SearchFilters {
+    year: string | null;
+    term: string | null;
     day: string | null;
     period: string | null;
     isLong: string | null;
@@ -68,9 +70,28 @@ export default function SearchInterface({
         window.location.assign(url.toString());
     };
 
+    const majorCategories = categories.filter(c => c.id?.startsWith('M') && (c.id !== "MSTH"));
+    const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && (c.id !== "MSTH")));
+
     return (
         <div>
             <section style={{display: 'flex', gap: '8px', marginBottom: '1rem'}}>
+                <select
+                    value={filters.year || ''}
+                    onChange={(e) => update({year: e.target.value})}
+                >
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+
+                <select
+                    value={filters.term || ''}
+                    onChange={(e) => update({term: e.target.value})}
+                >
+                    <option value="Spring">春学期</option>
+                    <option value="Autumn">秋学期</option>
+                    <option value="Winter">冬学期</option>
+                </select>
                 <input
                     type="text"
                     className="border p-1 rounded"
@@ -94,15 +115,32 @@ export default function SearchInterface({
                     {[1, 2, 3, 4, 5, 6, 7].map(p => <option key={p} value={p.toString()}>{p}</option>)}
                 </select>
 
+                {/* メジャーのグループ */}
+                <select
+                    value={filters.categoryId || ''}
+                    onChange={(e) => update({categoryId: e.target.value})}
+                    className="max-w-50"
+                >
+                    <option value="">メジャー (全て)</option>
+                    {majorCategories.length > 0 && (
+                        majorCategories.map(c => (
+                            <option key={c.id} value={c.id}>{c.nameJa}</option>
+                        ))
+                    )}
+                </select>
+
+                {/* その他のグループ */}
                 <select
                     value={filters.categoryId || ''}
                     onChange={(e) => update({categoryId: e.target.value})}
                     className="max-w-50"
                 >
                     <option value="">カテゴリ (全て)</option>
-                    {categories.map(c => (
-                        <option key={c.id} value={c.id}>{c.nameJa}</option>
-                    ))}
+                    {majorCategories.length > 0 && (
+                        otherCategories.map(c => (
+                            <option key={c.id} value={c.id}>{c.nameJa}</option>
+                        ))
+                    )}
                 </select>
             </section>
 
