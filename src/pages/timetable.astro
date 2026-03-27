@@ -1,22 +1,28 @@
 ---
 import {drizzle} from "drizzle-orm/d1";
 import * as schema from "@/db/schema.ts";
-import type {Course, FlatSchedule} from "@/db/schema.ts";
+import {type Course, daysEnum, type FlatSchedule} from "@/db/schema.ts";
 import TimetableInterface from "@/components/TimetableInterface";
 import {env} from "cloudflare:workers";
 import {and, eq, getTableColumns} from "drizzle-orm";
 import Layout from "@/layouts/Layout.astro";
+import {DEFAULT_TERM, DEFAULT_YEAR, END_TIME, START_TIME} from "@/constants/time.ts";
 
 const {user} = Astro.locals;
 const url = new URL(Astro.request.url);
 
-// デフォルト値を動的に設定（例: 現在の年）
-const currentYear = new Date().getFullYear();
-const selectedYear = parseInt(url.searchParams.get('year') || currentYear.toString());
-const selectedTerm = (url.searchParams.get('term') || 'Spring') as Course['term'];
+const selectedYear = parseInt(url.searchParams.get('year') || "") || DEFAULT_YEAR;
+const selectedTerm = (url.searchParams.get('term') || DEFAULT_TERM) as Course['term'];
+
+// Hour to Minute: TODO - どこかに関数をまとめる？
+export const timeToMin = (timeStr: string) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m - START_TIME;
+};
 
 let flatSchedules: FlatSchedule[] = [];
 
+// --- Get User's Timetable ---
 if (user) {
     const db = drizzle(env.timetable_icu, {schema});
 
@@ -53,6 +59,70 @@ if (user) {
         );
     }
 }
+
+interface ProcessedSchedule extends FlatSchedule {
+    startMin: number;
+    displayEndMin: number;
+    col: number;
+    groupMaxCols: number;
+}
+
+function getProcessedSchedules(schedules: FlatSchedule[]): ProcessedSchedule[] {
+    const allProcessed: ProcessedSchedule[] = [];
+    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    DAYS.forEach(day => {
+        // 1. 抽出・ソート
+        const daySchedules = schedules
+            .filter(s => s.dayOfWeek === day)
+            .sort((a, b) => timeToMin(a.startTime) - timeToMin(b.startTime));
+
+        // 2. 結合
+        const merged: FlatSchedule[] = [];
+        daySchedules.forEach(current => {
+            const currentStart = timeToMin(current.startTime);
+            const target = merged.find(m => {
+                const mEnd = timeToMin(m.endTime);
+                return m.courseCode === current.courseCode && (currentStart - mEnd) <= 10;
+            });
+            if (target) {
+                target.endTime = current.endTime;
+            } else {
+                merged.push({ ...current });
+            }
+        });
+
+        // 3. 衝突・列計算
+        const tempWithCol: (FlatSchedule & { startMin: number; endMin: number; col: number; displayEndMin: number })[] = [];
+        merged.forEach(sched => {
+            const startMin = timeToMin(sched.startTime);
+            const endMin = timeToMin(sched.endTime);
+            const displayEndMin = Math.min(endMin + 10, END_TIME - START_TIME);
+
+            let col = 0;
+            while (tempWithCol.some(c =>
+                c.col === col &&
+                Math.max(startMin, c.startMin) < Math.min(displayEndMin, c.displayEndMin)
+            )) {
+                col++;
+            }
+            tempWithCol.push({ ...sched, startMin, endMin, displayEndMin, col });
+        });
+
+        // 4. 幅計算
+        tempWithCol.forEach(sched => {
+            const group = tempWithCol.filter(other =>
+                Math.max(sched.startMin, other.startMin) < Math.min(sched.displayEndMin, other.displayEndMin)
+            );
+            const groupMaxCols = Math.max(...group.map(c => c.col)) + 1;
+            allProcessed.push({ ...sched, groupMaxCols });
+        });
+    });
+
+    return allProcessed;
+}
+
+const mergedSchedules = getProcessedSchedules(flatSchedules);
 ---
 <Layout title="あいしーゆーのじかんわり">
 <form method="GET" class="flex gap-2 mb-4">
@@ -70,5 +140,5 @@ if (user) {
         </select>
     </label>
 </form>
-<TimetableInterface schedules={flatSchedules}/>
+<TimetableInterface schedules={mergedSchedules}/>
 </Layout>
