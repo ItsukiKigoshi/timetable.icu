@@ -36,23 +36,22 @@ export default function LoginButton({ isLoggedIn }: { isLoggedIn: boolean }) {
     };
 
     return (
-        <div className="flex gap-2">
+        <div>
             {isLoggedIn ? (
                 <>
                     {hasLocalData && (
                         <button
                             onClick={handleSync}
-                            className="bg-orange-500 text-white px-3 py-1 rounded text-sm font-bold animate-pulse"
                         >
                             未保存のデータを同期
                         </button>
                     )}
-                    <button onClick={handleLogout} className="text-gray-600 underline text-sm">
+                    <button onClick={handleLogout}>
                         ログアウト
                     </button>
                 </>
             ) : (
-                <button onClick={() => signInWithGoogle()} className="bg-blue-600 text-white px-4 py-2 rounded font-bold">
+                <button onClick={() => signInWithGoogle()}>
                     Googleでログイン
                 </button>
             )}

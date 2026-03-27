@@ -1,7 +1,7 @@
 import type { FlatSchedule } from "@/db/schema";
 import { START_TIME, END_TIME } from "@/constants/time";
 
-// Hour to Minute: TODO - どこかに関数をまとめる？
+// Hour to Minute
 export const timeToMin = (timeStr: string) => {
     const [h, m] = timeStr.split(':').map(Number);
     return h * 60 + m - START_TIME;

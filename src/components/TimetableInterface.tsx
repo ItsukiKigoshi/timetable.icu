@@ -23,8 +23,10 @@ export interface TimetableProps {
 
 
 export default function TimetableInterface({ processedSchedules, user }: TimetableProps) {
+    // フックの戻り値から schedules を抽出
     const { schedules } = useTimetable({
-        processedSchedules: processedSchedules,
+        initialSchedules: processedSchedules,
+        initialCourseIds: Array.from(new Set(processedSchedules.map(s => s.courseId))),
         user
     });
 

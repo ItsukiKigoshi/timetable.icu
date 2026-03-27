@@ -18,39 +18,39 @@ interface Props {
     filters: SearchFilters;
     isLoggedIn: boolean;
     categories: Categories[];
-    initialUserCourseIds: number[]; // ログイン済みの場合の初期登録済みリスト
-    user?: any; // Astro.locals.user から渡される
+    initialUserCourseIds: number[]; // SSRから渡される初期値
+    user?: any;
 }
 
 export default function SearchInterface({
                                             initialResults,
                                             filters,
-                                            isLoggedIn,
                                             categories,
                                             initialUserCourseIds,
                                             user
                                         }: Props) {
-    // 時間割管理フックを呼び出す
-    // 初期値として「登録済みID」を反映させるため、空の ProcessedSchedule 配列を渡す（検索画面では描画しないため）
-    const { schedules, toggleCourse } = useTimetable({
-        processedSchedules: [], // 検索画面自体の描画には不要なので空でOK
+    // 1. カスタムフックの呼び出し
+    // registeredIds: 実際に登録されているコースIDのSet
+    // toggleCourse: APIまたはlocalStorageを操作する関数
+    const { registeredIds, toggleCourse } = useTimetable({
+        initialCourseIds: initialUserCourseIds,
         user
     });
 
-    // 登録済みかどうかを判定するためのIDセット
-    // ログイン時は initialUserCourseIds、未ログイン時はフック内の schedules から算出
-    const registeredIds = isLoggedIn
-        ? new Set([...initialUserCourseIds, ...schedules.map(s => s.courseId)])
-        : new Set(schedules.map(s => s.courseId));
-
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
 
+    // 2. 追加・削除のハンドリング
     const handleToggle = async (course: CourseWithSchedules) => {
+        if (isSubmitting === course.id) return;
         setIsSubmitting(course.id);
-        await toggleCourse(course); // フック側のロジック（API呼び出し or localStorage）を実行
-        setIsSubmitting(null);
+        try {
+            await toggleCourse(course);
+        } finally {
+            setIsSubmitting(null);
+        }
     };
 
+    // 3. 検索条件の更新（URLクエリパラメータの操作）
     const update = (params: Partial<Record<keyof SearchFilters | 'category', string | null>>) => {
         const url = new URL(window.location.href);
         Object.entries(params).forEach(([k, v]) => {
@@ -59,96 +59,143 @@ export default function SearchInterface({
             else url.searchParams.delete(key);
         });
 
+        // 検索条件が変わったら1ページ目に戻す（明示的なpage指定がない場合）
         if (!params.hasOwnProperty('page')) url.searchParams.delete('page');
         window.location.assign(url.toString());
     };
 
+    // カテゴリの分類
     const majorCategories = categories.filter(c => c.id?.startsWith('M') && (c.id !== "MSTH"));
     const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && (c.id !== "MSTH")));
 
     return (
-        <div className="space-y-4">
+        <div>
             {/* フィルターセクション */}
-            <section className="flex flex-wrap gap-2 mb-4 p-4 bg-gray-50 rounded-lg">
-                <select className="border p-1 rounded" value={filters.year || ''} onChange={(e) => update({ year: e.target.value })}>
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                </select>
+            <section>
+                <div>
+                    <select value={filters.year || ''} onChange={(e) => update({ year: e.target.value })}>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
 
-                <select className="border p-1 rounded" value={filters.term || ''} onChange={(e) => update({ term: e.target.value })}>
-                    <option value="Spring">春学期</option>
-                    <option value="Autumn">秋学期</option>
-                    <option value="Winter">冬学期</option>
-                </select>
+                    <select value={filters.term || ''} onChange={(e) => update({ term: e.target.value })}>
+                        <option value="Spring">春学期</option>
+                        <option value="Autumn">秋学期</option>
+                        <option value="Winter">冬学期</option>
+                    </select>
+                </div>
 
                 <input
                     type="text"
-                    className="border p-1 rounded flex-1 min-w-[200px]"
                     placeholder="タイトル、教員名..."
                     defaultValue={filters.q || ''}
                     onKeyDown={(e) => e.key === 'Enter' && update({ q: e.currentTarget.value })}
                 />
 
-                <select className="border p-1 rounded" value={filters.day || ''} onChange={(e) => update({ day: e.target.value })}>
-                    <option value="">曜日</option>
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
+                <div>
+                    <select value={filters.day || ''} onChange={(e) => update({ day: e.target.value })}>
+                        <option value="">曜日</option>
+                        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
 
-                <select className="border p-1 rounded" value={filters.period || ''} onChange={(e) => update({ period: e.target.value })}>
-                    <option value="">時限</option>
-                    {[1, 2, 3, 4, 5, 6, 7].map(p => <option key={p} value={p.toString()}>{p}</option>)}
-                </select>
+                    <select value={filters.period || ''} onChange={(e) => update({ period: e.target.value })}>
+                        <option value="">時限</option>
+                        {[1, 2, 3, 4, 5, 6, 7].map(p => <option key={p} value={p.toString()}>{p}</option>)}
+                    </select>
+                </div>
 
-                <select className="border p-1 rounded max-w-[150px]" value={filters.categoryId || ''} onChange={(e) => update({ categoryId: e.target.value })}>
-                    <option value="">メジャー (全て)</option>
-                    {majorCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
-                </select>
+                <div>
+                    <select
+                        value={filters.categoryId || ''}
+                        onChange={(e) => update({ categoryId: e.target.value })}
+                    >
+                        <option value="">全てのカテゴリ / メジャー</option>
 
-                <select className="border p-1 rounded max-w-[150px]" value={filters.categoryId || ''} onChange={(e) => update({ categoryId: e.target.value })}>
-                    <option value="">カテゴリ (全て)</option>
-                    {otherCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
-                </select>
+                        {/* メジャーセクション */}
+                        {majorCategories.length > 0 && (
+                            <optgroup label="メジャー (Majors)">
+                                {majorCategories.map(c => (
+                                    <option key={c.id} value={c.id}>{c.nameJa}</option>
+                                ))}
+                            </optgroup>
+                        )}
+
+                        {/* その他カテゴリセクション */}
+                        {otherCategories.length > 0 && (
+                            <optgroup label="一般カテゴリ / その他">
+                                {otherCategories.map(c => (
+                                    <option key={c.id} value={c.id}>{c.nameJa}</option>
+                                ))}
+                            </optgroup>
+                        )}
+                    </select>
+                </div>
             </section>
 
             {/* ページネーション */}
-            <div className="flex items-center gap-4 justify-center">
-                <button className="px-3 py-1 bg-white border rounded disabled:opacity-30" disabled={filters.page <= 1} onClick={() => update({ page: (filters.page - 1).toString() })}>＜</button>
-                <span className="font-bold text-sm">Page {filters.page}</span>
-                <button className="px-3 py-1 bg-white border rounded disabled:opacity-30" disabled={initialResults.length < 50} onClick={() => update({ page: (filters.page + 1).toString() })}>＞</button>
+            <div>
+                <button
+                    disabled={filters.page <= 1}
+                    onClick={() => update({ page: (filters.page - 1).toString() })}
+                >
+                    <span>前へ</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="15 19l-7-7 7-7"/></svg>
+                </button>
+                <span>Page {filters.page}</span>
+                <button
+                    disabled={initialResults.length < 50}
+                    onClick={() => update({ page: (filters.page + 1).toString() })}
+                >
+                    <span>次へ</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="9 5l7 7-7 7"/></svg>
+                </button>
             </div>
 
             {/* 結果テーブル */}
-            <div className="overflow-x-auto border rounded-lg">
-                <table className="w-full text-left text-sm border-collapse">
-                    <thead className="bg-gray-100">
+            <div>
+                <table>
+                    <thead>
                     <tr>
-                        <th className="p-3 border-b">Term</th>
-                        <th className="p-3 border-b">Title</th>
-                        <th className="p-3 border-b">Schedule</th>
-                        <th className="p-3 border-b text-center">Action</th>
+                        <th>Term / Year</th>
+                        <th>Course Title</th>
+                        <th>Schedule</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
                     {initialResults.map((course) => {
+                        // コマが空でも registeredIds (コースIDのSet) を参照するので正しく動作する
                         const isAdded = registeredIds.has(course.id);
+                        const loading = isSubmitting === course.id;
+
                         return (
-                            <tr key={course.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="p-3 border-b whitespace-nowrap">{course.term} {course.year}</td>
-                                <td className="p-3 border-b font-medium">{course.titleJa}</td>
-                                <td className="p-3 border-b">
-                                    {course.schedules.map((s) => `${s.period}${s.isLong ? "*" : ""}/${s.dayOfWeek}`).join(', ')}
+                            <tr key={course.id}>
+                                <td>
+                                    {course.term} {course.year}
                                 </td>
-                                <td className="p-3 border-b text-center">
+                                <td>
+                                    <div>{course.titleJa}</div>
+                                    <div>{course.titleEn}</div>
+                                </td>
+                                <td>
+                                    {course.schedules.length > 0 ? (
+                                        <div>
+                                            {course.schedules.map((s, i) => (
+                                                <span key={i}>
+                                                        {s.dayOfWeek}{s.period}{s.isLong ? "*" : ""}
+                                                    </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span>No Schedule</span>
+                                    )}
+                                </td>
+                                <td>
                                     <button
                                         onClick={() => handleToggle(course)}
-                                        disabled={isSubmitting === course.id}
-                                        className={`px-4 py-1 rounded text-xs font-bold transition-all ${
-                                            isAdded
-                                                ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
-                                                : 'bg-blue-600 text-white hover:bg-blue-700'
-                                        } disabled:opacity-50`}
+                                        disabled={loading}
                                     >
-                                        {isAdded ? '削除' : '追加'}
+                                        {loading ? '...' : (isAdded ? '削除' : '追加')}
                                     </button>
                                 </td>
                             </tr>
@@ -156,6 +203,11 @@ export default function SearchInterface({
                     })}
                     </tbody>
                 </table>
+                {initialResults.length === 0 && (
+                    <div>
+                        該当する授業が見つかりませんでした。
+                    </div>
+                )}
             </div>
         </div>
     );

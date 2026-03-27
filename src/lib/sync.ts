@@ -3,11 +3,16 @@ export const syncLocalStorageToDB = async (courseIds: number[]) => {
 
     const res = await fetch('/api/user-courses/sync', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ courseIds }),
     });
 
-    if (!res.ok) throw new Error("Sync failed");
+    if (!res.ok) {
+        const errorData = await res.json() as { error?: string };
+        throw new Error(errorData.error || "Sync failed");
+    }
 
     localStorage.removeItem('guest_timetable');
     return await res.json();
