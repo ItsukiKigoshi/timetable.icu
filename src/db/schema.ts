@@ -1,7 +1,7 @@
 import { relations,sql } from "drizzle-orm";
-import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlite-core";
-import { user } from "./auth-schema";
-export * from "./auth-schema";
+import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { user } from "./auth-schema.ts";
+export * from "./auth-schema.ts";
 
 const daysEnum = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
@@ -9,10 +9,11 @@ const daysEnum = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 // シラバスデータなどの基本情報を保持
 export const courses = sqliteTable("courses", {
     id: integer("id").primaryKey({ autoIncrement: true }),
-    year: integer("year").notNull(), // 2024, 2025...
+    year: integer("year").notNull(),
+    rgNo: text("rg_no").notNull(),
+    status: text("status", { enum: ["active", "cancelled"] }).default("active"),
     term: text("term", { enum: ["Autumn", "Winter", "Spring"] }).notNull(),
     courseCode: text("course_code").notNull(), // 例: GES001
-    rgNo: text("rg_no").notNull(), // RegID
     titleJa: text("title_ja").notNull(),
     titleEn: text("title_en").notNull(),
     instructor: text("instructor").notNull(),
@@ -20,8 +21,8 @@ export const courses = sqliteTable("courses", {
     language: text("language"), // J, E, J/E
     updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
 }, (table) => [
+    uniqueIndex("year_rgno_unique_idx").on(table.year, table.rgNo),
     index("year_term_idx").on(table.year, table.term),
-    index("rg_no_idx").on(table.rgNo),
 ]);
 
 // --- 2. 統合スケジュール (絶対時間ベース) ---

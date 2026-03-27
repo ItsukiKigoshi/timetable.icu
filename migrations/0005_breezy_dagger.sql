@@ -1,0 +1,1 @@
+ALTER TABLE `courses` ADD `status` text DEFAULT 'active';
