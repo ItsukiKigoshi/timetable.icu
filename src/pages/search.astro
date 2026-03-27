@@ -4,8 +4,11 @@ import {eq, and, exists, inArray, sql} from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import SearchInterface, {type SearchFilters, type CourseWithSchedules} from '@/components/SearchInterface';
 import {env} from "cloudflare:workers";
+import {getAuth} from "@/lib/auth";
+import Layout from "@/layouts/Layout.astro";
 
 const db = drizzle(env.timetable_icu, {schema});
+const auth = getAuth(env);
 
 const url = new URL(Astro.request.url);
 const filters: SearchFilters = {
@@ -53,20 +56,38 @@ const idRows = await db
 
 const targetIds = idRows.map(r => r.id);
 
+const session = await auth.api.getSession({headers: Astro.request.headers});
+const userId = session?.user.id;
+
 // --- 3. 詳細取得 ---
 let results: CourseWithSchedules[] = [];
+let userCourseIds: number[] = []; // ユーザーが登録済みのIDリスト
+
 if (targetIds.length > 0) {
-    // relational queryを使用
     const data = await db.query.courses.findMany({
         where: inArray(schema.courses.id, targetIds),
-        with: {
-            schedules: true,
-        },
+        with: {schedules: true},
     });
     results = data as CourseWithSchedules[];
+
+    // ログイン中なら登録済みIDを取得
+    if (userId) {
+        const userCourses = await db.select({id: schema.userCourses.courseId})
+            .from(schema.userCourses)
+            .where(eq(schema.userCourses.userId, userId))
+            .all();
+        userCourseIds = userCourses.map(uc => uc.id);
+    }
 }
 
 Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
 ---
-
-<SearchInterface client:load initialResults={results} filters={filters}/>
+<Layout title="あいしーゆーのじかんわり">
+    <SearchInterface
+            client:load
+            initialResults={results}
+            filters={filters}
+            isLoggedIn={!!userId}
+            initialUserCourseIds={userCourseIds}
+    />
+</Layout>

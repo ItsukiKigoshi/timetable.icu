@@ -1,31 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import LoginButton from "@/components/LoginButton";
+import Header from "@/components/Header.astro";
 import Timetable from "@/components/Timetable.tsx";
 
-const { user } = Astro.locals;
-
+const {user} = Astro.locals;
 ---
-
 <Layout title="あいしーゆーのじかんわり">
-	<main>
-		<h1>Timetable.icu (あいしーゆーのじかんわり)</h1>
-
-		{user ? (
-			<div>
-				<p>
-					ようこそ、<strong>{user.name}</strong>さん！ <br />
-					<span class="text-sm text-gray-500">({user.email})</span>
-				</p>
-				<LoginButton client:load />
-			</div>
-		) : (
-			<div>
-				<p>在学生であることを証明するためにICU Net IDでログインしてください。パスワードは取得されません!</p>
-				<LoginButton client:load />
-			</div>
-		)}
-
-		<Timetable/>
-	</main>
+    {!user && (
+            <p class="p-4 bg-blue-50">
+                在学生であることを証明するためにICU Net IDでログインしてください。
+            </p>
+    )}
+    <Timetable/>
 </Layout>

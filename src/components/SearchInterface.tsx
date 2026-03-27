@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import type {InferSelectModel} from 'drizzle-orm';
 import * as schema from '../db/schema';
 
@@ -20,9 +20,44 @@ export interface SearchFilters {
 interface Props {
     initialResults: CourseWithSchedules[];
     filters: SearchFilters;
+    isLoggedIn: boolean;
+    initialUserCourseIds: number[];
 }
 
-export default function SearchInterface({initialResults, filters}: Props) {
+
+export default function SearchInterface({initialResults, filters, isLoggedIn, initialUserCourseIds}: Props) {
+    // 登録済みIDをステートで管理
+    const [userCourseIds, setUserCourseIds] = useState<Set<number>>(new Set(initialUserCourseIds));
+    const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
+
+    const toggleRegistration = async (courseId: number) => {
+        if (!isLoggedIn) {
+            alert("ログインが必要です");
+            return;
+        }
+
+        setIsSubmitting(courseId);
+        try {
+            // 注意: Astro環境で単純な関数呼出しはできないため、
+            // 実際には /api/toggle-course などのAPIエンドポイントをfetchするか
+            // Astro Actionsを使用してください。
+            const res = await fetch('/api/courses/toggle', {
+                method: 'POST',
+                body: JSON.stringify({courseId}),
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            if (res.ok) {
+                const nextIds = new Set(userCourseIds);
+                if (nextIds.has(courseId)) nextIds.delete(courseId);
+                else nextIds.add(courseId);
+                setUserCourseIds(nextIds);
+            }
+        } finally {
+            setIsSubmitting(null);
+        }
+    };
+
     const update = (params: Partial<Record<keyof SearchFilters | 'category', string | null>>) => {
         const url = new URL(window.location.href);
         Object.entries(params).forEach(([k, v]) => {
@@ -68,23 +103,29 @@ export default function SearchInterface({initialResults, filters}: Props) {
                 <tr>
                     <th>RG No</th>
                     <th>Title</th>
-                    <th>Instructor</th>
                     <th>Schedule</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                {initialResults.map((course) => (
-                    <tr key={course.id}>
-                        <td>{course.rgNo}</td>
-                        <td>{course.titleJa}</td>
-                        <td>{course.instructor}</td>
-                        <td>
-                            {course.schedules.map(s =>
-                                `${s.dayOfWeek}${s.period}${s.isLong ? 'L' : ''}`
-                            ).join(' / ')}
-                        </td>
-                    </tr>
-                ))}
+                {initialResults.map((course) => {
+                    const isAdded = userCourseIds.has(course.id);
+                    return (
+                        <tr key={course.id}>
+                            <td>{course.rgNo}</td>
+                            <td>{course.titleJa}</td>
+                            <td>{course.schedules.map(s => `${s.dayOfWeek}${s.period}`).join('/')}</td>
+                            <td>
+                                <button
+                                    onClick={() => toggleRegistration(course.id)}
+                                    disabled={isSubmitting === course.id}
+                                >
+                                    {isAdded ? '削除' : '追加'}
+                                </button>
+                            </td>
+                        </tr>
+                    );
+                })}
                 </tbody>
             </table>
 

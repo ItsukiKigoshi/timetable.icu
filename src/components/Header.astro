@@ -1,0 +1,22 @@
+---
+import LoginButton from "./LoginButton";
+const {user} = Astro.props;
+---
+<div>
+    <h1>Timetable.icu</h1>
+    <div>
+        <a href="/">Home</a>
+        <a href="/search">Search</a>
+    </div>
+    <div>
+        {user ? (
+                <div>
+                    <p>Hi! {user.name}</p>
+                    <LoginButton client:load/>
+                </div>
+        ) : (
+                <LoginButton client:load/>
+        )}
+    </div>
+
+</div>

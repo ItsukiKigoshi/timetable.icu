@@ -1,7 +1,7 @@
-import {APIError, betterAuth} from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/d1";
-import { passkey } from "@better-auth/passkey"
+import {betterAuth} from "better-auth";
+import {drizzleAdapter} from "better-auth/adapters/drizzle";
+import {drizzle} from "drizzle-orm/d1";
+import {passkey} from "@better-auth/passkey"
 import * as schema from "@/db/schema.ts";
 
 export const getAuth = (env: Env) => {
@@ -14,7 +14,7 @@ export const getAuth = (env: Env) => {
         ),
         secret: env.BETTER_AUTH_SECRET,
         advanced: {
-            cookiePrefix: "icu-auth",
+            cookiePrefix: "timetable-icu-auth",
         },
         plugins: [
             passkey(),
