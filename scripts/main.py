@@ -1,7 +1,8 @@
 import json
 import os
-from bs4 import BeautifulSoup
 import re
+
+from bs4 import BeautifulSoup
 
 # --- 定数・変換マップ ---
 DAY_MAP = {
@@ -32,26 +33,19 @@ def parse_full_schedule(schedule_raw):
     alt_match = re.search(r'<(.*)>', schedule_raw)
     core_str = schedule_raw
     alt_groups_str = []
-
     if alt_match:
         core_str = schedule_raw.replace(alt_match.group(0), "").strip(', ')
         alt_groups_str = [g.strip() for g in alt_match.group(1).split('or')]
 
     raw_segments = []
-
-    # 共通コマ
     for p in re.split(r',', core_str):
         p = p.strip()
-        if '/' in p:
-            raw_segments.append({"text": p, "isAlternative": False, "altGroupId": None})
-
-    # 選択コマ (< > 内)
+        if '/' in p: raw_segments.append({"text": p, "isAlternative": False, "altGroupId": None})
     for i, group in enumerate(alt_groups_str):
         group_id = i + 1
         for p in re.split(r',', group):
             p = p.strip()
-            if '/' in p:
-                raw_segments.append({"text": p, "isAlternative": True, "altGroupId": group_id})
+            if '/' in p: raw_segments.append({"text": p, "isAlternative": True, "altGroupId": group_id})
 
     final_schedules = []
     for item in raw_segments:
@@ -65,7 +59,17 @@ def parse_full_schedule(schedule_raw):
             period_str, day_raw = text.split('/', 1)
             period = int(period_str)
             day_of_week = DAY_MAP.get(day_raw, "Mon")
+
+            # デフォルトの時間を取得
             start_t, end_t = PERIOD_TIMES.get(period, ("00:00", "00:00"))
+
+            if is_long:
+                if period == 4:
+                    start_t, end_t = ("13:20", "15:15")
+                elif period == 5:
+                    start_t, end_t = ("15:25", "17:20")
+                elif period == 7:
+                    start_t, end_t = ("18:15", "20:10")
 
             final_schedules.append({
                 "dayOfWeek": day_of_week,
@@ -80,6 +84,7 @@ def parse_full_schedule(schedule_raw):
             continue
 
     return final_schedules
+
 
 # --- Category判定 ---
 def get_category_id_from_code(course_code):
@@ -111,7 +116,7 @@ def get_category_id_from_code(course_code):
         "TCP": "C006",
         "CTP": "C007",
         "SLR": "C008",
-        "STH": "MSTH", # 卒業研究
+        "STH": "MSTH",  # 卒業研究
     }
 
     if prefix in special_mapping:
@@ -133,6 +138,7 @@ def get_category_id_from_code(course_code):
 
     # 5. どれにも当てはまらない場合
     return "C009"
+
 
 # --- HTML解析メイン関数 ---
 def get_course_data_json(html_content):
@@ -185,7 +191,7 @@ def get_course_data_json(html_content):
             return tag.get_text(strip=True) if tag else ""
 
         # 5. オブジェクトの組み立て
-        course_code = get_text("course_no") # 変数に入れておく
+        course_code = get_text("course_no")  # 変数に入れておく
 
         # カテゴリIDを判定
         cat_id = get_category_id_from_code(course_code)
@@ -201,13 +207,14 @@ def get_course_data_json(html_content):
             "instructor": get_text("instructor"),
             "room": get_text("room"),
             "language": get_text("lang"),
-            "categoryId": cat_id, # ここで追加
+            "categoryId": cat_id,  # ここで追加
             "schedules": parse_full_schedule(get_text("schedule")) if get_text("schedule") else []
         }
 
         res_list.append(course_obj)
 
     return res_list
+
 
 # --- メイン実行部分 ---
 if __name__ == "__main__":
