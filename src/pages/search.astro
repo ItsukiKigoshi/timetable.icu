@@ -1,35 +1,32 @@
 ---
-import {drizzle} from 'drizzle-orm/d1';
-import {eq, and, exists, like, or} from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/d1';
+import { eq, and, exists, like, or } from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import SearchInterface, {type SearchFilters} from '@/components/SearchInterface';
-import {env} from "cloudflare:workers";
-import {getAuth} from "@/lib/auth";
+import SearchInterface, { type SearchFilters } from '@/components/SearchInterface';
 import Layout from "@/layouts/Layout.astro";
-import type {Course, CourseWithSchedules} from "@/db/schema";
+import type { Course, CourseWithSchedules } from "@/db/schema";
+import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time";
+import {env} from "cloudflare:workers";
 
-const db = drizzle(env.timetable_icu, {schema});
-const auth = getAuth(env);
+// 1. ミドルウェアから認証情報と環境変数を取得
+const  user  = Astro.locals.user;
+const db = drizzle(env.timetable_icu, { schema });
 
 const url = new URL(Astro.request.url);
 
-const currentYear = new Date().getFullYear();
-
+// 2. クエリパラメータからフィルタ条件を構築
 const filters: SearchFilters = {
-    year: url.searchParams.get('year') || currentYear.toString(),
-    term: url.searchParams.get('term') || 'Spring',
-    day: url.searchParams.get('day'),
-    period: url.searchParams.get('period'),
+    year: url.searchParams.get('year') || DEFAULT_YEAR.toString(),
+    term: (url.searchParams.get('term') || DEFAULT_TERM) as Course['term'],
+    day: url.searchParams.get('day') || null,
+    period: url.searchParams.get('period') || null,
     isLong: url.searchParams.get('isLong'),
-    categoryId: url.searchParams.get('category'),
-    q: url.searchParams.get('q'),
+    categoryId: url.searchParams.get('category') || null,
+    q: url.searchParams.get('q') || '',
     page: Math.max(1, parseInt(url.searchParams.get('page') || '1')),
 };
 
-// 1. カテゴリ一覧を取得 (プルダウン用)
-const allCategories = await db.select().from(schema.categories).all();
-
-// 2. 検索条件の組み立て (coursesテーブル基準)
+// 3. 検索条件 (WHERE句) の組み立て
 let conditions = [];
 
 if (filters.year) {
@@ -39,8 +36,7 @@ if (filters.year) {
 if (filters.term) {
     conditions.push(eq(schema.courses.term, filters.term as Course['term']));
 }
-
-// キーワード検索
+// キーワード検索 (日本語名、英語名、教員名)
 if (filters.q) {
     const searchVal = `%${filters.q}%`;
     conditions.push(
@@ -52,7 +48,7 @@ if (filters.q) {
     );
 }
 
-// カテゴリ絞り込み
+// カテゴリ絞り込み (EXISTS句で関連テーブルをチェック)
 if (filters.categoryId) {
     conditions.push(exists(
         db.select()
@@ -64,48 +60,65 @@ if (filters.categoryId) {
     ));
 }
 
-// 曜日・時限の絞り込み
+// 曜日・時限の絞り込み (EXISTS句でScheduleテーブルをチェック)
 if (filters.day || filters.period) {
     let schedConditions = [eq(schema.courseSchedules.courseId, schema.courses.id)];
-    if (filters.day) schedConditions.push(eq(schema.courseSchedules.dayOfWeek, filters.day as any));
-    if (filters.period) schedConditions.push(eq(schema.courseSchedules.period, parseInt(filters.period)));
+
+    if (filters.day) {
+        schedConditions.push(eq(schema.courseSchedules.dayOfWeek, filters.day as any));
+    }
+    if (filters.period) {
+        schedConditions.push(eq(schema.courseSchedules.period, parseInt(filters.period)));
+    }
 
     conditions.push(exists(
-        db.select().from(schema.courseSchedules).where(and(...schedConditions))
+        db.select()
+            .from(schema.courseSchedules)
+            .where(and(...schedConditions))
     ));
 }
 
-// 3. メインデータの取得
-// findManyを使うことで、targetIdsを別途取得する手間とJOINエラーを回避
-const results = await db.query.courses.findMany({
-    where: conditions.length > 0 ? and(...conditions) : undefined,
-    with: {schedules: true},
-    limit: 20,
-    offset: (filters.page - 1) * 20,
-}) as CourseWithSchedules[];
+// 4. データ取得 (並列実行で高速化)
+const [allCategories, results] = await Promise.all([
+    // カテゴリ一覧 (プルダウン用)
+    db.select().from(schema.categories).all(),
 
-// 4. ユーザー登録情報の取得 (追加機能を維持)
-const session = await auth.api.getSession({headers: Astro.request.headers});
-const userId = session?.user.id;
+    // コース一覧 (リレーションを含む)
+    db.query.courses.findMany({
+        where: and(...conditions),
+        with: { schedules: true },
+        limit: 50, // 1ページあたりの件数
+        offset: (filters.page - 1) * 50,
+    })
+]);
+
+// 5. ログイン済みの場合、ユーザーが既に登録しているコースIDを取得
 let userCourseIds: number[] = [];
-
-if (userId) {
-    const userCoursesData = await db.select({id: schema.userCourses.courseId})
+if (user) {
+    const userCoursesData = await db
+        .select({ id: schema.userCourses.courseId })
         .from(schema.userCourses)
-        .where(eq(schema.userCourses.userId, userId))
+        .where(eq(schema.userCourses.userId, user.id))
         .all();
     userCourseIds = userCoursesData.map(uc => uc.id);
 }
 
+// レスポンスヘッダーの設定
 Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
 ---
-<Layout title="あいしーゆーのじかんわり">
-    <SearchInterface
-            client:load
-            initialResults={results}
-            filters={filters}
-            isLoggedIn={!!userId}
-            categories={allCategories}
-            initialUserCourseIds={userCourseIds}
-    />
+
+<Layout title="授業検索 | あいしーゆーのじかんわり">
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <h1 class="text-2xl font-bold mb-6">授業検索</h1>
+
+        <SearchInterface
+                client:load
+                initialResults={results as CourseWithSchedules[]}
+                filters={filters}
+                isLoggedIn={!!user}
+                categories={allCategories}
+                initialUserCourseIds={userCourseIds}
+                user={user}
+        />
+    </main>
 </Layout>

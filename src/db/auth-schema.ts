@@ -1,5 +1,6 @@
-import { relations, sql } from "drizzle-orm";
+import {type InferSelectModel, relations, sql} from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import {courses} from "@/db/schema.ts";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),

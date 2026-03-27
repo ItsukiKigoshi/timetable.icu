@@ -1,6 +1,8 @@
-import React from 'react';
 import type { FlatSchedule } from "@/db/schema.ts";
 import { END_TIME, PERIODS, START_TIME } from "@/constants/time.ts";
+import type {User} from "better-auth";
+import {timeToMin} from "@/lib/timetable.ts";
+import {useTimetable} from "@/lib/useTimetable.ts";
 
 const MIN_HEIGHT = 1.2;
 const HEADER_HEIGHT = 40;
@@ -14,17 +16,18 @@ export interface ProcessedSchedule extends FlatSchedule {
     groupMaxCols: number;
 }
 
-interface TimetableProps {
-    schedules: ProcessedSchedule[];
+export interface TimetableProps {
+    processedSchedules: ProcessedSchedule[];
+    user?: User | null;
 }
 
-// 共通の時刻計算関数（定数を使用して計算のみ行う）
-const timeToMin = (timeStr: string) => {
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + m - START_TIME;
-};
 
-export default function TimetableInterface({ schedules }: TimetableProps) {
+export default function TimetableInterface({ processedSchedules, user }: TimetableProps) {
+    const { schedules } = useTimetable({
+        processedSchedules: processedSchedules,
+        user
+    });
+
     const totalHeight = (END_TIME - START_TIME) * MIN_HEIGHT;
 
     const renderDayColumn = (dayOfWeek: string) => {
