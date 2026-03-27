@@ -37,11 +37,23 @@ def generate_sql():
         """
         output.append(course_sql.strip())
 
-        # 2. 既存スケジュールの削除
+        # 2. Category紐付け
+        cat_id = item.get('categoryId')
+        if cat_id:
+            # 古い紐付けを一旦消す（重複防止）
+            # TODO - 1つの授業に2個めのタグを手動追加してもこれがすべて消し去るので解決が必要
+            del_cat = f"DELETE FROM course_to_categories WHERE course_id = (SELECT id FROM courses WHERE year={item['year']} AND rg_no={escape_sql(item['rgNo'])});"
+            output.append(del_cat)
+
+            link_sql = f"INSERT OR IGNORE INTO course_to_categories (course_id, category_id) " \
+                       f"SELECT id, '{cat_id}' FROM courses WHERE year={item['year']} AND rg_no={escape_sql(item['rgNo'])};"
+            output.append(link_sql)
+
+        # 3. 既存スケジュールの削除
         delete_sch = f"DELETE FROM course_schedules WHERE course_id = (SELECT id FROM courses WHERE year={item['year']} AND rg_no={escape_sql(item['rgNo'])});"
         output.append(delete_sch)
 
-        # 3. スケジュールの挿入
+        # 4. スケジュールの挿入
         for s in item.get('schedules', []):
             sch_sql = f"""
             INSERT INTO course_schedules (course_id, day_of_week, start_time, end_time, period, is_long, is_alternative, alt_group_id)

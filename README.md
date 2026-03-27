@@ -66,6 +66,31 @@ Debug with Cloudflare Pages Environment
 bun run build && bun x wrangler dev
 ```
 
+Create JSON from HTML
+```bash
+bun db:scrape
+```
+
+Local DBにJSONからcorses/categoriesを入れる(seed.ts)
+```bash
+bun db:seed:local
+```
+
+HTML->JSON->Local DBを一括で実行
+```bash
+bun db:sync
+```
+
+Remote DBにJSONからcourses/categoriesを入れる(seed.ts)
+```bash
+bun db:push:remote
+```
+
+HTML->JSON->Remote DBを一括で実行
+```bash
+bun db:deploy
+```
+
 ---
 # 目標
 - [ ] ようこに卒業までつかってもらう

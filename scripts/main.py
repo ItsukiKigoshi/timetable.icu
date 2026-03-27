@@ -1,9 +1,9 @@
-import re
 import json
 import os
 from bs4 import BeautifulSoup
+import re
 
-# --- 1. 定数・変換マップ ---
+# --- 定数・変換マップ ---
 DAY_MAP = {
     'm': 'Mon', 'tu': 'Tue', 'w': 'Wed', 'th': 'Thu', 'f': 'Fri', 'sa': 'Sat', 'su': 'Sun',
     'mon': 'Mon', 'tue': 'Tue', 'wed': 'Wed', 'thu': 'Thu', 'fri': 'Fri', 'sat': 'Sat', 'sun': 'Sun'
@@ -24,7 +24,7 @@ PERIOD_TIMES = {
 }
 
 
-# --- 2. スケジュール解析ロジック ---
+# --- スケジュール解析ロジック ---
 def parse_full_schedule(schedule_raw):
     if not schedule_raw or schedule_raw.strip() == "":
         return []
@@ -81,10 +81,60 @@ def parse_full_schedule(schedule_raw):
 
     return final_schedules
 
+# --- Category判定 ---
+def get_category_id_from_code(course_code):
+    # 先頭の英字部分を抽出 (例: ELA010 -> ELA, JLP001 -> JLP)
+    match = re.match(r"([A-Z]+)", course_code)
+    if not match:
+        return "C009"  # 不明な場合は Others
 
-# --- 3. HTML解析メイン関数 ---
-from bs4 import BeautifulSoup
+    prefix = match.group(1)
 
+    # 1. 大学院科目 (Qから始まるもの)
+    if prefix.startswith('Q'):
+        return "GRAD"
+
+    # 2. 一般教育科目 (GEから始まる GEX, GEN, GES... などすべて)
+    if prefix.startswith('GE'):
+        return "C003"
+
+    # 3. 世界の言語 (Wから始まるもの)
+    if prefix.startswith('W'):
+        return "C005"
+
+    # --- 4. 完全一致による特殊マッピング ---
+    special_mapping = {
+        "ELA": "C001",
+        "JLP": "C002",
+        "HPE": "C004",
+        "ELG": "C010",
+        "TCP": "C006",
+        "CTP": "C007",
+        "SLR": "C008",
+        "STH": "MSTH", # 卒業研究
+    }
+
+    if prefix in special_mapping:
+        return special_mapping[prefix]
+
+    # --- 5. メジャー科目 (M + Prefix) ---
+    major_id = f"M{prefix}"
+
+    # 存在するメジャーIDかチェックするためのセット
+    valid_majors = {
+        "MAMS", "MANT", "MARC", "MAST", "MBIO", "MBUS", "MCED", "MCHM",
+        "MDPS", "MECO", "MEDU", "MEMS", "MENV", "MGLS", "MGSS", "MHST",
+        "MIRL", "MISC", "MJPS", "MLAW", "MLED", "MLIT", "MLNG", "MMCC",
+        "MMTH", "MMUS", "MPCS", "MPHR", "MPHY", "MPOL", "MPPL", "MPSY", "MSOC"
+    }
+
+    if major_id in valid_majors:
+        return major_id
+
+    # 5. どれにも当てはまらない場合
+    return "C009"
+
+# --- HTML解析メイン関数 ---
 def get_course_data_json(html_content):
     soup = BeautifulSoup(html_content, 'lxml')
     # テーブルの各行(tr)を取得
@@ -135,18 +185,23 @@ def get_course_data_json(html_content):
             return tag.get_text(strip=True) if tag else ""
 
         # 5. オブジェクトの組み立て
+        course_code = get_text("course_no") # 変数に入れておく
+
+        # カテゴリIDを判定
+        cat_id = get_category_id_from_code(course_code)
+
         course_obj = {
             "rgNo": rgno,
             "status": "cancelled" if is_cancelled else "active",
             "year": int(get_text("ay") or 2026),
             "term": get_text("season"),
-            "courseCode": get_text("course_no"),
+            "courseCode": course_code,
             "titleJa": get_text("title_j"),
             "titleEn": get_text("title_e"),
             "instructor": get_text("instructor"),
             "room": get_text("room"),
             "language": get_text("lang"),
-            # スケジュールが空文字でなければパース、空なら空配列
+            "categoryId": cat_id, # ここで追加
             "schedules": parse_full_schedule(get_text("schedule")) if get_text("schedule") else []
         }
 
@@ -154,7 +209,7 @@ def get_course_data_json(html_content):
 
     return res_list
 
-# --- 4. メイン実行部分 ---
+# --- メイン実行部分 ---
 if __name__ == "__main__":
     html_data = ""
 

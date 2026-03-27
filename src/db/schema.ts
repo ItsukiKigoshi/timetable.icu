@@ -1,5 +1,5 @@
 import { relations,sql } from "drizzle-orm";
-import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
 import { user } from "./auth-schema.ts";
 export * from "./auth-schema.ts";
 
@@ -94,19 +94,19 @@ export const customCourses = sqliteTable("custom_courses", {
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
 });
 
-/*// --- Categories & Tags ---
+// --- Categories & Tags ---
 export const categories = sqliteTable("categories", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    nameJa: text("name_ja").notNull(), // 例: 自然科学, 教職, メジャー
+    id: text("id").primaryKey(), // 'MBIO', 'ELA' など
+    nameJa: text("name_ja").notNull(),
     nameEn: text("name_en").notNull(),
 });
 
 export const courseToCategories = sqliteTable("course_to_categories", {
-    courseId: text("course_id").notNull().references(() => courses.id),
-    categoryId: integer("category_id").notNull().references(() => categories.id),
-}, (table) => [
-    primaryKey({ columns: [table.courseId, table.categoryId] }),
-]);*/
+    courseId: integer("course_id").notNull().references(() => courses.id),
+    categoryId: text("category_id").notNull().references(() => categories.id),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.courseId, table.categoryId] }),
+}));
 
 // --- User側からのリレーション ---
 // 1人のユーザーは「複数の履修登録(公式)」と「複数のカスタム科目」を持つ
