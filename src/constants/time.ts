@@ -25,7 +25,3 @@ export const PERIODS = [
     {label: '7', start: '18:15', end: '19:30'},
     {label: '夜', start: '19:30', end: '20:10'},
 ];
-
-
-// 型安全のためのヘルパー
-export type TermValue = typeof SELECTABLE_TERMS[number]['value'];
