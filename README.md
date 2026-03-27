@@ -49,7 +49,8 @@ bun x drizzle-kit generate
 
 Migration to D1 (--remote if applicable)
 ```bash
-bun wrangler d1 migrations apply timetable-icu
+bun wrangler d1 migrations apply timetable_icu
+bun wrangler d1 migrations apply timetable_icu --remote
 ```
 
 Debug with Cloudflare Pages Environment
@@ -139,16 +140,21 @@ bun run build && bun x wrangler dev
 - [x] Astro App Initialise
 - [x] BetterAuth
     - [x] Google OAuth
-    - [ ] Passkey
--  [ ] 保存機能
-    - [ ] Drizzle ORM
-    - [ ] Schema定義
-    - [ ] D1 Deploy
-    - [ ] APIを書く on Astro or w/ Hono
-- [ ] Calendar形式で表示
-
+    - [x] Passkey
 - [ ] Get Syllabi Data
-- [ ] Deploy to Pages
+  - [ ] ブラウザ保存->Pythonパース？
+  - [ ] Pythonで完結
+  - [ ] 定期的に自動で: GitHub CI/CD
+- [ ] 保存機能
+  - [x] Drizzle ORM
+  - [x] Schema定義
+  - [x] D1 Deploy
+- [x] Calendar形式で表示
+  - [ ] 理系の選択式の演習UI
+- [ ] 授業検索
+  - [ ] コマをクリック
+
+- [x] Deploy to Workers
 - [ ] PR
 
 ## Schema案

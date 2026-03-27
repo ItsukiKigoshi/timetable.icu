@@ -1,7 +1,9 @@
-import { sql } from "drizzle-orm";
+import { relations,sql } from "drizzle-orm";
 import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlite-core";
-
+import { user } from "./auth-schema";
 export * from "./auth-schema";
+
+const daysEnum = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 // --- Courses ---
 // シラバスデータなどの基本情報を保持
@@ -22,38 +24,76 @@ export const courses = sqliteTable("courses", {
     index("rg_no_idx").on(table.rgNo),
 ]);
 
-// --- Course Schedules ---
-// 「第4限」や「Long4」を柔軟に扱うためのテーブル
+// --- 2. 統合スケジュール (絶対時間ベース) ---
 export const courseSchedules = sqliteTable("course_schedules", {
     id: integer("id").primaryKey({ autoIncrement: true }),
-    courseId: text("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
-    dayOfWeek: text("day_of_week", { enum: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }).notNull(),
+    courseId: integer("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
 
-    // ICU標準の枠組み
-    period: integer("period"), // 他校科目の場合は null 許容
+    dayOfWeek: text("day_of_week", { enum: daysEnum }).notNull(),
+
+    startTime: text("start_time").notNull(),
+    endTime: text("end_time").notNull(),
+    period: integer("period"),
     isLong: integer("is_long", { mode: "boolean" }).default(false),
 
-    // 他校・特殊科目用の絶対時間情報 (例: "10:10")
-    startTime: text("start_time"),
-    endTime: text("end_time"),
+    // --- 理系の演習授業の選択肢 ---
+    // true の場合、< > で囲まれた選択科目のコマであることを示す
+    isAlternative: integer("is_alternative", { mode: "boolean" }).default(false),
+    // 同じ数字(1, 2...)を持つコマ同士が「一つの選択肢グループ」であることを示す
+    // 例: 6/M,7/M が "group 1"、6/W,7/W が "group 2"
+    altGroupId: integer("alt_group_id"),
 });
 
-// --- User Timetables / Enrollments ---
-// ユーザーがどの授業を自分の時間割に入れたかを管理
+// --- 3. ユーザーの履修登録状況 ---
+// ICUの科目のみ.
 export const userCourses = sqliteTable("user_courses", {
     id: integer("id").primaryKey({ autoIncrement: true }),
-    userId: text("user_id").notNull(), // BetterAuthのUser IDと紐付け
-    courseId: text("course_id").notNull().references(() => courses.id),
-    year: integer("year").notNull(),
-    term: text("term").notNull(),
-    colorCustom: text("color_custom"), // UI上の色分け用
-    memo: text("memo"), // 授業ごとの自分用メモ
+    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    courseId: integer("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
+
+    // ここには色とメモだけ残す
+    colorCustom: text("color_custom"),
+    memo: text("memo"),
+
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
 }, (table) => [
-    index("user_term_idx").on(table.userId, table.year, table.term),
+    index("user_courses_uid_idx").on(table.userId),
 ]);
 
-// --- Categories & Tags ---
+
+// --- カスタム科目 (他校・手打ち) ---
+// customCoursesは, userIdのユーザの持ち物
+export const customCourses = sqliteTable("custom_courses", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+
+    title: text("title").notNull(),
+    instructor: text("instructor"),
+    room: text("room"),
+
+    dayOfWeek: text("day_of_week", { enum: daysEnum }).notNull(),
+    startTime: text("start_time").notNull(),
+    endTime: text("end_time").notNull(),
+
+    year: integer("year").notNull(),
+    term: text("term").notNull(),
+
+    // カスタム科目自体の色とメモ
+    colorCustom: text("color_custom"),
+    memo: text("memo"),
+
+
+    // 公式授業を上書きしたい場合
+    // どの公式授業を上書きしたかの参照（任意）
+    overriddenCourseId: integer("overridden_course_id")
+        .references(() => courses.id),
+
+    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+});
+
+/*// --- Categories & Tags ---
 export const categories = sqliteTable("categories", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     nameJa: text("name_ja").notNull(), // 例: 自然科学, 教職, メジャー
@@ -65,4 +105,27 @@ export const courseToCategories = sqliteTable("course_to_categories", {
     categoryId: integer("category_id").notNull().references(() => categories.id),
 }, (table) => [
     primaryKey({ columns: [table.courseId, table.categoryId] }),
-]);
+]);*/
+
+// --- User側からのリレーション ---
+// 1人のユーザーは「複数の履修登録(公式)」と「複数のカスタム科目」を持つ
+export const userRelations = relations(user, ({ many }) => ({
+    userCourses: many(userCourses),
+    customCourses: many(customCourses),
+}));
+
+// --- userCourses (公式履修) のリレーション ---
+export const userCoursesRelations = relations(userCourses, ({ one }) => ({
+    user: one(user, { fields: [userCourses.userId], references: [user.id] }),
+    course: one(courses, { fields: [userCourses.courseId], references: [courses.id] }),
+}));
+
+// --- customCourses (カスタム科目) のリレーション ---
+export const customCoursesRelations = relations(customCourses, ({ one }) => ({
+    user: one(user, { fields: [customCourses.userId], references: [user.id] }),
+}));
+
+// --- courses (公式マスタ) とスケジュールのリレーション ---
+export const courseRelations = relations(courses, ({ many }) => ({
+    schedules: many(courseSchedules),
+}));
