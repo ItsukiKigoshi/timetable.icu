@@ -1,6 +1,6 @@
 export * from "./auth-schema.ts";
 
-import {relations, sql} from "drizzle-orm";
+import {type InferSelectModel, relations, sql} from "drizzle-orm";
 import {index, integer, primaryKey, sqliteTable, text, uniqueIndex} from "drizzle-orm/sqlite-core";
 import {user} from "./auth-schema.ts";
 
@@ -146,3 +146,22 @@ export const courseSchedulesRelations = relations(courseSchedules, ({one}) => ({
         references: [courses.id],
     }),
 }))
+
+
+// --- Types ---
+
+// 基本の型
+export type Course = InferSelectModel<typeof courses>;
+export type Schedule = InferSelectModel<typeof courseSchedules>;
+
+// リレーション込みの型 (Query APIの結果と一致させる)
+export type CourseWithSchedules = Course & {
+    schedules: Schedule[];
+};
+
+// 描画用の「フラット化された1コマ」の型を定義
+// PickやOmitを使って、必要なプロパティだけを抽出・合成する
+export type FlatSchedule = Pick<Schedule, 'id' | 'dayOfWeek' | 'startTime' | 'endTime' | 'isAlternative'> & {
+    title: Course['titleJa'];
+    room: Course['room'];
+};

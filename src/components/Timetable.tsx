@@ -1,4 +1,5 @@
 import React from 'react';
+import type {FlatSchedule} from "@/db/schema.ts";
 
 const MIN_HEIGHT = 1.2;
 const START_TIME = 8 * 60 + 45; // 08:45
@@ -10,68 +11,63 @@ const timeToMin = (timeStr: string) => {
 };
 
 const GRID_PERIODS = [
-    { label: '1', start: '08:45', end: '10:00', next: '10:10' },
-    { label: '2', start: '10:10', end: '11:25', next: '11:35' },
-    { label: '3', start: '11:35', end: '12:50', next: '12:50' },
-    { label: '昼', start: '12:50', end: '14:00', next: '14:00' },
-    { label: '4', start: '14:00', end: '15:15', next: '15:25' },
-    { label: '5', start: '15:25', end: '16:40', next: '16:50' },
-    { label: '6', start: '16:50', end: '18:05', next: '18:15' },
-    { label: '7', start: '18:15', end: '19:30', next: '19:30' },
-    { label: 'L7', start: '19:30', end: '20:10', next: '20:15' },
+    {label: '1', start: '08:45', end: '10:00', next: '10:10'},
+    {label: '2', start: '10:10', end: '11:25', next: '11:35'},
+    {label: '3', start: '11:35', end: '12:50', next: '12:50'},
+    {label: '昼', start: '12:50', end: '14:00', next: '14:00'},
+    {label: '4', start: '14:00', end: '15:15', next: '15:25'},
+    {label: '5', start: '15:25', end: '16:40', next: '16:50'},
+    {label: '6', start: '16:50', end: '18:05', next: '18:15'},
+    {label: '7', start: '18:15', end: '19:30', next: '19:30'},
+    {label: 'L7', start: '19:30', end: '20:10', next: '20:15'},
 ];
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const courses = [
-    { day: 'Mon', start: '13:20', end: '15:15', title: 'Super 4 (Long)' },
-    { day: 'Mon', start: '14:00', end: '15:15', title: 'Normal 4' },
-    { day: 'Mon', start: '14:30', end: '15:45', title: 'Special Seminar' },
-    { day: 'Wed', start: '15:25', end: '17:20', title: 'Super 5 (Long)' },
-    { day: 'Wed', start: '15:25', end: '17:20', title: 'Super 5 (Long) 2' },
-    { day: 'Wed', start: '15:25', end: '16:40', title: 'Normal 5' },
-    { day: 'Wed', start: '16:50', end: '18:05', title: 'Normal 6' },
-];
+interface TimetableProps {
+    schedules: FlatSchedule[]
+}
 
-export default function Timetable() {
+export default function Timetable({schedules}: TimetableProps) {
     const totalHeight = (END_TIME - START_TIME) * MIN_HEIGHT;
     const HEADER_HEIGHT = 40; // 時刻+ラベルを表示するため少し高く設定
 
-    const renderDayColumn = (day: string) => {
-        const dayCourses = courses
-            .filter(c => c.day === day)
-            .sort((a, b) => timeToMin(a.start) - timeToMin(b.start));
+    const renderDayColumn = (dayOfWeek: string) => {
+        // 1. その曜日のコマを抽出してソート
+        const daySchedules = schedules
+            .filter(s => s.dayOfWeek === dayOfWeek)
+            .sort((a, b) => timeToMin(a.startTime) - timeToMin(b.startTime));
 
-        // 1. 各コマの衝突判定と仮の列(col)割り当て
-        const courseWithCol: any[] = [];
-        dayCourses.forEach(course => {
-            const startMin = timeToMin(course.start);
-            const endMin = timeToMin(course.end);
+        // 2. 各コマの衝突判定と列(col)割り当て
+        const scheduleWithCol: (FlatSchedule & { startMin: number; endMin: number; col: number })[] = [];
+
+        daySchedules.forEach(sched => {
+            const startMin = timeToMin(sched.startTime);
+            const endMin = timeToMin(sched.endTime);
             let col = 0;
-            while (courseWithCol.some(c =>
+
+            while (scheduleWithCol.some(c =>
                 c.col === col &&
                 Math.max(startMin, c.startMin) < Math.min(endMin, c.endMin)
             )) {
                 col++;
             }
-            courseWithCol.push({ ...course, startMin, endMin, col });
+            scheduleWithCol.push({...sched, startMin, endMin, col});
         });
 
-        // 2. 相互に重なっている授業を「グループ」として抽出
-        // グループ内で最大の col + 1 をそのグループ全員の共通幅(groupMaxCols)にする
-        const processedCourses = courseWithCol.map(course => {
-            const group: any[] = [];
-            const visited = new Set();
-            const queue = [course];
+        // 3. 重なりグループの幅計算（ロジックは以前のものを流用）
+        const processedSchedules = scheduleWithCol.map(sched => {
+            const group: typeof scheduleWithCol = [];
+            const visited = new Set<number>();
+            const queue = [sched];
 
-            // 幅の計算に影響を与える「連鎖的な重なり」をすべて探す（幅の同期）
             while (queue.length > 0) {
-                const current = queue.shift();
-                if (visited.has(current.title + current.start)) continue;
-                visited.add(current.title + current.start);
+                const current = queue.shift()!;
+                if (visited.has(current.id)) continue;
+                visited.add(current.id);
                 group.push(current);
 
-                courseWithCol.forEach(other => {
+                scheduleWithCol.forEach(other => {
                     if (Math.max(current.startMin, other.startMin) < Math.min(current.endMin, other.endMin)) {
                         queue.push(other);
                     }
@@ -79,16 +75,21 @@ export default function Timetable() {
             }
 
             const groupMaxCols = Math.max(...group.map(c => c.col)) + 1;
-            return { ...course, groupMaxCols };
+            return {...sched, groupMaxCols};
         });
 
         return (
-            <div key={day} style={{ flex: 1, borderRight: '1px solid #ccc', position: 'relative', height: totalHeight + HEADER_HEIGHT }}>
+            <div key={dayOfWeek} style={{
+                flex: 1,
+                borderRight: '1px solid #ccc',
+                position: 'relative',
+                height: totalHeight + HEADER_HEIGHT
+            }}>
                 {/* 曜日ヘッダー */}
                 <div style={{
                     textAlign: 'center', borderBottom: '1px solid #ccc', fontSize: '12px', fontWeight: 'bold',
                     height: HEADER_HEIGHT, lineHeight: `${HEADER_HEIGHT}px`, backgroundColor: '#fdfdfd'
-                }}>{day}</div>
+                }}>{dayOfWeek}</div>
 
                 {/* 背景グリッド */}
                 {GRID_PERIODS.map(p => (
@@ -101,16 +102,16 @@ export default function Timetable() {
                         borderTop: '1px solid #eee',
                         boxSizing: 'border-box',
                         backgroundColor: '#fafafa'
-                    }} />
+                    }}/>
                 ))}
 
                 {/* コマの描画 */}
-                {processedCourses.map((course, i) => {
+                {processedSchedules.map((sched, i) => {
                     // groupMaxCols を使うことで、右側の隙間を埋める
-                    const width = 100 / course.groupMaxCols;
-                    const left = course.col * width;
-                    const top = course.startMin * MIN_HEIGHT + HEADER_HEIGHT;
-                    const height = (course.endMin - course.startMin) * MIN_HEIGHT;
+                    const width = 100 / sched.groupMaxCols;
+                    const left = sched.col * width;
+                    const top = sched.startMin * MIN_HEIGHT + HEADER_HEIGHT;
+                    const height = (sched.endMin - sched.startMin) * MIN_HEIGHT;
 
                     return (
                         <div key={i} style={{
@@ -130,8 +131,12 @@ export default function Timetable() {
                             boxShadow: '1px 1px 2px rgba(0,0,0,0.05)',
                             overflow: 'hidden'
                         }}>
-                            <div style={{ fontWeight: 'bold', lineHeight: '1.2' }}>{course.title}</div>
-                            <div style={{ fontSize: '9px', color: '#666', marginTop: 'auto' }}>{course.start}-{course.end}</div>
+                            <div style={{fontWeight: 'bold', lineHeight: '1.2'}}>{sched.title}</div>
+                            <div style={{
+                                fontSize: '9px',
+                                color: '#666',
+                                marginTop: 'auto'
+                            }}>{sched.startTime}-{sched.endTime}</div>
                         </div>
                     );
                 })}
@@ -145,8 +150,13 @@ export default function Timetable() {
             fontFamily: 'sans-serif', backgroundColor: '#fff', width: '100%'
         }}>
             {/* 時刻軸 */}
-            <div style={{ width: '65px', borderRight: '1px solid #ccc', position: 'relative', backgroundColor: '#fdfdfd' }}>
-                <div style={{ height: HEADER_HEIGHT, borderBottom: '1px solid #ccc' }} />
+            <div style={{
+                width: '65px',
+                borderRight: '1px solid #ccc',
+                position: 'relative',
+                backgroundColor: '#fdfdfd'
+            }}>
+                <div style={{height: HEADER_HEIGHT, borderBottom: '1px solid #ccc'}}/>
                 {GRID_PERIODS.map(p => {
                     const top = timeToMin(p.start) * MIN_HEIGHT + HEADER_HEIGHT;
                     const height = (timeToMin(p.end) - timeToMin(p.start)) * MIN_HEIGHT;
@@ -181,7 +191,7 @@ export default function Timetable() {
                                 height: '100%',
                                 width: '100%'
                             }}>
-                                <div style={{ fontSize: '15px', color: '#bbb', fontWeight: 'bold', lineHeight: 1 }}>
+                                <div style={{fontSize: '15px', color: '#bbb', fontWeight: 'bold', lineHeight: 1}}>
                                     {p.label}
                                 </div>
                             </div>

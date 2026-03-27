@@ -1,13 +1,5 @@
 import React, {useState} from 'react';
-import type {InferSelectModel} from 'drizzle-orm';
-import * as schema from '../db/schema';
-
-export type Course = InferSelectModel<typeof schema.courses>;
-export type Schedule = InferSelectModel<typeof schema.courseSchedules>;
-
-export interface CourseWithSchedules extends Course {
-    schedules: Schedule[];
-}
+import type {CourseWithSchedules} from "@/db/schema";
 
 export interface SearchFilters {
     day: string | null;
