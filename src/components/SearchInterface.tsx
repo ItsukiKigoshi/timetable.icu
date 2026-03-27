@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import type {CourseWithSchedules} from "@/db/schema";
+import type {Categories, CourseWithSchedules} from "@/db/schema";
 
 export interface SearchFilters {
     day: string | null;
     period: string | null;
     isLong: string | null;
     categoryId: string | null;
+    q: string | null;
     page: number;
 }
 
@@ -13,11 +14,18 @@ interface Props {
     initialResults: CourseWithSchedules[];
     filters: SearchFilters;
     isLoggedIn: boolean;
+    categories: Categories[];
     initialUserCourseIds: number[];
 }
 
 
-export default function SearchInterface({initialResults, filters, isLoggedIn, initialUserCourseIds}: Props) {
+export default function SearchInterface({
+                                            initialResults,
+                                            filters,
+                                            isLoggedIn,
+                                            categories,
+                                            initialUserCourseIds
+                                        }: Props) {
     // 登録済みIDをステートで管理
     const [userCourseIds, setUserCourseIds] = useState<Set<number>>(new Set(initialUserCourseIds));
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
@@ -30,9 +38,6 @@ export default function SearchInterface({initialResults, filters, isLoggedIn, in
 
         setIsSubmitting(courseId);
         try {
-            // 注意: Astro環境で単純な関数呼出しはできないため、
-            // 実際には /api/toggle-course などのAPIエンドポイントをfetchするか
-            // Astro Actionsを使用してください。
             const res = await fetch('/api/courses/toggle', {
                 method: 'POST',
                 body: JSON.stringify({courseId}),
@@ -66,6 +71,13 @@ export default function SearchInterface({initialResults, filters, isLoggedIn, in
     return (
         <div>
             <section style={{display: 'flex', gap: '8px', marginBottom: '1rem'}}>
+                <input
+                    type="text"
+                    className="border p-1 rounded"
+                    placeholder="タイトル、教員名..."
+                    defaultValue={filters.q || ''}
+                    onKeyDown={(e) => e.key === 'Enter' && update({q: e.currentTarget.value})}
+                />
                 <select
                     value={filters.day || ''}
                     onChange={(e) => update({day: e.target.value})}
@@ -82,12 +94,16 @@ export default function SearchInterface({initialResults, filters, isLoggedIn, in
                     {[1, 2, 3, 4, 5, 6, 7].map(p => <option key={p} value={p.toString()}>{p}</option>)}
                 </select>
 
-                <input
-                    type="text"
-                    placeholder="Category (e.g. ELA)"
-                    defaultValue={filters.categoryId || ''}
-                    onBlur={(e) => update({categoryId: e.target.value})}
-                />
+                <select
+                    value={filters.categoryId || ''}
+                    onChange={(e) => update({categoryId: e.target.value})}
+                    className="max-w-50"
+                >
+                    <option value="">カテゴリ (全て)</option>
+                    {categories.map(c => (
+                        <option key={c.id} value={c.id}>{c.nameJa}</option>
+                    ))}
+                </select>
             </section>
 
             <table border={1} style={{width: '100%', borderCollapse: 'collapse'}}>
@@ -106,7 +122,7 @@ export default function SearchInterface({initialResults, filters, isLoggedIn, in
                         <tr key={course.id}>
                             <td>{course.rgNo}</td>
                             <td>{course.titleJa}</td>
-                            <td>{course.schedules.map(s => `${s.dayOfWeek}${s.period}`).join('/')}</td>
+                            <td>{course.schedules.map(s => `${s.isLong && "*"}${s.period}/${s.dayOfWeek}`).join(',')}</td>
                             <td>
                                 <button
                                     onClick={() => toggleRegistration(course.id)}

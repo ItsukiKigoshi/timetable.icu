@@ -159,9 +159,6 @@ export type CourseWithSchedules = Course & {
     schedules: Schedule[];
 };
 
-// 描画用の「フラット化された1コマ」の型を定義
-// PickやOmitを使って、必要なプロパティだけを抽出・合成する
-export type FlatSchedule = Pick<Schedule, 'id' | 'dayOfWeek' | 'startTime' | 'endTime' | 'isAlternative'> & {
-    title: Course['titleJa'];
-    room: Course['room'];
-};
+export type Categories = InferSelectModel<typeof categories>;
+
+export type FlatSchedule = Schedule & Course;

@@ -16,7 +16,6 @@ async function runSeed() {
 
     console.log(`📁 Connecting to Bun SQLite: ${dbPath}`);
 
-    // Bun標準のDatabaseクラスを使用
     const sqlite = new Database(dbPath);
     const db = drizzle(sqlite, {schema});
 

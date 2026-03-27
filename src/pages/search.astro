@@ -1,11 +1,12 @@
 ---
 import {drizzle} from 'drizzle-orm/d1';
-import {eq, and, exists, inArray, sql} from 'drizzle-orm';
+import {eq, and, exists, like, or} from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import SearchInterface, {type SearchFilters, type CourseWithSchedules} from '@/components/SearchInterface';
+import SearchInterface, {type SearchFilters} from '@/components/SearchInterface';
 import {env} from "cloudflare:workers";
 import {getAuth} from "@/lib/auth";
 import Layout from "@/layouts/Layout.astro";
+import type {CourseWithSchedules} from "@/db/schema";
 
 const db = drizzle(env.timetable_icu, {schema});
 const auth = getAuth(env);
@@ -16,68 +17,71 @@ const filters: SearchFilters = {
     period: url.searchParams.get('period'),
     isLong: url.searchParams.get('isLong'),
     categoryId: url.searchParams.get('category'),
+    q: url.searchParams.get('q'),
     page: Math.max(1, parseInt(url.searchParams.get('page') || '1')),
 };
 
-const limit = 20;
-const offset = (filters.page - 1) * limit;
+// 1. カテゴリ一覧を取得 (プルダウン用)
+const allCategories = await db.select().from(schema.categories).all();
 
-// --- 1. 条件配列の作成 (ここですべての条件を統合する) ---
+// 2. 検索条件の組み立て (coursesテーブル基準)
 let conditions = [];
 
-// 曜日・時限・Longの条件
-if (filters.day) conditions.push(eq(schema.courseSchedules.dayOfWeek, filters.day as any));
-if (filters.period) conditions.push(eq(schema.courseSchedules.period, parseInt(filters.period)));
-if (filters.isLong === 'true' || filters.isLong === 'false') {
-    conditions.push(eq(schema.courseSchedules.isLong, filters.isLong === 'true'));
+// キーワード検索
+if (filters.q) {
+    const searchVal = `%${filters.q}%`;
+    conditions.push(
+        or(
+            like(schema.courses.titleJa, searchVal),
+            like(schema.courses.titleEn, searchVal),
+            like(schema.courses.instructor, searchVal)
+        )
+    );
 }
 
-// カテゴリがある場合は exists 条件を配列に追加
+// カテゴリ絞り込み
 if (filters.categoryId) {
-    const categoryExists = exists(
+    conditions.push(exists(
         db.select()
             .from(schema.courseToCategories)
             .where(and(
                 eq(schema.courseToCategories.categoryId, filters.categoryId),
-                eq(schema.courseToCategories.courseId, schema.courseSchedules.courseId)
+                eq(schema.courseToCategories.courseId, schema.courses.id)
             ))
-    );
-    conditions.push(categoryExists);
+    ));
 }
 
-// --- 2. クエリ実行 (whereはここで1回だけ呼ぶ) ---
-const idRows = await db
-    .selectDistinct({id: schema.courseSchedules.courseId})
-    .from(schema.courseSchedules)
-    .where(and(...conditions)) // まとめた条件をスプレッドで渡す
-    .limit(limit)
-    .offset(offset)
-    .all();
+// 曜日・時限の絞り込み
+if (filters.day || filters.period) {
+    let schedConditions = [eq(schema.courseSchedules.courseId, schema.courses.id)];
+    if (filters.day) schedConditions.push(eq(schema.courseSchedules.dayOfWeek, filters.day as any));
+    if (filters.period) schedConditions.push(eq(schema.courseSchedules.period, parseInt(filters.period)));
 
-const targetIds = idRows.map(r => r.id);
+    conditions.push(exists(
+        db.select().from(schema.courseSchedules).where(and(...schedConditions))
+    ));
+}
 
+// 3. メインデータの取得
+// findManyを使うことで、targetIdsを別途取得する手間とJOINエラーを回避
+const results = await db.query.courses.findMany({
+    where: conditions.length > 0 ? and(...conditions) : undefined,
+    with: {schedules: true},
+    limit: 20,
+    offset: (filters.page - 1) * 20,
+}) as CourseWithSchedules[];
+
+// 4. ユーザー登録情報の取得 (追加機能を維持)
 const session = await auth.api.getSession({headers: Astro.request.headers});
 const userId = session?.user.id;
+let userCourseIds: number[] = [];
 
-// --- 3. 詳細取得 ---
-let results: CourseWithSchedules[] = [];
-let userCourseIds: number[] = []; // ユーザーが登録済みのIDリスト
-
-if (targetIds.length > 0) {
-    const data = await db.query.courses.findMany({
-        where: inArray(schema.courses.id, targetIds),
-        with: {schedules: true},
-    });
-    results = data as CourseWithSchedules[];
-
-    // ログイン中なら登録済みIDを取得
-    if (userId) {
-        const userCourses = await db.select({id: schema.userCourses.courseId})
-            .from(schema.userCourses)
-            .where(eq(schema.userCourses.userId, userId))
-            .all();
-        userCourseIds = userCourses.map(uc => uc.id);
-    }
+if (userId) {
+    const userCoursesData = await db.select({id: schema.userCourses.courseId})
+        .from(schema.userCourses)
+        .where(eq(schema.userCourses.userId, userId))
+        .all();
+    userCourseIds = userCoursesData.map(uc => uc.id);
 }
 
 Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
@@ -88,6 +92,7 @@ Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
             initialResults={results}
             filters={filters}
             isLoggedIn={!!userId}
+            categories={allCategories}
             initialUserCourseIds={userCourseIds}
     />
 </Layout>
