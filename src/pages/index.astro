@@ -1,83 +1,92 @@
 ---
-// src/pages/index.astro
-import { drizzle } from "drizzle-orm/d1";
+import {drizzle} from "drizzle-orm/d1";
 import * as schema from "@/db/schema.ts";
-import type { Course } from "@/db/schema.ts";
+import type {Course} from "@/db/schema.ts";
 import Layout from "@/layouts/Layout.astro";
-import { env } from "cloudflare:workers";
-import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time.ts";
-import { computeProcessedSchedules } from "@/lib/timetable.ts";
-import CourseManager from "@/layouts/CourseManager"; // 新規作成する親コンポーネント
+import {env} from "cloudflare:workers";
+import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
+import {type ProcessedSchedule, computeProcessedSchedules} from "@/lib/timetable";
+import TimetableInterface from "@/components/TimetableInterface"; // Component名を修正
 
 const user = Astro.locals.user;
-if (!user) {
-    return Astro.redirect("/login"); // ログイン必須の場合
-}
 
 const url = new URL(Astro.request.url);
 const selectedYear = parseInt(url.searchParams.get('year') || "") || DEFAULT_YEAR;
 const selectedTerm = (url.searchParams.get('term') || DEFAULT_TERM) as Course['term'];
 
-const db = drizzle(env.timetable_icu, { schema });
+let processedSchedules = [] as ProcessedSchedule[];
 
-// --- 1. 最適化されたDBリクエスト ---
-// 1回のクエリで、ユーザーのコース、その詳細、スケジュールをすべて取得
-const userCoursesWithDetails = await db.query.userCourses.findMany({
-    where: (uc, { eq }) => eq(uc.userId, user.id),
-    with: {
-        course: {
-            with: {
-                schedules: true // スケジュールも一緒にネストして取得
+// 1. ログイン時のみDBからデータを取得
+if (user) {
+    const db = drizzle(env.timetable_icu, {schema});
+
+    const userCoursesWithDetails = await db.query.userCourses.findMany({
+        where: (uc, {eq}) => eq(uc.userId, user.id),
+        with: {
+            course: {
+                with: {
+                    schedules: true
+                }
             }
         }
-    }
-});
+    });
 
-// --- 2. データの平坦化とフィルタリング ---
-// 選択された年度・学期に合致するスケジュールだけを抽出して平坦化
-const flatSchedules = userCoursesWithDetails
-    .filter(uc => uc.course.year === selectedYear && uc.course.term === selectedTerm)
-    .flatMap(uc =>
-        uc.course.schedules.map((s) => ({
-            ...uc.course, // コース情報
-            ...s,         // スケジュール情報 (idなどが上書きされないよう注意)
-            courseId: uc.course.id, // 明示的にIDを持たせる
-            scheduleId: s.id      // スケジュールのID
-        }))
-    );
+    const flatSchedules = userCoursesWithDetails
+        .filter(uc => uc.course.year === selectedYear && uc.course.term === selectedTerm)
+        .flatMap(uc =>
+            uc.course.schedules.map((s) => ({
+                ...uc.course,
+                ...s,
+                courseId: uc.course.id,
+                scheduleId: s.id
+            }))
+        );
 
-// 座標計算ロジック
-const processedSchedules = computeProcessedSchedules(flatSchedules);
+    processedSchedules = computeProcessedSchedules(flatSchedules);
+}
 
-// 学期選択肢（UI用）
 const terms: Course['term'][] = ['Spring', 'Autumn', 'Winter'];
 ---
 
 <Layout title="あいしーゆーのじかんわり">
     <div class="p-4">
-        <form method="GET" class="flex gap-2 mb-6 p-4 bg-base-200 rounded-lg">
-            <label>
-                <select name="year" onchange="this.form.submit()" class="select select-bordered select-sm">
-                    {[2024, 2025, 2026].map(y => (
-                            <option value={y} selected={selectedYear === y}>{y}年度</option>
-                    ))}
-                </select>
-            </label>
+        {/* ログイン誘導（ゲスト時のみ表示） */}
+        {!user && (
+                <div>
+                    <div>
+                        <h3>ゲストモードで利用中</h3>
+                        <div>
+                            時間割はブラウザに一時保存されます。ログインすると他のデバイスと同期できます。
+                        </div>
+                    </div>
+                </div>
+        )}
 
-            <label>
-                <select name="term" onchange="this.form.submit()" class="select select-bordered select-sm">
-                    {terms.map(t => (
-                            <option value={t} selected={selectedTerm === t}>{t}</option>
-                    ))}
-                </select>
-            </label>
-            <noscript><button type="submit" class="btn btn-sm">更新</button></noscript>
+        {/* フィルターフォーム */}
+        <form method="GET">
+            <select name="year" onchange="this.form.submit()">
+                {[2024, 2025, 2026].map(y => (
+                        <option value={y} selected={selectedYear === y}>{y}年度</option>
+                ))}
+            </select>
+
+            <select name="term" onchange="this.form.submit()">
+                {terms.map(t => (
+                        <option value={t} selected={selectedTerm === t}>{t}</option>
+                ))}
+            </select>
+            <noscript>
+                <button type="submit" class="btn btn-sm">更新</button>
+            </noscript>
         </form>
 
-        <CourseManager
-                initialSchedules={processedSchedules}
-                user={user}
-                client:load
-        />
+        {/* 時間割本体 */}
+        <div class="bg-base-100 rounded-xl shadow-xl overflow-hidden border border-base-300">
+            <TimetableInterface
+                    processedSchedules={processedSchedules}
+                    user={user}
+                    client:load
+            />
+        </div>
     </div>
 </Layout>
