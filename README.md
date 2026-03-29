@@ -30,9 +30,9 @@
     - timetable.icu $7.20 Renews at $14.20
         - ICUのじかんわり
         - Timetable.icu
-- [ ] ロゴつくりなおす
-    - [ ] 3Dみ
-    - [ ] たぬき
+- [x] ロゴつくりなおす
+    - [x] 3Dみ
+    - [x] たぬき
 - [ ] 開発者と顔を明示し，信頼を得る
 - [ ] かわいいデザイン
     - [ ] 絵文字を多用するAI-Designに負けない!
@@ -105,7 +105,7 @@
     - [x] Schema定義
     - [x] D1 Deploy
     - [x] 未ログインユーザはLocalStorageへ
-        - [ ] LocalStorageがSaveされたときにトースト
+        - [x] LocalStorageがSaveされたときに通知
 - [x] Calendar形式で表示
     - [x] Termセレクター
     - [ ] 理系の選択式の演習UI: 優先度低し

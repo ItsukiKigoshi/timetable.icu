@@ -17,7 +17,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
             headers: context.request.headers,
         });
 
-        if (sessionData) {
+        if (sessionData?.session) {
             context.locals.user = sessionData.user;
             context.locals.session = sessionData.session;
         } else {

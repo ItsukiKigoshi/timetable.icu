@@ -9,8 +9,18 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
         if (isLoading) return;
         setIsLoading(true);
         try {
-            await authClient.signOut();
-            window.location.reload();
+            await authClient.signOut({
+                fetchOptions: {
+                    onSuccess: () => {
+                        window.location.href = "/";
+                    },
+                },
+            });
+
+            // 万が一 onSuccess が呼ばれない場合の予備
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 500);
         } catch (error) {
             console.error(error);
             setIsLoading(false); // 失敗時のみ戻す（成功時はリロードされるため）
@@ -36,6 +46,7 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
                 <button
                     onClick={handleLogout}
                     disabled={isLoading}
+                    type="button"
                     className="btn w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
@@ -50,6 +61,7 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
             ) : (
                 <button onClick={handleGoogleLogin}
                         disabled={isLoading}
+                        type="button"
                         className="btn bg-white text-black border-[#e5e5e5] w-full"
                 >
                     <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg"
