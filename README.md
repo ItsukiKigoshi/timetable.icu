@@ -104,7 +104,8 @@
     - [x] Drizzle ORM
     - [x] Schema定義
     - [x] D1 Deploy
-    - [ ] 未ログインユーザはLocalStorageへ
+    - [x] 未ログインユーザはLocalStorageへ
+        - [ ] LocalStorageがSaveされたときにトースト
 - [x] Calendar形式で表示
     - [x] Termセレクター
     - [ ] 理系の選択式の演習UI: 優先度低し
@@ -126,7 +127,7 @@
 - [ ] Timetable.icuで移行を促すMessage
     - [ ] 移行機能 (直接新アプリのAPIを叩く?)
 - [ ] Refactor
-    - Componentがごちゃごちゃしている．絶対必要!
+    - [ ] Componentがごちゃごちゃしている．絶対必要!
     - [ ] WorkersならPreactの方が良い？
 - [x] Deploy to Workers
 - [ ] PR
