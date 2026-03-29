@@ -7,6 +7,19 @@ import {useEffect, useState} from "react"; // useEffectを追加
 
 const HEADER_HEIGHT = 40;
 
+export const seasonToNumber = (season: string | null): number => {
+    switch (season) {
+        case "Spring":
+            return 1;
+        case "Autumn":
+            return 2;
+        case "Winter":
+            return 3;
+        default:
+            return 0;
+    }
+};
+
 export default function TimetableInterface({initialRawSchedules, user}: {
     initialRawSchedules: FlatSchedule[],
     user?: User | null
@@ -64,6 +77,7 @@ export default function TimetableInterface({initialRawSchedules, user}: {
         }
     };
 
+
     return (
         <div className="flex w-full overflow-hidden bg-base-100 border-t border-b select-none"
              style={{height: containerHeight}}>
@@ -88,7 +102,7 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                         return (
                             <div
                                 key={`slot-${p.label}`}
-                                className={`absolute w-full border-t border-base-200 z-0 transition-colors ${isOccupied ? "cursor-pointer hover:bg-primary/5" : ""}`}
+                                className={`absolute w-full border-t z-0 transition-colors ${isOccupied ? "cursor-pointer hover:bg-primary/5" : ""}`}
                                 style={timeStyle(timeToMin(p.start), timeToMin(p.end))}
                                 onClick={() => handleSlotClick(day, p.label)}
                             />
@@ -139,6 +153,12 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                                         <div className="text-xs opacity-60 truncate">{course.instructor}</div>
                                     </div>
                                     <div className="flex gap-2 shrink-0">
+                                        <a target="_blank"
+                                           href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${
+                                               course.rgNo
+                                           }&year=${course.year}&term=${seasonToNumber(
+                                               course.term
+                                           )}`} className="btn btn-sm">シラバス</a>
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={isSubmitting === cId}
@@ -147,7 +167,6 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                                             {isSubmitting === cId ?
                                                 <span className="loading loading-spinner loading-xs"/> : "削除"}
                                         </button>
-                                        <a href={`/course/${cId}`} className="btn btn-sm btn-ghost">詳細</a>
                                     </div>
                                 </div>
                             );

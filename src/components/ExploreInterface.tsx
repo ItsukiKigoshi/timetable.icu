@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
+import {seasonToNumber} from "@/components/TimetableInterface.tsx";
 
 export interface SearchFilters {
     year: string | null;
@@ -86,6 +87,8 @@ export default function ExploreInterface({
         } else {
             nextFilters.page = Number(newParams.page);
         }
+
+        window.scrollTo({top: 0, behavior: 'smooth'});
 
         // URLパラメータの同期（見た目上のURLを書き換え）
         const url = new URL(window.location.href);
@@ -216,9 +219,20 @@ export default function ExploreInterface({
                 </form>
             </dialog>
 
+            <div className="flex flex-col items-center gap-4">
+                <div className="join">
+                    <button className="join-item btn" disabled={filters.page <= 1}
+                            onClick={() => update({page: filters.page - 1})}>«
+                    </button>
+                    <button className="join-item btn no-animation">Page {filters.page} / {totalPages}</button>
+                    <button className="join-item btn" disabled={filters.page >= totalPages}
+                            onClick={() => update({page: filters.page + 1})}>»
+                    </button>
+                </div>
+            </div>
             {/* 結果表示セクション */}
             <div
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
+                className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
                 {courses.map((course) => {
                     const isAdded = registeredIds.has(course.id);
                     const hasSchedules = course.schedules && course.schedules.length > 0;
@@ -242,18 +256,24 @@ export default function ExploreInterface({
                                     {hasSchedules ? (
                                         course.schedules.map((s, i) => (
                                             <span key={i} className="badge badge-ghost badge-sm font-mono uppercase">
-                                {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
-                            </span>
+                                                {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
+                                            </span>
                                         ))
                                     ) : (
                                         <span className="text-xs">No Schedule</span>
                                     )}
                                 </div>
 
-                                <div className="card-actions justify-end mt-4">
+                                <div className="card-actions flex justify-between mt-4">
                                     {/* 「スケジュールがある」または「すでに登録されている（削除用）」場合のみボタンを表示。
-      スケジュールがなく、かつ登録もされていない授業は、ボタンが非表示になります。
-    */}
+                                      スケジュールがなく、かつ登録もされていない授業は、ボタンが非表示になります。
+                                    */}
+                                    <a target='_blank'
+                                       href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${
+                                           course.rgNo
+                                       }&year=${course.year}&term=${seasonToNumber(
+                                           course.term
+                                       )}`} className="btn btn-sm">シラバス</a>
                                     {(hasSchedules || isAdded) && (
                                         <button
                                             onClick={() => handleToggle(course)}
@@ -280,7 +300,7 @@ export default function ExploreInterface({
             </div>
 
             {/* ページネーション */}
-            <div className="flex flex-col items-center gap-4 py-6">
+            <div className="flex flex-col items-center gap-4 py-6 mb-6">
                 <div className="join">
                     <button className="join-item btn" disabled={filters.page <= 1}
                             onClick={() => update({page: filters.page - 1})}>«

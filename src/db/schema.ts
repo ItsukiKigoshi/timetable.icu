@@ -15,7 +15,7 @@ export const courses = sqliteTable("courses", {
     year: integer("year").notNull(),
     rgNo: text("rg_no").notNull(),
     status: text("status", {enum: ["active", "cancelled"]}).default("active"),
-    term: text("term", {enum: ["Autumn", "Winter", "Spring"]}).notNull(),
+    term: text("term", {enum: ["Spring", "Autumn", "Winter"]}).notNull(),
     courseCode: text("course_code").notNull(), // 例: GES001
     titleJa: text("title_ja").notNull(),
     titleEn: text("title_en").notNull(),
