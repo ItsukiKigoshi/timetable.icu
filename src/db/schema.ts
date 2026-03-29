@@ -21,7 +21,7 @@ export const courses = sqliteTable("courses", {
     titleEn: text("title_en").notNull(),
     instructor: text("instructor").notNull(),
     room: text("room"),
-    language: text("language"), // J, E, J/E
+    language: text("language"), // J, E, O
     updatedAt: integer("updated_at")
         .default(sql`(unixepoch()
                      )`),

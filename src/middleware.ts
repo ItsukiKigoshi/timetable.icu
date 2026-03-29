@@ -1,4 +1,4 @@
-import {getAuth} from "@/lib/auth";
+import {getAuth} from "@/lib/auth.ts";
 import {defineMiddleware} from "astro:middleware";
 import {env} from "cloudflare:workers";
 

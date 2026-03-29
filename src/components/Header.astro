@@ -1,19 +1,17 @@
 ---
 import LoginButton from "./LoginButton";
-import {Passkey} from "./Passkey";
-const {user} = Astro.locals;
+import PasskeyButton from "./PasskeyButton.tsx";
+import PasskeyList from "./PasskeyList.tsx";
+
+
+const user = Astro.locals.user;
 const isLoggedIn = !!user;
 ---
 <div>
-    <h1>Timetable.icu</h1>
-    <div>
-        <a href="/">Timetable</a>
-        <a href="/search">Search</a>
-    </div>
+    <h1>ICUのじかんわり</h1>
     <nav>
-        {user ? <span>Hi, {user.name}!</span> :
-                <span>Login to Sync</span>}
         <LoginButton client:load isLoggedIn={isLoggedIn}/>
-        <Passkey client:load isLoggedIn={isLoggedIn}/>
+        <PasskeyButton client:load isLoggedIn={isLoggedIn}/>
+        <PasskeyList client:load isLoggedIn={isLoggedIn}/>
     </nav>
 </div>

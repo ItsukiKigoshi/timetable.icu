@@ -1,92 +1,14 @@
 ---
-import {drizzle} from "drizzle-orm/d1";
-import * as schema from "@/db/schema.ts";
-import type {Course} from "@/db/schema.ts";
 import Layout from "@/layouts/Layout.astro";
-import {env} from "cloudflare:workers";
-import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
-import {type ProcessedSchedule, computeProcessedSchedules} from "@/lib/timetable";
-import TimetableInterface from "@/components/TimetableInterface"; // Component名を修正
-
-const user = Astro.locals.user;
-
-const url = new URL(Astro.request.url);
-const selectedYear = parseInt(url.searchParams.get('year') || "") || DEFAULT_YEAR;
-const selectedTerm = (url.searchParams.get('term') || DEFAULT_TERM) as Course['term'];
-
-let processedSchedules = [] as ProcessedSchedule[];
-
-// 1. ログイン時のみDBからデータを取得
-if (user) {
-    const db = drizzle(env.timetable_icu, {schema});
-
-    const userCoursesWithDetails = await db.query.userCourses.findMany({
-        where: (uc, {eq}) => eq(uc.userId, user.id),
-        with: {
-            course: {
-                with: {
-                    schedules: true
-                }
-            }
-        }
-    });
-
-    const flatSchedules = userCoursesWithDetails
-        .filter(uc => uc.course.year === selectedYear && uc.course.term === selectedTerm)
-        .flatMap(uc =>
-            uc.course.schedules.map((s) => ({
-                ...uc.course,
-                ...s,
-                courseId: uc.course.id,
-                scheduleId: s.id
-            }))
-        );
-
-    processedSchedules = computeProcessedSchedules(flatSchedules);
-}
-
-const terms: Course['term'][] = ['Spring', 'Autumn', 'Winter'];
 ---
-
-<Layout title="あいしーゆーのじかんわり">
-    <div class="p-4">
-        {/* ログイン誘導（ゲスト時のみ表示） */}
-        {!user && (
-                <div>
-                    <div>
-                        <h3>ゲストモードで利用中</h3>
-                        <div>
-                            時間割はブラウザに一時保存されます。ログインすると他のデバイスと同期できます。
-                        </div>
-                    </div>
-                </div>
-        )}
-
-        {/* フィルターフォーム */}
-        <form method="GET">
-            <select name="year" onchange="this.form.submit()">
-                {[2024, 2025, 2026].map(y => (
-                        <option value={y} selected={selectedYear === y}>{y}年度</option>
-                ))}
-            </select>
-
-            <select name="term" onchange="this.form.submit()">
-                {terms.map(t => (
-                        <option value={t} selected={selectedTerm === t}>{t}</option>
-                ))}
-            </select>
-            <noscript>
-                <button type="submit" class="btn btn-sm">更新</button>
-            </noscript>
-        </form>
-
-        {/* 時間割本体 */}
-        <div class="bg-base-100 rounded-xl shadow-xl overflow-hidden border border-base-300">
-            <TimetableInterface
-                    processedSchedules={processedSchedules}
-                    user={user}
-                    client:load
-            />
-        </div>
-    </div>
+<Layout title="ICUのじかんわりへようこそ！">
+    <h1>ICUのじかんわりへようこそ！</h1>
+    <ul>
+        <li><a href="/timetable">時間割をつくる</a></li>
+        <li><a href="/explore">授業を探索する</a></li>
+    </ul>
+    <h2>できること</h2>
+    <ul>
+        <li>ログインすれば, どのデバイスでも時間割を見られます</li>
+    </ul>
 </Layout>

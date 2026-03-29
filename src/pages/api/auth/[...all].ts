@@ -1,6 +1,6 @@
-import { getAuth } from "@/lib/auth.ts";
-import type { APIRoute } from "astro";
-import { env } from "cloudflare:workers";
+import {getAuth} from "@/lib/auth.ts";
+import type {APIRoute} from "astro";
+import {env} from "cloudflare:workers";
 
 export const ALL: APIRoute = async (ctx) => {
     // If you want to use rate limiting, make sure to set the 'x-forwarded-for' header to the request headers from the context

@@ -10,25 +10,26 @@
 # 大切にしたいこと
 
 - [ ] とにかく時間割作成に使いやすいものである
-    - [ ] long時間割対応 (しょうもないことだがアイデンティティ)
+    - [x] long時間割対応 (しょうもないことだがアイデンティティ)
     - [ ] 軽量
 - [ ] ICUらしくある
     - [ ] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
 - [ ] プロジェクトとして持続可能なものである
-    - [ ] 後輩に引き継ぐ前庭で作る，その価値があるものにする
+    - [ ] 後輩に引き継ぐ前提で作る，その価値があるものにする
     - [ ] オープンソース
     - [ ] ICUのいろいろな団体とコラボする
     - [ ] できればCTLなどでも使ってもらいたい
     - [ ] 木越が責任を持って取り組む
 - [ ] Transparency
-  - [ ] Share Issues, Feature Requests
-  - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
+    - [ ] Share Issues, Feature Requests
+    - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
 
 # ブランディング
 
 - [ ] 名前
-  - [ ] Catalogue.icuはお名前comに奪われ3万の復旧費用. あくどい商売やで
-  - [ ] timetable.icu　
+    - timetable.icu $7.20 Renews at $14.20
+        - ICUのじかんわり
+        - Timetable.icu
 - [ ] ロゴつくりなおす
     - [ ] 3Dみ
     - [ ] たぬき
@@ -36,6 +37,8 @@
 - [ ] かわいいデザイン
     - [ ] 絵文字を多用するAI-Designに負けない!
 - [ ] ちゃんとランディングページを作る: Astroのいいところ
+- [ ] SEO
+    - [ ] リッチリザルト
 
 # できること
 
@@ -45,32 +48,25 @@
     - [x] Google Oauth + Passkey
     - [ ] Google Calendar / .icsエクスポート？
 - [ ] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
-- [ ] Feedback (他の人も見られる?)
+    - [ ] 空きコマに入る授業検索: query paramを`&dayPeriod=["M-2"and"T-1"]`みたいに持たせる？
+- [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
+    - [ ] With Upvote
 - [ ] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
+- [ ] 役立つリンク
+    - [ ] CTL
+    - [ ] Major一覧
 
 # できないこと
 
 - [ ] 実際の履修登録 (リンク貼る)
 - [ ] 卒業要件との照らし合わせ (リンク貼る)
 - [ ] シラバスを見ること (リンク貼る)
-- [ ] 授業評価を見ること (リンク貼る)
+- [ ] 授業評価（）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
-
-# 技術選定
-
-## Frontend
-
-- Astro
-    - shadcn/ui?
-    - mui/base?
-    - API (BetterAuthまわりなど)もAstroで完結すれば最高; できないならHono
-- BetterAuth (Google OAuth/Passkey)
-
-## Infra
-
-- Cloudflare Pages with Functions (Worker)
-- D1
+- [ ] オフラインで確認すること
+    - [ ] 代わりに: Apple/Google Calendarへのエクスポート
+    - [ ] 代わりに: スクショしやすい画面配置
 
 # 挑戦したいこと
 
@@ -83,7 +79,7 @@
 # ライバル
 
 - [ICUrriculum](https://icu-courses.com)
-- Timetable4ICU
+- [Timetable4ICU](https://www.timetable4icu.com/)
 
 # 参考
 
@@ -116,55 +112,58 @@
     - [ ] コマをクリックでその時間の授業を検索
     - [ ] メジャーとそれ以外を分離, もしくはタグ形式で
     - [ ] Issue: Co-Listに非対応
+- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)
 - [ ] 独自スケジュール
     - [x] DB定義
     - [ ] 追加方法
     - [ ] 表示方法
 - [ ] テスト
-  - [ ] 時間割
-    - [ ] 様々なデータで描画
-  - [ ] データ
-    - [ ] ローカルからのsync
+    - [ ] 時間割
+        - [ ] 様々なデータで描画
+    - [ ] データ
+        - [ ] ローカルからのsync
+- [ ] Timetable.icuで移行を促すMessage
+    - 移行機能 (直接新アプリのAPIを叩く?)
+- [ ] Refactor
+    - Componentがごちゃごちゃしている．絶対必要!
 - [x] Deploy to Workers
 - [ ] PR
+
+## 課題
+
+-[ ] 卒業後にログインできなくなる
+    - [ ] 卒業後にアカウントが削除できなくなる
+    - [ ] 対策として， 最終ログイン後から数年/IDの卒業年によるアカウント削除や，第2メールアドレスを持たせる？
+    - [ ] 大学院進学でメールアドレスが変わると使えなくなる?
+- [ ] 現状だと，Passkeyを持っていれば卒業後も在学生以外にアクセスさせたくない情報 (Room)が見られてしまう
+-
 
 ## 注意点
 
 - [ ] Roomはicu.ac.jpを持つユーザのみ
 
-## Schema案
-
-- auth関連 (BetterAuthに任せる)
-    - users
-- user_courses (各ユーザの履修登録; もっと良いTable名は?)
-    - 登録した courseのid
-    - comment
-    - academic year
-    - term
-- courses (授業情報)
-    - 複合キー (course_code, year, term) ?
-    - Title
-    - RegID
-    - Instructor
-    - Course Number
-    - Language
-    - academic year
-    - season
-    - room?
-- course_schedule
-    - 別テーブルに予定を入れるため, 曜日毎の検索や1授業あたり複数の時間があるのを解決
-    - day
-    - start_at, end_at; or: period, isLong
-- schedule: 休校日など?
-- exam?
-    - type (mid/final)
-    - date
-- categories
-- メジャー，教職過程など, 1授業に複数あるもの
-- course_categories: courses-categoriesを繋げる
-
 ---
+
 # Development
+
+## 技術選定
+
+### Frontend
+
+- Astro
+- Tailwindcss
+- DaisyUI
+
+### Backend
+
+- Astro
+- BetterAuth (Google OAuth/Passkey)
+
+### Infra
+
+- Cloudflare Pages with Functions (Worker)
+- D1
+
 ## 🚀 Project Structure
 
 ```text
@@ -264,3 +263,99 @@ HTML->JSON->Remote DBを一括で実行
 ```bash
 bun db:deploy
 ```
+
+## Schema案
+
+- [x] auth関連 (BetterAuthに任せる)
+    - users
+- [x] user_courses (各ユーザの履修登録; もっと良いTable名は?)
+    - 登録した courseのid
+    - comment
+    - academic year
+    - term
+- [x] courses (授業情報)
+    - 複合キー (course_code, year, term) ?
+    - Title
+    - RegID
+    - Instructor
+    - Course Number
+    - Language
+    - academic year
+    - season
+    - room?
+- [x] course_schedule
+    - 別テーブルに予定を入れるため, 曜日毎の検索や1授業あたり複数の時間があるのを解決
+    - day
+    - start_at, end_at; or: period, isLong
+- schedule: 休校日など?
+  - [ ]exam?
+    - type (mid/final)
+    - date
+- [x] categories
+    - メジャー，教職過程など, 1授業に複数あるもの
+- [x] course_categories: courses-categoriesを繋げる
+
+# メモ
+
+## 名称案
+
+- Catalogue.icuはお名前comに奪われ3万の復旧費用. あくどい商売やで
+- timetable.icu $7.20 Renews at $14.20
+    - ICUのじかんわり
+    - Timetable.icu
+- icutime.com $10.46Renews at $10.46
+- table.icu $89.20 Renews at $178.20
+- syllabus.icu $12.20 Renews at $12.20
+- ICUのレシピサイト
+    - Cuisine.icu $12.20 Renews at $12.20
+    - recipe.icu unavailable
+    - gourmet.icu $29.20 Renews at $58.20
+    - dish.icu $29.20 Renews at $58.20
+    - kitchen.icu is not available
+    - cook.icu $89.20Renews at $178.20
+- .icuドメインにこだわるとブランド命名の幅が狭まる.
+    - SEOも弱い?
+    - .icuというドメインは，ICUの公式サイトであるように（良くも悪くも）誤認されやすい
+- 「まずはここから」
+    - starter.icu $12.20 Renews at $12.20
+    - starterkit.icu $12.20 Renews at $12.20
+- 天体観測
+    - stargazer.icu unavailable
+    - planet.icu $29.20Renews at $58.20
+- ICUっぽさ
+    - Bakayama.icu unavailable
+    - bakayama.com $10.46Renews at $10.46
+    - sekume.icu $12.20 Renews at $12.20
+    - coursemate.icu $12.20 Renews at $12.20
+    - ahoyama.icu $12.20 Renews at $12.20
+    - donguri.icu $12.20 Renews at $12.20
+    - dongry.icu 11.20 (12.20)
+    - land.icu $29.20Renews at $58.20
+    - why.icu unavailable
+    - forest.icu $29.20Renews at $58.20
+    - mori.icu unavailable
+    -
+- 色々
+    - story.icu unavailable
+    - render.icu unavailable
+    - overview.icu unavailable
+    - look4.icu $12.20 Renews at $12.20
+    - good4.icu $12.20Renews at $12.20
+    - time2.icu $12.20Renews at $12.20
+    - go4.icu unavailable
+    - ilove.icu unavailable
+    - madein.icu $12.20Renews at $12.20
+    - made4.icu $12.20Renews at $12.20
+    - what.icu unavailable
+    - belong2.icu $12.20Renews at $12.20
+    - easyregi.icu $12.20Renews at $12.20
+    - chef.icu $287.70Renews at $575.20
+    - at.icu $89.20Renews at $178.20
+- 絵を書く
+    - canvas.icu $29.20Renews at $58.20
+    - palette.icu $29.20Renews at $58.20
+- 参考:
+    - Twinte (筑波)
+    - Hupass (北大)
+    - [Berkeleytime.com](https://berkeleytime.com/grades) (Berkeley)
+    - Penmark
