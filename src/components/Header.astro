@@ -1,33 +1,104 @@
 ---
 import LoginButton from "./LoginButton";
 import PasskeyButton from "./PasskeyButton.tsx";
+import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 
 
-const user = Astro.locals.user;
+const {user, selectedYear, selectedTerm} = Astro.locals;
 const isLoggedIn = !!user;
+
+//TermをSpring->Sに変更
+const currentTermObj = SELECTABLE_TERMS.find(t => t.en === selectedTerm);
+const displayTermLabel = currentTermObj ? currentTermObj.label : selectedTerm;
 ---
-<header class="navbar sticky  top-0 z-100 bg-base-100 shadow-sm">
-    <div class="flex-1">
+<header class="navbar sticky top-0 z-100 bg-base-100 shadow-sm">
+    <!-- Left - Title -->
+    <div class="navbar-start">
         <a class="btn btn-ghost text-xl" href="/">ICUのじかんわり</a>
     </div>
-    <nav class="flex-none">
-    </nav>
-    <button class="btn" onclick="login_modal.showModal()">Login</button>
-    <dialog id="login_modal" class="modal">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Hello!</h3>
-            <p class="py-4">Press ESC key or click the button below to close</p>
-            <LoginButton client:load isLoggedIn={isLoggedIn}/>
-            <PasskeyButton client:load isLoggedIn={isLoggedIn}/>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button in form, it will close the modal -->
-                    <button class="btn">Close</button>
-                </form>
+
+    <!-- Center - Term Selector -->
+    <div class="navbar-center">
+        <button class="btn w-fit" onclick="options_modal.showModal()">
+            <p>{`${selectedYear}${displayTermLabel}`}</p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-chevron-down-icon lucide-chevron-down">
+                <path d="m6 9 6 6 6-6"/>
+            </svg>
+        </button>
+    </div>
+
+
+    <!-- Right - Login Button -->
+    <nav class="navbar-end">
+        <details class="dropdown">
+            <summary class="btn btn-ghost btn-circle avatar">
+                {user?.image ? (
+                        <div class="w-12 rounded-full shadow-md">
+                            <img src={user.image} alt="User Avatar"/>
+                        </div>) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-user-round-icon lucide-user-round">
+                            <circle cx="12" cy="8" r="5"/>
+                            <path d="M20 21a8 8 0 0 0-16 0"/>
+                        </svg>
+                )
+                }
+            </summary>
+            <div class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                <h3>{user ? (`Hi, ${user?.name}!`) : ("ログイン")}</h3>
+                <p>{user ? ("データがすべてのデバイスで同期されます") : ("ログインすることでデータがすべてのデバイスで同期されます")}</p>
+                <LoginButton client:load isLoggedIn={isLoggedIn}/>
+                <PasskeyButton client:load isLoggedIn={isLoggedIn}/>
             </div>
-        </div>
-        <form method="dialog" class="modal-backdrop">
-            <button>Close by Click outside the Modal</button>
-        </form>
-    </dialog>
+        </details>
+    </nav>
 </header>
+
+
+<dialog id="options_modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-base-content">学期を選択する</h3>
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+            </form>
+        </div>
+
+        <form method="GET" class="flex flex-col gap-4">
+            <div class="form-control w-full">
+                <label class="label"><span class="label-text font-bold">年度</span></label>
+                <select
+                        name="year"
+                        onchange="this.form.submit()"
+                        class="select select-bordered w-full"
+                >
+                    {SELECTABLE_YEARS.map(y => (
+                            <option value={y} selected={selectedYear === y}>{y}</option>
+                    ))}
+                </select>
+            </div>
+
+            <div class="form-control w-full">
+                <label class="label"><span class="label-text font-bold">学期</span></label>
+                <div class="join rounded-full w-full overflow-hidden border border-base-300">
+                    {SELECTABLE_TERMS.map(t => (
+                            <button
+                                    type="submit"
+                                    name="term"
+                                    value={t.en}
+                                    class={`btn btn-sm join-item flex-1 ${selectedTerm === t.en ? 'btn-primary' : 'btn-ghost'}`}
+                            >
+                                {t.en}
+                            </button>
+                    ))}
+                </div>
+            </div>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>

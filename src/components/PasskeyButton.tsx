@@ -77,6 +77,7 @@ export default function PasskeyButton({isLoggedIn}: { isLoggedIn: boolean }) {
                 <button
                     onClick={handleAddPasskey}
                     disabled={isLoading}
+                    className="btn"
                 >
                     {isLoading ? "Passkeyを登録中..." : "Passkeyを追加"}
                 </button>
@@ -84,6 +85,7 @@ export default function PasskeyButton({isLoggedIn}: { isLoggedIn: boolean }) {
                 <button
                     onClick={handlePasskeySignIn}
                     disabled={isLoading}
+                    className="btn"
                 >
                     {isLoading ? "Passkeyで認証中..." : "Passkeyでログイン"}
                 </button>

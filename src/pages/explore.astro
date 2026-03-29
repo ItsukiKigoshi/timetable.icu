@@ -1,34 +1,24 @@
 ---
-import { drizzle } from 'drizzle-orm/d1';
-import { eq, and, exists, like, or } from 'drizzle-orm';
+import {drizzle} from 'drizzle-orm/d1';
+import {eq, and, exists, like, or} from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import SearchInterface, { type SearchFilters } from '@/components/SearchInterface';
+import SearchInterface, {type SearchFilters} from '@/components/SearchInterface';
 import Layout from "@/layouts/Layout.astro";
-import type { Course, CourseWithSchedules } from "@/db/schema";
-import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time";
+import type {Course, CourseWithSchedules} from "@/db/schema";
+import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time";
 import {env} from "cloudflare:workers";
 
 // 1. ミドルウェアから認証情報と環境変数を取得
-const  user  = Astro.locals.user;
-const db = drizzle(env.timetable_icu, { schema });
+const {user, selectedYear, selectedTerm} = Astro.locals;
+const db = drizzle(env.timetable_icu, {schema});
+
 
 const url = new URL(Astro.request.url);
-const hasYear = url.searchParams.has('year');
-const hasTerm = url.searchParams.has('term');
-
-// デフォルト値が必要な場合にリダイレクト
-if (!hasYear || !hasTerm) {
-    if (!hasYear) url.searchParams.set('year', DEFAULT_YEAR.toString());
-    if (!hasTerm) url.searchParams.set('term', DEFAULT_TERM);
-
-    // 302リダイレクトを実行
-    return Astro.redirect(url.pathname + url.search);
-}
 
 // 2. クエリパラメータからフィルタ条件を構築
 const filters: SearchFilters = {
-    year: url.searchParams.get('year') || DEFAULT_YEAR.toString(),
-    term: (url.searchParams.get('term') || DEFAULT_TERM) as Course['term'],
+    year: selectedYear.toString(),
+    term: selectedTerm,
     day: url.searchParams.get('day') || null,
     period: url.searchParams.get('period') || null,
     isLong: url.searchParams.get('isLong'),
@@ -97,7 +87,7 @@ const [allCategories, results] = await Promise.all([
     // コース一覧 (リレーションを含む)
     db.query.courses.findMany({
         where: and(...conditions),
-        with: { schedules: true },
+        with: {schedules: true},
         limit: 50, // 1ページあたりの件数
         offset: (filters.page - 1) * 50,
     })
@@ -107,7 +97,7 @@ const [allCategories, results] = await Promise.all([
 let userCourseIds: number[] = [];
 if (user) {
     const userCoursesData = await db
-        .select({ id: schema.userCourses.courseId })
+        .select({id: schema.userCourses.courseId})
         .from(schema.userCourses)
         .where(eq(schema.userCourses.userId, user.id))
         .all();
