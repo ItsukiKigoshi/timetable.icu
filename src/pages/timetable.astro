@@ -1,17 +1,16 @@
 ---
 import {drizzle} from "drizzle-orm/d1";
 import * as schema from "@/db/schema.ts";
-import type {Course} from "@/db/schema.ts";
 import Layout from "@/layouts/Layout.astro";
 import {env} from "cloudflare:workers";
-import {DEFAULT_TERM, DEFAULT_YEAR, SELECTABLE_TERMS, SELECTABLE_YEARS} from "@/constants/time.ts";
-import {type ProcessedSchedule, computeProcessedSchedules} from "@/lib/timetable";
 import TimetableInterface from "@/components/TimetableInterface";
+import type {FlatSchedule} from "@/db/schema.ts";
 
 const {user, selectedYear, selectedTerm} = Astro.locals;
-let processedSchedules = [] as ProcessedSchedule[];
 
-// 1. ログイン時のみDBからデータを取得
+// 1. スコープの外側で空配列として初期化しておく
+let flatSchedules = [] as FlatSchedule[];
+
 if (user) {
     const db = drizzle(env.timetable_icu, {schema});
 
@@ -26,7 +25,7 @@ if (user) {
         }
     });
 
-    const flatSchedules = userCoursesWithDetails
+    flatSchedules = userCoursesWithDetails
         .filter(uc => uc.course.year === selectedYear && uc.course.term === selectedTerm)
         .flatMap(uc =>
             uc.course.schedules.map((s) => ({
@@ -36,15 +35,13 @@ if (user) {
                 scheduleId: s.id
             }))
         );
-
-    processedSchedules = computeProcessedSchedules(flatSchedules);
 }
 ---
 
 <Layout title="時間割 | ICUのじかんわり">
     <div class="bg-base-100 overflow-hidden p-2">
         <TimetableInterface
-                processedSchedules={processedSchedules}
+                initialRawSchedules={flatSchedules}
                 user={user}
                 client:load
         />

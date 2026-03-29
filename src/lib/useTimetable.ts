@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import type { FlatSchedule, CourseWithSchedules } from "@/db/schema";
-import { type ProcessedSchedule, computeProcessedSchedules } from "@/lib/timetable";
+import {useEffect, useMemo, useState} from 'react';
+import type {FlatSchedule} from "@/db/schema";
+import {computeProcessedSchedules} from "@/lib/timetable";
 
 export function useTimetable({
                                  initialCourseIds = [],
@@ -8,99 +8,88 @@ export function useTimetable({
                                  user
                              }: {
     initialCourseIds?: number[],
-    initialSchedules?: ProcessedSchedule[],
+    initialSchedules?: FlatSchedule[],
     user: any
 }) {
-    // 状態管理
+    const [rawSchedules, setRawSchedules] = useState<FlatSchedule[]>(initialSchedules);
     const [registeredIds, setRegisteredIds] = useState<Set<number>>(new Set(initialCourseIds));
-    const [schedules, setSchedules] = useState<ProcessedSchedule[]>(initialSchedules);
+    // 読み込み完了状態を管理
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // 初期化: localStorage からデータを復元
+    const displaySchedules = useMemo(() => {
+        return computeProcessedSchedules(rawSchedules);
+    }, [rawSchedules]);
+
+    const updateAll = (nextRaw: FlatSchedule[]) => {
+        setRawSchedules(nextRaw);
+        const nextIds = new Set(nextRaw.map(s => Number(s.courseId || (s as any).id)));
+        setRegisteredIds(nextIds);
+        if (!user) {
+            localStorage.setItem('guest_timetable', JSON.stringify(nextRaw));
+        }
+    };
+
     useEffect(() => {
-        const init = () => {
-            if (user) {
-                // ログインユーザーの場合は SSR の値をセット
-                setRegisteredIds(new Set(initialCourseIds));
-            } else {
-                // ゲストモード: localStorage から直接 ID を抽出する
-                const localData = localStorage.getItem('guest_timetable');
-                if (localData) {
-                    try {
-                        const rawData = JSON.parse(localData) as FlatSchedule[];
-                        // スケジュールが空でも、各オブジェクトの courseId または id を元に Set を作成
-                        // 提供されたデータでは "id" フィールドにコースIDが入っているため、両方チェックする
-                        const ids = new Set(rawData.map(item => Number(item.courseId || (item as any).id)));
-
-                        setRegisteredIds(ids);
-                        setSchedules(computeProcessedSchedules(rawData));
-                    } catch (e) {
-                        console.error("Failed to parse local storage", e);
-                    }
+        if (!user) {
+            const localData = localStorage.getItem('guest_timetable');
+            if (localData) {
+                try {
+                    const rawData = JSON.parse(localData) as FlatSchedule[];
+                    updateAll(rawData);
+                } catch (e) {
+                    console.error("Failed to parse local storage", e);
                 }
             }
-        };
-        init();
-    }, [user, initialCourseIds]);
+        }
+        setIsInitialized(true); // 読み込み（または判定）完了
+    }, [user]);
 
-    const toggleCourse = async (course: CourseWithSchedules) => {
-        const courseId = Number(course.id);
+    const toggleCourse = async (course: any) => {
+        const targetCourseId = Number(course.courseId || course.id);
+        const isRegistered = registeredIds.has(targetCourseId);
 
-        // 常に最新の registeredIds を参照して判定
+        // --- 追加: スケジュールが空の場合は追加させない ---
+        const schedulesToProcess = course.schedules || (course.dayOfWeek ? [course] : []);
+        if (!isRegistered && schedulesToProcess.length === 0) {
+            alert("この授業にはスケジュール情報がないため、時間割に追加できません。");
+            return;
+        }
+
         if (user) {
             try {
                 const res = await fetch('/api/user-courses', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ courseId }),
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({courseId: targetCourseId}),
                 });
                 const data = (await res.json()) as { action: "added" | "removed" };
 
                 if (data.action === "added") {
-                    setRegisteredIds(prev => new Set(prev).add(courseId));
-                    const courseFlatSchedules: FlatSchedule[] = course.schedules.length > 0
-                        ? course.schedules.map(s => ({ ...course, ...s }))
-                        : [{ ...course, dayOfWeek: 'None', period: 0 } as any];
-                    setSchedules(prev => computeProcessedSchedules([...prev, ...courseFlatSchedules]));
+                    const newEntries: FlatSchedule[] = schedulesToProcess.map((s: any) => ({
+                        ...course,
+                        ...s,
+                        courseId: targetCourseId
+                    }));
+                    updateAll([...rawSchedules, ...newEntries]);
                 } else {
-                    setRegisteredIds(prev => {
-                        const next = new Set(prev);
-                        next.delete(courseId);
-                        return next;
-                    });
-                    setSchedules(prev => computeProcessedSchedules(prev.filter(s => (s.courseId || (s as any).id) !== courseId)));
+                    updateAll(rawSchedules.filter(s => Number(s.courseId || (s as any).id) !== targetCourseId));
                 }
             } catch (e) {
                 console.error("Toggle failed", e);
             }
         } else {
-            // --- ゲストモード ---
-            const localRaw = JSON.parse(localStorage.getItem('guest_timetable') || '[]') as FlatSchedule[];
-
-            // IDの存在チェック (数値として比較)
-            const isAlreadyAdded = localRaw.some(item => Number(item.courseId || (item as any).id) === courseId);
-
-            let nextRaw: FlatSchedule[];
-
-            if (isAlreadyAdded) {
-                // 削除処理
-                nextRaw = localRaw.filter(item => Number(item.courseId || (item as any).id) !== courseId);
+            if (isRegistered) {
+                updateAll(rawSchedules.filter(s => Number(s.courseId || (s as any).id) !== targetCourseId));
             } else {
-                // 追加処理
-                const newEntries: FlatSchedule[] = course.schedules.length > 0
-                    ? course.schedules.map(s => ({ ...course, ...s }))
-                    : [{ ...course, dayOfWeek: 'None', period: 0 } as any];
-                nextRaw = [...localRaw, ...newEntries];
+                const newEntries: FlatSchedule[] = schedulesToProcess.map((s: any) => ({
+                    ...course,
+                    ...s,
+                    courseId: targetCourseId
+                }));
+                updateAll([...rawSchedules, ...newEntries]);
             }
-
-            // localStorage を更新
-            localStorage.setItem('guest_timetable', JSON.stringify(nextRaw));
-
-            // State を一括更新
-            const nextIds = new Set(nextRaw.map(item => Number(item.courseId || (item as any).id)));
-            setRegisteredIds(nextIds);
-            setSchedules(computeProcessedSchedules(nextRaw));
         }
     };
 
-    return { registeredIds, schedules, toggleCourse };
+    return {registeredIds, schedules: rawSchedules, displaySchedules, toggleCourse, isInitialized};
 }

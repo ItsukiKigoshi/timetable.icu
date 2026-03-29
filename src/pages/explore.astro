@@ -1,11 +1,10 @@
 ---
 import {drizzle} from 'drizzle-orm/d1';
-import {eq, and, exists, like, or} from 'drizzle-orm';
+import {eq, and, exists, like, or, count} from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import SearchInterface, {type SearchFilters} from '@/components/SearchInterface';
+import SearchInterface, {type SearchFilters} from '@/components/ExploreInterface.tsx';
 import Layout from "@/layouts/Layout.astro";
 import type {Course, CourseWithSchedules} from "@/db/schema";
-import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time";
 import {env} from "cloudflare:workers";
 
 // 1. ミドルウェアから認証情報と環境変数を取得
@@ -14,6 +13,9 @@ const db = drizzle(env.timetable_icu, {schema});
 
 
 const url = new URL(Astro.request.url);
+
+const slotsRaw = url.searchParams.get('slots'); // 例: "Mon-1,Tue-2"
+const slots = slotsRaw ? slotsRaw.split(',') : [];
 
 // 2. クエリパラメータからフィルタ条件を構築
 const filters: SearchFilters = {
@@ -24,6 +26,7 @@ const filters: SearchFilters = {
     isLong: url.searchParams.get('isLong'),
     categoryId: url.searchParams.get('category') || null,
     q: url.searchParams.get('q') || '',
+    slots: slots,
     page: Math.max(1, parseInt(url.searchParams.get('page') || '1')),
 };
 
@@ -62,36 +65,46 @@ if (filters.categoryId) {
 }
 
 // 曜日・時限の絞り込み (EXISTS句でScheduleテーブルをチェック)
-if (filters.day || filters.period) {
-    let schedConditions = [eq(schema.courseSchedules.courseId, schema.courses.id)];
+// 1つだけのときはOR, 2つ以上はAND (空きコマにハマる授業を検索するため)
+if (slots.length > 0) {
+    slots.forEach(slot => {
+        const [day, periodStr] = slot.split('-');
+        const period = parseInt(periodStr);
 
-    if (filters.day) {
-        schedConditions.push(eq(schema.courseSchedules.dayOfWeek, filters.day as any));
-    }
-    if (filters.period) {
-        schedConditions.push(eq(schema.courseSchedules.period, parseInt(filters.period)));
-    }
-
-    conditions.push(exists(
-        db.select()
-            .from(schema.courseSchedules)
-            .where(and(...schedConditions))
-    ));
+        conditions.push(
+            exists(
+                db.select()
+                    .from(schema.courseSchedules)
+                    .where(and(
+                        eq(schema.courseSchedules.courseId, schema.courses.id),
+                        eq(schema.courseSchedules.dayOfWeek, day as any),
+                        eq(schema.courseSchedules.period, period)
+                    ))
+            )
+        );
+    });
 }
 
 // 4. データ取得 (並列実行で高速化)
-const [allCategories, results] = await Promise.all([
-    // カテゴリ一覧 (プルダウン用)
+const [allCategories, results, [{total}]] = await Promise.all([
+    // 1. カテゴリ一覧
     db.select().from(schema.categories).all(),
 
-    // コース一覧 (リレーションを含む)
+    // 2. 現在のページのデータ (limit/offsetあり)
     db.query.courses.findMany({
         where: and(...conditions),
         with: {schedules: true},
-        limit: 50, // 1ページあたりの件数
-        offset: (filters.page - 1) * 50,
-    })
+        limit: 20,
+        offset: (filters.page - 1) * 20,
+    }),
+
+    // 3. 検索条件に一致する「全件数」を取得
+    db.select({total: count()})
+        .from(schema.courses)
+        .where(and(...conditions))
 ]);
+
+const totalCount = total;
 
 // 5. ログイン済みの場合、ユーザーが既に登録しているコースIDを取得
 let userCourseIds: number[] = [];
@@ -111,7 +124,6 @@ Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
 <Layout title="授業検索 | あいしーゆーのじかんわり">
     <main class="max-w-7xl mx-auto px-4 py-6">
         <h1 class="text-2xl font-bold mb-6">授業検索</h1>
-
         <SearchInterface
                 client:load
                 initialResults={results as CourseWithSchedules[]}
@@ -120,6 +132,7 @@ Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
                 categories={allCategories}
                 initialUserCourseIds={userCourseIds}
                 user={user}
+                totalCount={totalCount}
         />
     </main>
 </Layout>
