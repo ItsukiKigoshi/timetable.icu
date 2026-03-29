@@ -123,9 +123,10 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                             <div className="absolute inset-0 bg-primary/10"/>
                             <div
                                 className="relative p-0.5 h-full flex flex-col justify-center items-center text-center">
-                                <h1 className="text-[10px] sm:text-xs font-bold line-clamp-2 text-primary leading-tight">
+                                <h1 className="text-md sm:text-xs font-bold line-clamp-2 text-primary leading-tight">
                                     {sched.titleJa}
                                 </h1>
+                                <p className="text-xs">{sched.startTime}-{sched.endTime}</p>
                             </div>
                         </div>
                     ))}
