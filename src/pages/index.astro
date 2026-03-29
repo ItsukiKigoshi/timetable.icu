@@ -1,11 +1,62 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Logo from "@/assets/Logo.svg";
 ---
 <Layout title="ようこそ! | ICUのじかんわり">
-    <h1>ICUのじかんわりへようこそ！</h1>
-    <h2>できること</h2>
-    <ul>
-        <li>ログインすれば, どのデバイスでも時間割を見られます</li>
-        <li>Long 4, 5, 6, 7に対応</li>
-    </ul>
+    <div class="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div class="hero bg-base-200 w-fit p-4 rounded-2xl">
+            <div class="hero-content flex-col lg:flex-row">
+                <Logo width={256} height={256}/>
+                <div class="flex flex-col gap-6">
+                    <h1 class="text-5xl font-bold">ICUのじかんわり<span class="text-3xl">へようこそ！</span></h1>
+                    <a href="/explore">
+                        <button class="btn btn-primary" href="/explore">Explore Courses</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <ul class="list ">
+            <li class="p-4 pb-2 textmds opacity-60 tracking-wide">このアプリでできること</li>
+
+            <li class="list-row">
+                <div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-cloud-sync-icon lucide-cloud-sync">
+                            <path d="m17 18-1.535 1.605a5 5 0 0 1-8-1.5"/>
+                            <path d="M17 22v-4h-4"/>
+                            <path d="M20.996 15.251A4.5 4.5 0 0 0 17.495 8h-1.79a7 7 0 1 0-12.709 5.607"/>
+                            <path d="M7 10v4h4"/>
+                            <path d="m7 14 1.535-1.605a5 5 0 0 1 8 1.5"/>
+                        </svg>
+                    </div>
+                    <div>同期</div>
+                    <div class="text-xs uppercase font-semibold opacity-60">Googleでログインすれば,
+                        どのデバイスでも時間割を見られます
+                    </div>
+                </div>
+            </li>
+
+            <li class="list-row">
+                <div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-calendar-check2-icon lucide-calendar-check-2">
+                            <path d="M8 2v4"/>
+                            <path d="M16 2v4"/>
+                            <path d="M21 14V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"/>
+                            <path d="M3 10h18"/>
+                            <path d="m16 20 2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <div class="lg font-bold">ICUだもん!</div>
+                    <div class="md font-semibold opacity-60">Long 4, 5, 6, 7に対応</div>
+                </div>
+            </li>
+
+
+        </ul>
+    </div>
 </Layout>

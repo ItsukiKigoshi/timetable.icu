@@ -77,16 +77,32 @@ export default function PasskeyButton({isLoggedIn}: { isLoggedIn: boolean }) {
                 <button
                     onClick={handleAddPasskey}
                     disabled={isLoading}
-                    className="btn"
+                    className="btn w-full"
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         className="lucide lucide-key-round-icon lucide-key-round">
+                        <path
+                            d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/>
+                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+                    </svg>
                     {isLoading ? "Passkeyを登録中..." : "Passkeyを追加"}
                 </button>
             ) : (
                 <button
                     onClick={handlePasskeySignIn}
                     disabled={isLoading}
-                    className="btn"
+                    className="btn bg-white text-black border-[#e5e5e5] w-full"
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         className="lucide lucide-user-key-icon lucide-user-key">
+                        <path d="M20 11v6"/>
+                        <path d="M20 13h2"/>
+                        <path d="M3 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 2.072.578"/>
+                        <circle cx="10" cy="7" r="4"/>
+                        <circle cx="20" cy="19" r="2"/>
+                    </svg>
                     {isLoading ? "Passkeyで認証中..." : "Passkeyでログイン"}
                 </button>
             )}
