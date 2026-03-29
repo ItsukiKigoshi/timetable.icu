@@ -1,5 +1,5 @@
-import type { FlatSchedule } from "@/db/schema.ts";
-import { END_TIME, PERIODS, START_TIME } from "@/constants/time.ts";
+import type {FlatSchedule} from "@/db/schema.ts";
+import {END_TIME, PERIODS, START_TIME} from "@/constants/time.ts";
 import type {User} from "better-auth";
 import {timeToMin} from "@/lib/timetable.ts";
 import {useTimetable} from "@/lib/useTimetable.ts";
@@ -22,9 +22,9 @@ export interface TimetableProps {
 }
 
 
-export default function TimetableInterface({ processedSchedules, user }: TimetableProps) {
+export default function TimetableInterface({processedSchedules, user}: TimetableProps) {
     // フックの戻り値から schedules を抽出
-    const { schedules } = useTimetable({
+    const {schedules} = useTimetable({
         initialSchedules: processedSchedules,
         initialCourseIds: Array.from(new Set(processedSchedules.map(s => s.courseId))),
         user
@@ -39,7 +39,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
             <div
                 key={dayOfWeek}
                 className="flex-1 border-r relative"
-                style={{ height: totalHeight + HEADER_HEIGHT }}
+                style={{height: totalHeight + HEADER_HEIGHT}}
             >
                 {/* 背景グリッド描画 */}
                 {PERIODS.map(p => (
@@ -56,7 +56,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                 {/* 曜日ヘッダー */}
                 <div
                     className="text-center border-b text-[12px] font-bold"
-                    style={{ height: HEADER_HEIGHT, lineHeight: `${HEADER_HEIGHT}px` }}
+                    style={{height: HEADER_HEIGHT, lineHeight: `${HEADER_HEIGHT}px`}}
                 >
                     {dayOfWeek}
                 </div>
@@ -71,7 +71,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                     return (
                         <div
                             key={`${sched.courseCode}-${i}`}
-                            className="card card-xs card-border absolute z-10 flex flex-col overflow-hidden box-border bg-base-100 w-96 shadow-sm"
+                            className="card card-xs card-border absolute z-1 flex flex-col overflow-hidden box-border bg-base-100 w-96 shadow-sm"
                             style={{
                                 top: `${top}px`,
                                 height: `${height - 1}px`,
@@ -79,10 +79,10 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                                 width: `${width}%`,
                             }}
                         >
-                                <div className="card-body">
-                                    <h1 className="card-title line-clamp-2">{sched.titleJa}</h1>
-                                    <p>{sched.startTime}-{sched.endTime}</p>
-                                </div>
+                            <div className="card-body">
+                                <h1 className="card-title line-clamp-2">{sched.titleJa}</h1>
+                                <p>{sched.startTime}-{sched.endTime}</p>
+                            </div>
 
                         </div>
                     );
@@ -97,7 +97,7 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
             <div className="w-16.25 border-r relative">
                 <div
                     className="border-b"
-                    style={{ height: HEADER_HEIGHT }}
+                    style={{height: HEADER_HEIGHT}}
                 />
                 {PERIODS.map(p => {
                     const top = timeToMin(p.start) * MIN_HEIGHT + HEADER_HEIGHT;
@@ -106,9 +106,9 @@ export default function TimetableInterface({ processedSchedules, user }: Timetab
                         <div
                             key={p.label}
                             className="absolute w-full flex flex-col items-center box-border"
-                            style={{ top: `${top}px`, height: `${height}px` }}
+                            style={{top: `${top}px`, height: `${height}px`}}
                         >
-                            <div className="text-[10px] font-bold absolute top-0 px-0.5 z-10">
+                            <div className="text-[10px] font-bold absolute top-0 px-0.5 z-1">
                                 {p.start}
                             </div>
                             <div className="flex items-center justify-center h-full w-full">

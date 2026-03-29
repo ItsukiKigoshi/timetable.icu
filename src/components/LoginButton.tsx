@@ -36,6 +36,7 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
                 <button
                     onClick={handleLogout}
                     disabled={isLoading}
+                    className="btn"
                 >
                     {isLoading ? "ログアウト中..." : "ログアウト"}
                 </button>
@@ -43,6 +44,7 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
                 <button
                     onClick={handleGoogleLogin}
                     disabled={isLoading}
+                    className="btn"
                 >
                     {isLoading ? "Googleへ接続中..." : "Googleでログイン"}
                 </button>
