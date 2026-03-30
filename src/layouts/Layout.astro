@@ -12,10 +12,9 @@ const {
     description = "ICUのじかんわりで，複雑な時間割・履修登録もお手の物! 公式データから作成した授業一覧・検索機能に，Long 4対応の時間割．これであなたもICUアカデミックプランニングマスター！",
     ogImage = "https://timetable-icu.itsukikigoshi.workers.dev/web-app-manifest-512x512.png",
     ogType = "website",
-    showHeader = true,
+    isLanding = false,
 } = Astro.props;
 ---
-
 <!doctype html>
 <html lang="ja">
     <head>
@@ -69,7 +68,7 @@ const {
             >
         </div>
         {
-            dbError && (
+            (!isLanding && dbError) && (
                 <div class="p-4 container mx-auto">
                     <div role="alert" class="alert alert-warning shadow-lg">
                         <svg
@@ -96,7 +95,7 @@ const {
                 </div>
             )
         }
-        {showHeader && <Header user={user} />}
+        {!isLanding && <Header user={user} />}
         <main class="grow">
             <slot />
         </main>
