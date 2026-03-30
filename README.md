@@ -141,6 +141,7 @@
     - [ ] ポチポチして利用規約つくれるサイト？
   - [ ] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
     - [ ] [Google Search Console](https://search.google.com/search-console)
+  - [ ] ドメイン購入しないと次に進めないかも？
 - [ ] 寄付を受ける
   - [ ] OpenCollective, Stripe
 - [ ] 退会方法を設ける
