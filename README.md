@@ -102,27 +102,29 @@
     - [x] ブラウザ保存->Pythonパース？
     - [x] Pythonで完結
     - [ ] 定期的に自動で: GitHub CI/CD
-- [x] 保存機能
-    - [x] Drizzle ORM
-    - [x] Schema定義
-    - [x] D1 Deploy
-    - [x] 未ログインユーザはLocalStorageへ
-        - [x] LocalStorageがSaveされたときに通知
-- [x] Calendar形式で表示
-    - [x] Termセレクター
-    - [ ] 表示をSophisticate
-        - [ ] クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？
-        - [ ] 開始時間->CorseID タイトル->場所かな
-    - [ ] 理系の選択式の演習UI: 優先度低し
-- [ ] List形式で表示
-- [ ] Google Calendar / .icsエクスポート？
-    - [ ] 授業開始日と終了日
-    - [ ] 休講日を除く
+- [ ] 時間割
+  - [x] Calendar形式で表示
+      - [x] Termセレクター
+      - [ ] 表示をSophisticate
+          - [ ] クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？
+          - [ ] 開始時間->CorseID タイトル->場所かな
+      - [ ] 理系の選択式の演習UI: 優先度低し
+  - [x] 保存機能
+      - [x] Drizzle ORM
+      - [x] Schema定義
+      - [x] D1 Deploy
+      - [x] 未ログインユーザはLocalStorageへ
+          - [x] LocalStorageがSaveされたときに通知
+  - [ ] List形式で表示
+  - [ ] Google Calendar / .icsエクスポート？
+      - [ ] 授業開始日と終了日
+      - [ ] 休講日を除く
 - [x] 授業検索
+  - **キーワード検索にCourse IDを含む!**
+  - [x] メジャーとそれ以外を分離, もしくはタグ形式で
+  - [ ] Issue: Co-Listに非対応
   ~~- [ ] コマをクリックでその時間の授業を検索~~
-    - [x] メジャーとそれ以外を分離, もしくはタグ形式で
-    - [ ] Issue: Co-Listに非対応
-      ~~- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
+  ~~- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
 - [ ] **体育にも対応した単位数表示**
   - [ ] DB
     - [ ] Schema追加
@@ -218,7 +220,7 @@
 - [ ] Known Issues: リリースまでに反映もしくは注意書き
     - [ ] 退会方法を設ける
     - [ ] Co-List非対応: ehandbookを参照しながら解説
-    - [ ] スケジュール後がない授業を追加できない
+    - [ ] スケジュールがない授業を追加できない
 - [ ] SEO
     - [ ] meta description
     - [ ] タイトルつける
