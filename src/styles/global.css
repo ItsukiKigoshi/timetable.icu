@@ -1,4 +1,29 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-    themes: light --default, dark --prefersdark;
+
+@plugin "daisyui";
+/*Dark Theme*/
+@plugin "daisyui/theme" {
+    name: "timetableicutheme";
+    default: true; /* set as default */
+    prefersdark: false; /* set as default dark mode (prefers-color-scheme:dark) */
+    color-scheme: dark; /* color of browser-provided UI */
+    --color-base-100: oklch(100% 0 0);
+    --color-base-200: oklch(98% 0 0);
+    --color-base-300: oklch(95% 0 0);
+    --color-base-content: oklch(21% 0.006 285.885);
+    --color-primary: #005abb;
+    --color-primary-content: oklch(93% 0.034 272.788);
+}
+/*Light theme*/
+@plugin "daisyui/theme" {
+    name: "timetableicutheme";
+    default: true; /* set as default */
+    prefersdark: true; /* set as default dark mode (prefers-color-scheme:dark) */
+    color-scheme: light; /* color of browser-provided UI */
+    --color-base-100: oklch(25.33% 0.016 252.42);
+    --color-base-200: oklch(23.26% 0.014 253.1);
+    --color-base-300: oklch(21.15% 0.012 254.09);
+    --color-base-content: oklch(97.807% 0.029 256.847);
+    --color-primary: #005abb;
+    --color-primary-content: oklch(93% 0.034 272.788);
 }
