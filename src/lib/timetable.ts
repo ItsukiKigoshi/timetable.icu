@@ -1,5 +1,7 @@
-import type { FlatSchedule } from "@/db/schema";
-import { START_TIME, END_TIME } from "@/constants/time";
+// TODO - useTimetable.tsとともに最適化
+
+import type {FlatSchedule} from "@/db/schema";
+import {END_TIME, SELECTABLE_DAYS, START_TIME} from "@/constants/time";
 
 // Hour to Minute
 export const timeToMin = (timeStr: string) => {
@@ -19,9 +21,8 @@ export interface ProcessedSchedule extends FlatSchedule {
 // FlatSchedule -> ProcessedSchedule (with Canvas Setting)
 export function computeProcessedSchedules(schedules: FlatSchedule[]): ProcessedSchedule[] {
     const allProcessed: ProcessedSchedule[] = [];
-    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    DAYS.forEach(day => {
+    SELECTABLE_DAYS.forEach(day => {
         // 1. 抽出・ソート
         const daySchedules = schedules
             .filter(s => s.dayOfWeek === day)
@@ -38,12 +39,17 @@ export function computeProcessedSchedules(schedules: FlatSchedule[]): ProcessedS
             if (target) {
                 target.endTime = current.endTime;
             } else {
-                merged.push({ ...current });
+                merged.push({...current});
             }
         });
 
         // 3. 衝突・列計算
-        const tempWithCol: (FlatSchedule & { startMin: number; endMin: number; col: number; displayEndMin: number })[] = [];
+        const tempWithCol: (FlatSchedule & {
+            startMin: number;
+            endMin: number;
+            col: number;
+            displayEndMin: number
+        })[] = [];
         merged.forEach(sched => {
             const startMin = timeToMin(sched.startTime);
             const endMin = timeToMin(sched.endTime);
@@ -56,7 +62,7 @@ export function computeProcessedSchedules(schedules: FlatSchedule[]): ProcessedS
             )) {
                 col++;
             }
-            tempWithCol.push({ ...sched, startMin, endMin, displayEndMin, col });
+            tempWithCol.push({...sched, startMin, endMin, displayEndMin, col});
         });
 
         // 4. 幅計算
@@ -65,7 +71,7 @@ export function computeProcessedSchedules(schedules: FlatSchedule[]): ProcessedS
                 Math.max(sched.startMin, other.startMin) < Math.min(sched.displayEndMin, other.displayEndMin)
             );
             const groupMaxCols = Math.max(...group.map(c => c.col)) + 1;
-            allProcessed.push({ ...sched, groupMaxCols });
+            allProcessed.push({...sched, groupMaxCols});
         });
     });
 

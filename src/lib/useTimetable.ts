@@ -1,3 +1,5 @@
+// TODO - timetable.tsとともに最適化
+
 import {useEffect, useMemo, useState} from 'react';
 import type {FlatSchedule} from "@/db/schema";
 import {computeProcessedSchedules} from "@/lib/timetable";

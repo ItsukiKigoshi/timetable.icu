@@ -16,6 +16,11 @@ export interface SearchFilters {
     page: number;
 }
 
+interface SearchResponse {
+    results: CourseWithSchedules[];
+    hasNextPage: boolean; // totalCount から変更
+}
+
 interface Props {
     initialResults: CourseWithSchedules[];
     filters: SearchFilters;
@@ -23,7 +28,7 @@ interface Props {
     categories: Categories[];
     initialUserCourseIds: number[];
     user?: any;
-    totalCount: number;
+    hasNextPage: boolean;
 }
 
 export default function ExploreInterface({
@@ -32,11 +37,11 @@ export default function ExploreInterface({
                                              categories,
                                              initialUserCourseIds,
                                              user,
-                                             totalCount: initialTotal
+                                             hasNextPage: initialHasNext
                                          }: Props) {
     // 1. 状態管理
     const [courses, setCourses] = useState<CourseWithSchedules[]>(initialResults);
-    const [totalCount, setTotalCount] = useState(initialTotal);
+    const [hasNextPage, setHasNextPage] = useState(initialHasNext);
     const [filters, setFilters] = useState<SearchFilters>(initialFilters);
     const [isFetching, setIsFetching] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
@@ -45,11 +50,6 @@ export default function ExploreInterface({
         initialCourseIds: initialUserCourseIds,
         user
     });
-
-    interface SearchResponse {
-        results: CourseWithSchedules[];
-        totalCount: number;
-    }
 
     // 2. APIフェッチ関数
     const fetchData = async (nextFilters: SearchFilters) => {
@@ -68,7 +68,7 @@ export default function ExploreInterface({
             const data = (await res.json()) as SearchResponse;
 
             setCourses(data.results);
-            setTotalCount(data.totalCount);
+            setHasNextPage(data.hasNextPage);
         } catch (e) {
             console.error("Failed to fetch courses:", e);
         } finally {
@@ -129,7 +129,6 @@ export default function ExploreInterface({
 
     const majorCategories = categories.filter(c => c.id?.startsWith('M') && (c.id !== "MSTH"));
     const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && (c.id !== "MSTH")));
-    const totalPages = Math.ceil(totalCount / 20);
 
     return (
         <div className="space-y-6">
@@ -272,18 +271,28 @@ export default function ExploreInterface({
                 </form>
             </dialog>
 
-            {/*ページ*/}
-            <div className="flex flex-col items-center gap-4">
-                <div className="join">
-                    <button className="join-item btn" disabled={filters.page <= 1}
-                            onClick={() => update({page: filters.page - 1})}>«
-                    </button>
-                    <button className="join-item btn no-animation">Page {filters.page} / {totalPages}</button>
-                    <button className="join-item btn" disabled={filters.page >= totalPages}
-                            onClick={() => update({page: filters.page + 1})}>»
-                    </button>
-                </div>
+
+            {/* ページネーション上 */}
+            <div className="join">
+                <button
+                    className="join-item btn"
+                    disabled={filters.page <= 1}
+                    onClick={() => update({page: filters.page - 1})}
+                >
+                    «
+                </button>
+                <button className="join-item btn no-animation">
+                    Page {filters.page}
+                </button>
+                <button
+                    className="join-item btn"
+                    disabled={!hasNextPage} // 次のページがあるかどうかで判定
+                    onClick={() => update({page: filters.page + 1})}
+                >
+                    »
+                </button>
             </div>
+
             {/* 結果表示セクション */}
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
@@ -389,18 +398,25 @@ export default function ExploreInterface({
                 )}
             </div>
 
-            {/* ページネーション */}
-            <div className="flex flex-col items-center gap-4 py-6 mb-6">
-                <div className="join">
-                    <button className="join-item btn" disabled={filters.page <= 1}
-                            onClick={() => update({page: filters.page - 1})}>«
-                    </button>
-                    <button className="join-item btn no-animation">Page {filters.page} / {totalPages}</button>
-                    <button className="join-item btn" disabled={filters.page >= totalPages}
-                            onClick={() => update({page: filters.page + 1})}>»
-                    </button>
-                </div>
-                <div className="text-xs text-base-content/50">Total: {totalCount} items</div>
+            {/* ページネーション下 */}
+            <div className="join">
+                <button
+                    className="join-item btn"
+                    disabled={filters.page <= 1}
+                    onClick={() => update({page: filters.page - 1})}
+                >
+                    «
+                </button>
+                <button className="join-item btn no-animation">
+                    Page {filters.page}
+                </button>
+                <button
+                    className="join-item btn"
+                    disabled={!hasNextPage} // 次のページがあるかどうかで判定
+                    onClick={() => update({page: filters.page + 1})}
+                >
+                    »
+                </button>
             </div>
         </div>
     );

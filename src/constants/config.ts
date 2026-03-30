@@ -1,0 +1,1 @@
+export const limitPerPage = 20; // 検索画面における1ページあたりの件数

@@ -114,11 +114,11 @@
     - [ ] 単位数表示（体育は？）
 - [ ] List形式で表示
 - [x] 授業検索
-  ~~- [ ] コマをクリックでその時間の授業を検索 ~~
+  ~~- [ ] コマをクリックでその時間の授業を検索~~
     - [x] メジャーとそれ以外を分離, もしくはタグ形式で
     - [ ] Issue: Co-Listに非対応
     - [ ] 単位数表示（体育は？）
-- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)
+      ~~- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
 - [ ] 独自スケジュール
     - [x] DB定義
     - [ ] 追加方法
@@ -136,7 +136,7 @@
     - [ ] useTimetableの挙動: そもそもHooks必要?
     - [ ] WorkersならPreactの方が良い？
 - [ ] Design
-    - [ ] カラーテーマ当てる
+    - [x] カラーテーマ当てる
     - [ ] コンポーネントの丸みなど調整する
     - [ ] AIみの排除
         - [ ] グラデーション
@@ -148,7 +148,7 @@
             - [ ] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
             - [ ] landingpageのみSSG?
 - [ ] Landing Page
-    - [ ] 出来ることとできないことを明示
+    - [x] 出来ることとできないことを明示
     - [ ] 比較
         - [ ] 対象
             - [ ] Penmark
@@ -177,6 +177,7 @@
             - [ ] 他Twinte参照
     - [ ] 会計開示
         - [ ] 寄付受付
+            - [ ] OpenCollective, Stripe
     - [ ] Members
         - [ ] 自己紹介
         - [ ] リンク
@@ -193,12 +194,10 @@
             - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
     - [ ] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
         - [ ] [Google Search Console](https://search.google.com/search-console)
-    - [ ] ドメイン購入しないと次に進めないかも？
-- [ ] 寄付を受ける
-    - [ ] OpenCollective, Stripe
 - [ ] Known Issues: リリースまでに反映もしくは注意書き
     - [ ] 退会方法を設ける
     - [ ] Co-List非対応: ehandbookを参照しながら解説
+    - [ ] スケジュール後がない授業を追加できない
 - [ ] SEO
     - [ ] meta description
     - [ ] タイトルつける
@@ -211,6 +210,7 @@
 - [ ] リンク
     - [ ] Grad Reqへのリンク
     - [ ] 4年間の全体像を考える
+- [ ] 表示するコマが無いときに「Explore」へ促す
 - [ ] PR
     - [ ] Zenn記事
         - [ ] Drizzle, BetterAuth, D1

@@ -1,23 +1,20 @@
 ---
 import {drizzle} from 'drizzle-orm/d1';
-import {eq, and, exists, like, or, count} from 'drizzle-orm';
+import {eq, and, exists, like, or} from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import SearchInterface, {type SearchFilters} from '@/components/ExploreInterface.tsx';
+import ExploreInterface, {type SearchFilters} from '@/components/ExploreInterface.tsx';
 import Layout from "@/layouts/Layout.astro";
 import type {Course, CourseWithSchedules} from "@/db/schema";
 import {env} from "cloudflare:workers";
+import {limitPerPage} from "@/constants/config.ts";
 
-// 1. ミドルウェアから認証情報と環境変数を取得
 const {user, selectedYear, selectedTerm} = Astro.locals;
 const db = drizzle(env.timetable_icu, {schema});
 
-
 const url = new URL(Astro.request.url);
-
-const slotsRaw = url.searchParams.get('slots'); // 例: "Mon-1,Tue-2"
+const slotsRaw = url.searchParams.get('slots');
 const slots = slotsRaw ? slotsRaw.split(',') : [];
 
-// 2. クエリパラメータからフィルタ条件を構築
 const filters: SearchFilters = {
     year: selectedYear.toString(),
     term: selectedTerm,
@@ -30,33 +27,23 @@ const filters: SearchFilters = {
     page: Math.max(1, parseInt(url.searchParams.get('page') || '1')),
 };
 
-// 3. 検索条件 (WHERE句) の組み立て
 let conditions = [];
 
-if (filters.year) {
-    conditions.push(eq(schema.courses.year, parseInt(filters.year)));
-}
+if (filters.year) conditions.push(eq(schema.courses.year, parseInt(filters.year)));
+if (filters.term) conditions.push(eq(schema.courses.term, filters.term as Course['term']));
 
-if (filters.term) {
-    conditions.push(eq(schema.courses.term, filters.term as Course['term']));
-}
-// キーワード検索 (日本語名、英語名、教員名)
 if (filters.q) {
     const searchVal = `%${filters.q}%`;
-    conditions.push(
-        or(
-            like(schema.courses.titleJa, searchVal),
-            like(schema.courses.titleEn, searchVal),
-            like(schema.courses.instructor, searchVal)
-        )
-    );
+    conditions.push(or(
+        like(schema.courses.titleJa, searchVal),
+        like(schema.courses.titleEn, searchVal),
+        like(schema.courses.instructor, searchVal)
+    ));
 }
 
-// カテゴリ絞り込み (EXISTS句で関連テーブルをチェック)
 if (filters.categoryId) {
     conditions.push(exists(
-        db.select()
-            .from(schema.courseToCategories)
+        db.select().from(schema.courseToCategories)
             .where(and(
                 eq(schema.courseToCategories.categoryId, filters.categoryId),
                 eq(schema.courseToCategories.courseId, schema.courses.id)
@@ -64,49 +51,35 @@ if (filters.categoryId) {
     ));
 }
 
-// 曜日・時限の絞り込み (EXISTS句でScheduleテーブルをチェック)
-// 1つだけのときはOR, 2つ以上はAND (空きコマにハマる授業を検索するため)
 if (slots.length > 0) {
     slots.forEach(slot => {
         const [day, periodStr] = slot.split('-');
-        const period = parseInt(periodStr);
-
-        conditions.push(
-            exists(
-                db.select()
-                    .from(schema.courseSchedules)
-                    .where(and(
-                        eq(schema.courseSchedules.courseId, schema.courses.id),
-                        eq(schema.courseSchedules.dayOfWeek, day as any),
-                        eq(schema.courseSchedules.period, period)
-                    ))
-            )
-        );
+        conditions.push(exists(
+            db.select().from(schema.courseSchedules)
+                .where(and(
+                    eq(schema.courseSchedules.courseId, schema.courses.id),
+                    eq(schema.courseSchedules.dayOfWeek, day as any),
+                    eq(schema.courseSchedules.period, parseInt(periodStr))
+                ))
+        ));
     });
 }
 
-// 4. データ取得 (並列実行で高速化)
-const [allCategories, results, [{total}]] = await Promise.all([
-    // 1. カテゴリ一覧
+// 4. データ取得（countクエリを削除）
+const [allCategories, rawResults] = await Promise.all([
     db.select().from(schema.categories).all(),
-
-    // 2. 現在のページのデータ (limit/offsetあり)
     db.query.courses.findMany({
         where: and(...conditions),
         with: {schedules: true},
-        limit: 20,
-        offset: (filters.page - 1) * 20,
+        limit: limitPerPage + 1, // 1件多く取得
+        offset: (filters.page - 1) * limitPerPage,
     }),
-
-    // 3. 検索条件に一致する「全件数」を取得
-    db.select({total: count()})
-        .from(schema.courses)
-        .where(and(...conditions))
 ]);
 
-const totalCount = total;
+// 次のページがあるか判定し、結果を20件に切り出す
+const hasNextPage = rawResults.length > limitPerPage;
+const results = hasNextPage ? rawResults.slice(0, limitPerPage) : rawResults;
 
-// 5. ログイン済みの場合、ユーザーが既に登録しているコースIDを取得
 let userCourseIds: number[] = [];
 if (user) {
     const userCoursesData = await db
@@ -117,13 +90,12 @@ if (user) {
     userCourseIds = userCoursesData.map(uc => uc.id);
 }
 
-// レスポンスヘッダーの設定
 Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
 ---
 
 <Layout title="授業検索 | あいしーゆーのじかんわり">
     <main class="max-w-7xl mx-auto px-4 py-6">
-        <SearchInterface
+        <ExploreInterface
                 client:load
                 initialResults={results as CourseWithSchedules[]}
                 filters={filters}
@@ -131,7 +103,7 @@ Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
                 categories={allCategories}
                 initialUserCourseIds={userCourseIds}
                 user={user}
-                totalCount={totalCount}
+                hasNextPage={hasNextPage}
         />
     </main>
 </Layout>

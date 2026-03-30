@@ -1,8 +1,9 @@
 import type {APIRoute} from 'astro';
 import {drizzle} from 'drizzle-orm/d1';
-import {and, count, eq, exists, like, or} from 'drizzle-orm';
+import {and, eq, exists, like, or} from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import {env} from "cloudflare:workers";
+import {limitPerPage} from "@/constants/config.ts";
 
 export const GET: APIRoute = async ({request}) => {
     const db = drizzle(env.timetable_icu, {schema});
@@ -15,7 +16,6 @@ export const GET: APIRoute = async ({request}) => {
     const categoryId = url.searchParams.get('categoryId');
     const slots = url.searchParams.get('slots')?.split(',').filter(Boolean) || [];
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
-    const limit = 20;
 
     // 検索条件の構築
     let conditions = [];
@@ -57,17 +57,21 @@ export const GET: APIRoute = async ({request}) => {
     }
 
     // データ取得
-    const [results, [{total}]] = await Promise.all([
-        db.query.courses.findMany({
-            where: and(...conditions),
-            with: {schedules: true},
-            limit,
-            offset: (page - 1) * limit,
-        }),
-        db.select({total: count()}).from(schema.courses).where(and(...conditions))
-    ]);
+    const results = await db.query.courses.findMany({
+        where: and(...conditions),
+        with: {schedules: true},
+        limit: limitPerPage + 1, // 次のページがあるか確認するために1件多く取る
+        offset: (page - 1) * limitPerPage,
+    });
 
-    return new Response(JSON.stringify({results, totalCount: total}), {
+    const hasNextPage = results.length > limitPerPage;
+    // 実際に返すのは20件のみ
+    const data = hasNextPage ? results.slice(0, limitPerPage) : results;
+
+    return new Response(JSON.stringify({
+        results: data,
+        hasNextPage
+    }), {
         headers: {"Content-Type": "application/json"}
     });
 };
