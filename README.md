@@ -85,6 +85,7 @@
 
 - [Hupass](https://hupass.hu-jagajaga.com/)
 - [現在の時間割](https://www.icu.ac.jp/news/2406181000.html)
+- [Webサービス公開前のチェックリスト](https://zenn.dev/catnose99/articles/547cbf57e5ad28)
 
 ---
 
@@ -128,9 +129,31 @@
     - [ ] 移行機能 (直接新アプリのAPIを叩く?)
 - [ ] Refactor
     - [ ] Componentがごちゃごちゃしている．絶対必要!
+    - [ ] Long4まわりの表示をSophisticate, refactor
+    - [ ] useTimetableの挙動: そもそもHooks必要?
     - [ ] WorkersならPreactの方が良い？
+- [ ] Design
+  - [ ] カラーテーマ当てる
+  - [ ] コンポーネントの丸みなど調整する
+- [ ] Google OAuthをpublesh
+  - [ ] Privacy Policy
+  - [ ] 利用規約
+    - [ ] ポチポチして利用規約つくれるサイト？
+- [ ] 寄付を受ける
+  - [ ] OpenCollective, Stripe
+- [ ] 退会方法を設ける
+- [ ] SEO
+  - [ ] meta description
+  - [ ] タイトルつける
+  - [ ] OGP
+    - og:title
+    - og:description
+    - og:url
+    - og:image
 - [x] Deploy to Workers
 - [ ] PR
+  - [ ] Zenn記事
+  - [ ] Weekly Giant寄稿
 
 ## 課題
 
