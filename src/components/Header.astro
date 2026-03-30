@@ -5,7 +5,8 @@ import SyncHandler from "./SyncHandler";
 import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 import Logo from '@/assets/Logo.svg';
 
-const {user, selectedYear, selectedTerm} = Astro.locals;
+const locals = Astro.locals ?? {};
+const {user, selectedYear, selectedTerm, dbError} = locals;
 const isLoggedIn = !!user;
 ---
 <header class="navbar sticky top-0 z-100 bg-base-100 shadow-sm">
@@ -50,50 +51,52 @@ const isLoggedIn = !!user;
     <nav class="navbar-end">
         {isLoggedIn &&
                 <SyncHandler client:load isLoggedIn={isLoggedIn}/>}
+        {!dbError &&
 
-        <div class="relative inline-block ml-auto">
-            <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
+                <div class="relative inline-block ml-auto">
+                    <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
 
-            <label
-                    for="user-menu-toggle"
-                    class="fixed inset-0 h-screen w-screen cursor-default hidden peer-checked:block z-90">
-            </label>
+                    <label
+                            for="user-menu-toggle"
+                            class="fixed inset-0 h-screen w-screen cursor-default hidden peer-checked:block z-90">
+                    </label>
 
-            <label
-                    for="user-menu-toggle"
-                    class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer"
-            >
-                <div class="w-10 rounded-full shadow-inner ring-1 ring-base-content/10">
-                    {user?.image ? (
-                            <img src={user.image} alt="User Avatar"/>
-                    ) : (
-                            <div class="flex h-full w-full items-center justify-center bg-base-200 text-base-content/50">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <circle cx="12" cy="8" r="5"/>
-                                    <path d="M20 21a8 8 0 0 0-16 0"/>
-                                </svg>
+                    <label
+                            for="user-menu-toggle"
+                            class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer"
+                    >
+                        <div class="w-10 rounded-full shadow-inner ring-1 ring-base-content/10">
+                            {user?.image ? (
+                                    <img src={user.image} alt="User Avatar"/>
+                            ) : (
+                                    <div class="flex h-full w-full items-center justify-center bg-base-200 text-base-content/50">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                             viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <circle cx="12" cy="8" r="5"/>
+                                            <path d="M20 21a8 8 0 0 0-16 0"/>
+                                        </svg>
+                                    </div>
+                            )}
+                        </div>
+                    </label>
+
+                    <ul class="hidden peer-checked:flex absolute right-0 z-101 mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl border border-base-200 flex-col items-center">
+                        <li class="w-full">
+                            <div class="w-full text-center space-y-1">
+                                <h3 class="font-bold text-lg">{user ? `Hi, ${user.name}!` : "おかえりなさい"}</h3>
+                                <p class="text-xs text-base-content/60">
+                                    {user ? "同期済み" : "ログインして同期"}
+                                </p>
                             </div>
-                    )}
-                </div>
-            </label>
-
-            <ul class="hidden peer-checked:flex absolute right-0 z-101 mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl border border-base-200 flex-col items-center">
-                <li class="w-full">
-                    <div class="w-full text-center space-y-1">
-                        <h3 class="font-bold text-lg">{user ? `Hi, ${user.name}!` : "おかえりなさい"}</h3>
-                        <p class="text-xs text-base-content/60">
-                            {user ? "同期済み" : "ログインして同期"}
-                        </p>
-                    </div>
-                </li>
-                <div class="divider my-3 opacity-20 w-full"></div>
-                <li class="w-full flex flex-col gap-2">
-                    <LoginButton client:load isLoggedIn={isLoggedIn}/>
-                    <PasskeyButton client:load isLoggedIn={isLoggedIn}/>
-                </li>
-            </ul>
-        </div>
+                        </li>
+                        <div class="divider my-3 opacity-20 w-full"></div>
+                        <li class="w-full flex flex-col gap-2">
+                            <LoginButton client:load isLoggedIn={isLoggedIn}/>
+                            <PasskeyButton client:load isLoggedIn={isLoggedIn}/>
+                        </li>
+                    </ul>
+                </div>}
     </nav>
 </header>

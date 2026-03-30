@@ -11,22 +11,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // Session Management
     try {
         const auth = getAuth(env);
-
+        // ここでD1が制限に達していると例外が飛ぶ
         const sessionData = await auth.api.getSession({
             headers: context.request.headers,
         });
 
-        if (sessionData?.session) {
-            context.locals.user = sessionData.user;
-            context.locals.session = sessionData.session;
-        } else {
-            context.locals.user = null;
-            context.locals.session = null;
-        }
+        context.locals.user = sessionData?.user ?? null;
+        context.locals.session = sessionData?.session ?? null;
+        context.locals.dbError = false; // 正常
     } catch (error) {
-        console.error("Auth Middleware Error:", error);
+        // D1が落ちている時はここに来る
+        console.error("D1/Auth is down, proceeding as guest:", error);
+
+        // ユーザー情報を明示的に null にして「未ログイン状態」として続行させる
         context.locals.user = null;
         context.locals.session = null;
+        context.locals.dbError = true;
     }
 
     // Selected Year & Term Management using Cookie
