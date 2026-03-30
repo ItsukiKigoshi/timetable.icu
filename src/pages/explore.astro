@@ -1,82 +1,33 @@
 ---
 import {drizzle} from 'drizzle-orm/d1';
-import {eq, and, exists, like, or} from 'drizzle-orm';
+import {eq} from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import ExploreInterface, {type SearchFilters} from '@/components/ExploreInterface.tsx';
+import ExploreInterface from '@/components/ExploreInterface.tsx';
 import Layout from "@/layouts/Layout.astro";
 import type {Course, CourseWithSchedules} from "@/db/schema";
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
+import {getCourseSearchConfig} from "@/lib/course-query.ts";
 
 const {user, selectedYear, selectedTerm} = Astro.locals;
 const db = drizzle(env.timetable_icu, {schema});
 
 const url = new URL(Astro.request.url);
-const slotsRaw = url.searchParams.get('slots');
-const slots = slotsRaw ? slotsRaw.split(',') : [];
+if (!url.searchParams.has('year')) url.searchParams.set('year', selectedYear.toString());
+if (!url.searchParams.has('term')) url.searchParams.set('term', selectedTerm);
 
-const filters: SearchFilters = {
-    year: selectedYear.toString(),
-    term: selectedTerm,
-    day: url.searchParams.get('day') || null,
-    period: url.searchParams.get('period') || null,
-    isLong: url.searchParams.get('isLong'),
-    categoryId: url.searchParams.get('category') || null,
-    q: url.searchParams.get('q') || '',
-    slots: slots,
-    page: Math.max(1, parseInt(url.searchParams.get('page') || '1')),
-};
+const {where, page, filters} = getCourseSearchConfig(url, db);
 
-let conditions = [];
-
-if (filters.year) conditions.push(eq(schema.courses.year, parseInt(filters.year)));
-if (filters.term) conditions.push(eq(schema.courses.term, filters.term as Course['term']));
-
-if (filters.q) {
-    const searchVal = `%${filters.q}%`;
-    conditions.push(or(
-        like(schema.courses.titleJa, searchVal),
-        like(schema.courses.titleEn, searchVal),
-        like(schema.courses.instructor, searchVal)
-    ));
-}
-
-if (filters.categoryId) {
-    conditions.push(exists(
-        db.select().from(schema.courseToCategories)
-            .where(and(
-                eq(schema.courseToCategories.categoryId, filters.categoryId),
-                eq(schema.courseToCategories.courseId, schema.courses.id)
-            ))
-    ));
-}
-
-if (slots.length > 0) {
-    slots.forEach(slot => {
-        const [day, periodStr] = slot.split('-');
-        conditions.push(exists(
-            db.select().from(schema.courseSchedules)
-                .where(and(
-                    eq(schema.courseSchedules.courseId, schema.courses.id),
-                    eq(schema.courseSchedules.dayOfWeek, day as any),
-                    eq(schema.courseSchedules.period, parseInt(periodStr))
-                ))
-        ));
-    });
-}
-
-// 4. データ取得（countクエリを削除）
 const [allCategories, rawResults] = await Promise.all([
     db.select().from(schema.categories).all(),
     db.query.courses.findMany({
-        where: and(...conditions),
+        where,
         with: {schedules: true},
-        limit: limitPerPage + 1, // 1件多く取得
-        offset: (filters.page - 1) * limitPerPage,
+        limit: limitPerPage + 1,
+        offset: (page - 1) * limitPerPage,
     }),
 ]);
 
-// 次のページがあるか判定し、結果を20件に切り出す
 const hasNextPage = rawResults.length > limitPerPage;
 const results = hasNextPage ? rawResults.slice(0, limitPerPage) : rawResults;
 
@@ -98,7 +49,7 @@ Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
         <ExploreInterface
                 client:load
                 initialResults={results as CourseWithSchedules[]}
-                filters={filters}
+                initialFilters={filters}
                 isLoggedIn={!!user}
                 categories={allCategories}
                 initialUserCourseIds={userCourseIds}

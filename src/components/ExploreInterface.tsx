@@ -23,7 +23,7 @@ interface SearchResponse {
 
 interface Props {
     initialResults: CourseWithSchedules[];
-    filters: SearchFilters;
+    initialFilters: SearchFilters;
     isLoggedIn: boolean;
     categories: Categories[];
     initialUserCourseIds: number[];
@@ -33,7 +33,7 @@ interface Props {
 
 export default function ExploreInterface({
                                              initialResults,
-                                             filters: initialFilters,
+                                             initialFilters: initialFilters,
                                              categories,
                                              initialUserCourseIds,
                                              user,
@@ -273,24 +273,26 @@ export default function ExploreInterface({
 
 
             {/* ページネーション上 */}
-            <div className="join">
-                <button
-                    className="join-item btn"
-                    disabled={filters.page <= 1}
-                    onClick={() => update({page: filters.page - 1})}
-                >
-                    «
-                </button>
-                <button className="join-item btn no-animation">
-                    Page {filters.page}
-                </button>
-                <button
-                    className="join-item btn"
-                    disabled={!hasNextPage} // 次のページがあるかどうかで判定
-                    onClick={() => update({page: filters.page + 1})}
-                >
-                    »
-                </button>
+            <div className="flex flex-col items-center gap-4">
+                <div className="join">
+                    <button
+                        className="join-item btn"
+                        disabled={filters.page <= 1}
+                        onClick={() => update({page: filters.page - 1})}
+                    >
+                        «
+                    </button>
+                    <button className="join-item btn no-animation">
+                        Page {filters.page}
+                    </button>
+                    <button
+                        className="join-item btn"
+                        disabled={!hasNextPage} // 次のページがあるかどうかで判定
+                        onClick={() => update({page: filters.page + 1})}
+                    >
+                        »
+                    </button>
+                </div>
             </div>
 
             {/* 結果表示セクション */}
@@ -399,24 +401,26 @@ export default function ExploreInterface({
             </div>
 
             {/* ページネーション下 */}
-            <div className="join">
-                <button
-                    className="join-item btn"
-                    disabled={filters.page <= 1}
-                    onClick={() => update({page: filters.page - 1})}
-                >
-                    «
-                </button>
-                <button className="join-item btn no-animation">
-                    Page {filters.page}
-                </button>
-                <button
-                    className="join-item btn"
-                    disabled={!hasNextPage} // 次のページがあるかどうかで判定
-                    onClick={() => update({page: filters.page + 1})}
-                >
-                    »
-                </button>
+            <div className="flex flex-col items-center gap-4 py-6 mb-6">
+                <div className="join">
+                    <button
+                        className="join-item btn"
+                        disabled={filters.page <= 1}
+                        onClick={() => update({page: filters.page - 1})}
+                    >
+                        «
+                    </button>
+                    <button className="join-item btn no-animation">
+                        Page {filters.page}
+                    </button>
+                    <button
+                        className="join-item btn"
+                        disabled={!hasNextPage} // 次のページがあるかどうかで判定
+                        onClick={() => update({page: filters.page + 1})}
+                    >
+                        »
+                    </button>
+                </div>
             </div>
         </div>
     );
