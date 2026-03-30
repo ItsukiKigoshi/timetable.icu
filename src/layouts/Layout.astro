@@ -34,6 +34,13 @@ const {
     <meta property="og:site_name" content={/*siteName || */"ICUのじかんわり | 時間割・履修登録ツールの決定版"}/>
 </head>
 <body class="min-h-screen flex flex-col">
+<div role="alert" class="alert alert-error">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>
+    <span>本サイトは試験運用中です．本番運用開始までの間，データ等は予告無く削除される可能性があります．</span>
+</div>
 {dbError && (
         <div class="p-4 container mx-auto">
             <div role="alert" class="alert alert-warning shadow-lg">
@@ -52,13 +59,6 @@ const {
             </div>
         </div>
 )}
-<div role="alert" class="alert alert-error">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-    </svg>
-    <span>本サイトは試験運用中です．本番運用開始までの間，データ等は予告無く削除される可能性があります．</span>
-</div>
 {showHeader &&
         <Header user={user}/>}
 <main class="grow">
