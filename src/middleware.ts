@@ -5,7 +5,6 @@ import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
 
 export const onRequest = defineMiddleware(async (context, next) => {
     if (!env) {
-        console.warn("Cloudflare environment variables are not available.");
         return next();
     }
 
