@@ -45,7 +45,7 @@ const {
     
     const locals = Astro.locals ?? {};
     const user = locals.user ?? null;
-    const dbError = locals.dbError;
+    const dbError = locals.dbError || false;
     
     const {
         title = "ICUのじかんわり | 時間割・履修登録ツールの決定版",
