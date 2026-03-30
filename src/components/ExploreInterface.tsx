@@ -135,67 +135,112 @@ export default function ExploreInterface({
         <div className="space-y-6">
             {/* フィルターセクション */}
             <div className="flex flex-col md:flex-row gap-4 items-start">
-                <input
-                    type="text"
-                    className="input input-bordered w-full max-w-xs"
-                    placeholder="タイトル、教員名..."
-                    defaultValue={filters.q || ''}
-                    onKeyDown={(e) => e.key === 'Enter' && update({q: e.currentTarget.value})}
-                />
+                <label
+                    className="input input-bordered flex items-center gap-2 w-full max-w-xs shadow-sm bg-base-100/50 backdrop-blur-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 22H5.5a1 1 0 0 1 0-5h4.501"/>
+                        <path d="m21 22-1.879-1.878"/>
+                        <path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8"/>
+                        <circle cx="17" cy="18" r="3"/>
+                    </svg>
+                    <input
+                        type="text"
+                        className="grow"
+                        placeholder="タイトル、教員名..."
+                        defaultValue={filters.q || ''}
+                        onKeyDown={(e) => e.key === 'Enter' && update({q: e.currentTarget.value})}
+                    />
+                </label>
 
-                <select
-                    className="select select-bordered w-full max-w-xs"
-                    value={filters.categoryId || ''}
-                    onChange={(e) => update({categoryId: e.target.value})}
-                >
-                    <option value="">全てのカテゴリ / メジャー</option>
-                    <optgroup label="メジャー (Majors)">
-                        {majorCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
-                    </optgroup>
-                    <optgroup label="一般カテゴリ / その他">
-                        {otherCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
-                    </optgroup>
-                </select>
+                <label
+                    className="input input-bordered flex items-center gap-2 w-full max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         className="lucide lucide-list-filter-icon lucide-list-filter">
+                        <path d="M2 5h20"/>
+                        <path d="M6 12h12"/>
+                        <path d="M9 19h6"/>
+                    </svg>
+                    <select
+                        className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none"
+                        value={filters.categoryId || ''}
+                        onChange={(e) => update({categoryId: e.target.value})}
+                    >
+                        <option value="">全てのカテゴリ / メジャー</option>
+                        <optgroup label="メジャー (Majors)">
+                            {majorCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
+                        </optgroup>
+                        <optgroup label="一般カテゴリ / その他">
+                            {otherCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
+                        </optgroup>
+                    </select>
+                </label>
 
                 <button
-                    className={`btn ${filters.slots?.length ? 'btn-primary' : 'btn-outline'}`}
+                    type="button"
+                    className="btn btn-md flex items-center gap-2 w-fi max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm border-white/20 font-normal text-base-content"
                     onClick={() => (window as any).slot_modal.showModal()}
                 >
-                    時限 ({filters.slots?.length || 0})
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24"
+                        viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" strokeWidth="2"
+                        strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M16 2v4"/>
+                        <path d="M21 11.75V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7.25"/>
+                        <path d="m22 22-1.875-1.875"/>
+                        <path d="M3 10h18"/>
+                        <path d="M8 2v4"/>
+                        <circle cx="18" cy="18" r="3"/>
+                    </svg>
+
+                    <span className="grow text-left">
+                    時限を選択
+                        <span
+                            className={`ml-2 text-xs ${(filters.slots?.length ?? 0) > 0 ? 'font-bold' : 'opacity-50'}`}>
+                            ({filters.slots?.length ?? 0})
+                        </span>
+                    </span>
                 </button>
             </div>
 
             {/* 時限モーダル */}
             <dialog id="slot_modal" className="modal modal-bottom">
-                <div className="modal-box p-0 overflow-hidden">
-                    <div className="p-4 border-b flex justify-between items-center bg-base-200">
-                        <h3 className="font-bold text-lg">時限を選択</h3>
-                        <form method="dialog">
-                            <button className="btn btn-sm btn-circle btn-ghost">✕</button>
-                        </form>
-                    </div>
-                    <div className="p-4">
-                        <div className="overflow-x-auto">
-                            <table className="table table-fixed w-full border border-base-300 text-center">
+                <div
+                    className="modal-box p-0 overflow-hidden bg-base-100/95 border border-white/10 shadow-2xl sm:max-w-2xl md:max-w-3xl mx-auto">
+                    <div className="p-4 sm:p-6">
+                        <div className="overflow-x-auto rounded-xl border border-base-300 shadow-sm bg-base-100">
+                            <table className="table table-fixed w-full text-center">
                                 <thead>
-                                <tr className="bg-base-200">
-                                    <th className="w-10"></th>
-                                    {SELECTABLE_DAYS.map(d => <th key={d}>{d}</th>)}
+                                <tr className="bg-base-200/50">
+                                    <th className="w-12 bg-base-200/80"></th>
+                                    {SELECTABLE_DAYS.map(d => <th key={d} className="font-bold">{d}</th>)}
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {[1, 2, 3, 4, 5, 6, 7].map(p => (
                                     <tr key={p}>
-                                        <th className="bg-base-200">{p}</th>
+                                        <th className="bg-base-200/80 font-bold">{p}</th>
                                         {SELECTABLE_DAYS.map(day => {
                                             const isSelected = filters.slots?.includes(`${day}-${p}`);
                                             return (
                                                 <td
                                                     key={`${day}-${p}`}
-                                                    className={`cursor-pointer border border-base-300 h-12 ${isSelected ? 'bg-primary/30' : 'hover:bg-base-200'}`}
+                                                    className={`cursor-pointer border border-base-300 h-14 transition-all ${
+                                                        isSelected ? 'bg-primary text-primary-content' : 'hover:bg-primary/10'
+                                                    }`}
                                                     onClick={() => toggleSlot(day, p)}
                                                 >
-                                                    {isSelected && "✓"}
+                                                    {isSelected && (
+                                                        <span className="flex justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline
+                                                        points="20 6 9 17 4 12"/></svg>
+                                                </span>
+                                                    )}
                                                 </td>
                                             );
                                         })}
@@ -204,21 +249,30 @@ export default function ExploreInterface({
                                 </tbody>
                             </table>
                         </div>
-                        <div className="modal-action flex justify-between">
-                            <button className="btn btn-ghost btn-sm text-error"
-                                    onClick={() => update({slots: []})}>クリア
+
+                        <div className="modal-action flex justify-between items-center mt-6">
+                            <button
+                                className="btn btn-ghost btn-sm text-error"
+                                onClick={() => update({slots: []})}
+                            >
+                                選択をクリア
                             </button>
                             <form method="dialog">
-                                <button className="btn btn-primary">閉じる</button>
+                                <button className="btn btn-outline border-base-100/40 px-10 shadow-lg">
+                                    閉じる
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
-                <form method="dialog" className="modal-backdrop">
+
+                {/* 背景（オーバーレイ） */}
+                <form method="dialog" className="modal-backdrop ">
                     <button>close</button>
                 </form>
             </dialog>
 
+            {/*ページ*/}
             <div className="flex flex-col items-center gap-4">
                 <div className="join">
                     <button className="join-item btn" disabled={filters.page <= 1}
@@ -273,17 +327,53 @@ export default function ExploreInterface({
                                            course.rgNo
                                        }&year=${course.year}&term=${seasonToNumber(
                                            course.term
-                                       )}`} className="btn btn-sm">シラバス</a>
+                                       )}`} className="btn btn-sm">
+                                        <span>シラバス</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right">
+                                            <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/>
+                                            <path d="m21 3-9 9"/>
+                                            <path d="M15 3h6v6"/>
+                                        </svg>
+                                    </a>
                                     {(hasSchedules || isAdded) && (
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={loading}
-                                            className={`btn btn-sm ${isAdded ? 'btn-error' : 'btn-primary'}`}
+                                            className={`btn btn-sm gap-1 transition-all duration-300 ${
+                                                isAdded
+                                                    ? 'btn-error btn-outline'
+                                                    : 'btn-primary'
+                                            }`}
                                         >
                                             {loading ? (
                                                 <span className="loading loading-spinner loading-xs"></span>
+                                            ) : isAdded ? (
+                                                <>
+                                                    <span>削除</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    >
+                                                        <path d="M18 6 6 18"/>
+                                                        <path d="m6 6 12 12"/>
+                                                    </svg>
+                                                </>
                                             ) : (
-                                                isAdded ? '削除' : '追加'
+                                                <>
+                                                    <span>追加</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round"
+                                                         stroke-linejoin="round">
+                                                        <path d="M12 7v6"/>
+                                                        <path d="M15 10H9"/>
+                                                        <path
+                                                            d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/>
+                                                    </svg>
+                                                </>
                                             )}
                                         </button>
                                     )}

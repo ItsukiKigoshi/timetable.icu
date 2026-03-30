@@ -3,7 +3,7 @@ import {END_TIME, PERIODS, SELECTABLE_DAYS, START_TIME} from "@/constants/time.t
 import type {User} from "better-auth";
 import {timeToMin} from "@/lib/timetable.ts";
 import {useTimetable} from "@/lib/useTimetable.ts";
-import {useEffect, useState} from "react"; // useEffectを追加
+import React, {useEffect, useState} from "react"; // useEffectを追加
 
 const HEADER_HEIGHT = 40;
 
@@ -154,19 +154,41 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                                         <div className="text-xs opacity-60 truncate">{course.instructor}</div>
                                     </div>
                                     <div className="flex gap-2 shrink-0">
-                                        <a target="_blank"
+                                        <a target='_blank'
                                            href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${
                                                course.rgNo
                                            }&year=${course.year}&term=${seasonToNumber(
                                                course.term
-                                           )}`} className="btn btn-sm">シラバス</a>
+                                           )}`} className="btn btn-sm">
+                                            <span>シラバス</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right">
+                                                <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/>
+                                                <path d="m21 3-9 9"/>
+                                                <path d="M15 3h6v6"/>
+                                            </svg>
+                                        </a>
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={isSubmitting === cId}
-                                            className="btn btn-sm btn-error btn-outline"
+                                            className="btn btn-sm btn-error btn-outline gap-1.5 transition-all duration-300 hover:shadow-lg hover:shadow-error/20"
                                         >
-                                            {isSubmitting === cId ?
-                                                <span className="loading loading-spinner loading-xs"/> : "削除"}
+                                            {isSubmitting === cId ? (
+                                                <span className="loading loading-spinner loading-xs"/>
+                                            ) : (
+                                                <>
+                                                    <span className="font-bold">削除</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    >
+                                                        <path d="M18 6 6 18"/>
+                                                        <path d="m6 6 12 12"/>
+                                                    </svg>
+                                                </>
+                                            )}
                                         </button>
                                     </div>
                                 </div>

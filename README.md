@@ -114,7 +114,7 @@
     - [ ] 単位数表示（体育は？）
 - [ ] List形式で表示
 - [x] 授業検索
-    ~~- [ ] コマをクリックでその時間の授業を検索 ~~
+  ~~- [ ] コマをクリックでその時間の授業を検索 ~~
     - [x] メジャーとそれ以外を分離, もしくはタグ形式で
     - [ ] Issue: Co-Listに非対応
     - [ ] 単位数表示（体育は？）
@@ -136,79 +136,85 @@
     - [ ] useTimetableの挙動: そもそもHooks必要?
     - [ ] WorkersならPreactの方が良い？
 - [ ] Design
-  - [ ] カラーテーマ当てる
-  - [ ] コンポーネントの丸みなど調整する
-  - [ ] AIみの排除
-    - [ ] グラデーション
-    - [ ] アニメーション
-    - [ ] ボーダー
-    - [ ] 背景色
-    - [ ] フォント（こだわろう; 明朝?）
-    - [ ] 他のAIみの少ないサイトを参照
-      - [ ] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
-      - [ ] landingpageのみSSG?
+    - [ ] カラーテーマ当てる
+    - [ ] コンポーネントの丸みなど調整する
+    - [ ] AIみの排除
+        - [ ] グラデーション
+        - [ ] アニメーション
+        - [ ] ボーダー
+        - [ ] 背景色
+        - [ ] フォント（こだわろう; 明朝?）
+        - [ ] 他のAIみの少ないサイトを参照
+            - [ ] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
+            - [ ] landingpageのみSSG?
 - [ ] Landing Page
-  - [ ] 出来ることとできないことを明示
-  - [ ] 比較
-    - [ ] 対象
-      - [ ] Penmark
-      - [ ] ICurriculum
-      - [ ] Timetable4ICU
-      - [ ] すごい時間割
-    - [ ] 項目
-      - [ ] 特徴
-      - [ ] コース一覧
-      - [ ] 時間割共有
-      - [ ] 多言語対応
-      - [ ] デバイス対応
-      - [ ] オフライン
-      - [ ] Long4
-      - [ ] 複数コマ
-      - [ ] シラバス参照
-      - [ ] 卒業要件
-      - [ ] 開発元
-      - [ ] 運営期間
-      - [ ] オープンソース
-  - [ ] QA
-    - [ ] なぜ？
-      - [ ] 複数の授業を比較しながら離愁を考えるため
-      - [ ] Long4
-      - [ ] 誰が運営？
-      - [ ] 他Twinte参照
-  - [ ] 会計開示
-    - [ ] 寄付受付
-  - [ ] Members
-    - [ ] 自己紹介
-    - [ ] リンク
-    - [ ] Join the Team!
-      - [ ] 連絡用のメールアドレス
-      - [ ] Form?
+    - [ ] 出来ることとできないことを明示
+    - [ ] 比較
+        - [ ] 対象
+            - [ ] Penmark
+            - [ ] ICurriculum
+            - [ ] Timetable4ICU
+            - [ ] すごい時間割
+        - [ ] 項目
+            - [ ] 特徴
+            - [ ] コース一覧
+            - [ ] 時間割共有
+            - [ ] 多言語対応
+            - [ ] デバイス対応
+            - [ ] オフライン
+            - [ ] Long4
+            - [ ] 複数コマ
+            - [ ] シラバス参照
+            - [ ] 卒業要件
+            - [ ] 開発元
+            - [ ] 運営期間
+            - [ ] オープンソース
+    - [ ] QA
+        - [ ] なぜ？
+            - [ ] 複数の授業を比較しながら離愁を考えるため
+            - [ ] Long4
+            - [ ] 誰が運営？
+            - [ ] 他Twinte参照
+    - [ ] 会計開示
+        - [ ] 寄付受付
+    - [ ] Members
+        - [ ] 自己紹介
+        - [ ] リンク
+        - [ ] Join the Team!
+            - [ ] 連絡用のメールアドレス
+            - [ ] Form?
 - [ ] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
 - [x] Google OAuthをpublesh
-  - [ ] Privacy Policy
-  - [ ] 利用規約
-    - [ ] ポチポチして利用規約つくれるサイト？
-  - [ ] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
-    - [ ] [Google Search Console](https://search.google.com/search-console)
-  - [ ] ドメイン購入しないと次に進めないかも？
+    - [ ] Privacy Policy
+        - [ ] わかりやすく
+    - [ ] 利用規約
+        - [ ] ポチポチして利用規約つくれるサイト？
+        - [ ] 卒業後のアカウント削除に関する規程
+            - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
+    - [ ] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
+        - [ ] [Google Search Console](https://search.google.com/search-console)
+    - [ ] ドメイン購入しないと次に進めないかも？
 - [ ] 寄付を受ける
-  - [ ] OpenCollective, Stripe
+    - [ ] OpenCollective, Stripe
 - [ ] Known Issues: リリースまでに反映もしくは注意書き
-  - [ ] 退会方法を設ける
-  - [ ] Co-List非対応: ehandbookを参照しながら解説
+    - [ ] 退会方法を設ける
+    - [ ] Co-List非対応: ehandbookを参照しながら解説
 - [ ] SEO
-  - [ ] meta description
-  - [ ] タイトルつける
-  - [ ] OGP
-    - og:title
-    - og:description
-    - og:url
-    - og:image
+    - [ ] meta description
+    - [ ] タイトルつける
+    - [ ] OGP
+        - og:title
+        - og:description
+        - og:url
+        - og:image
 - [x] Deploy to Workers
+- [ ] リンク
+    - [ ] Grad Reqへのリンク
+    - [ ] 4年間の全体像を考える
 - [ ] PR
-  - [ ] Zenn記事
-    - [ ] Drizzle, BetterAuth, D1
-  - [ ] Weekly Giant寄稿
+    - [ ] Zenn記事
+        - [ ] Drizzle, BetterAuth, D1
+    - [ ] Weekly Giant寄稿
 
 ## 課題
 

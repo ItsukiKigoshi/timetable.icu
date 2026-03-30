@@ -3,7 +3,7 @@
 @plugin "daisyui";
 /*Dark Theme*/
 @plugin "daisyui/theme" {
-    name: "timetableicutheme";
+    name: "timetableicutheme-dark";
     default: true; /* set as default */
     prefersdark: false; /* set as default dark mode (prefers-color-scheme:dark) */
     color-scheme: dark; /* color of browser-provided UI */
@@ -13,6 +13,8 @@
     --color-base-content: oklch(21% 0.006 285.885);
     --color-primary: #005abb;
     --color-primary-content: oklch(93% 0.034 272.788);
+    --color-error: oklch(71% 0.194 13.428);
+    --color-error-content: oklch(27% 0.105 12.094);
 }
 /*Light theme*/
 @plugin "daisyui/theme" {
@@ -20,10 +22,8 @@
     default: true; /* set as default */
     prefersdark: true; /* set as default dark mode (prefers-color-scheme:dark) */
     color-scheme: light; /* color of browser-provided UI */
-    --color-base-100: oklch(25.33% 0.016 252.42);
-    --color-base-200: oklch(23.26% 0.014 253.1);
-    --color-base-300: oklch(21.15% 0.012 254.09);
-    --color-base-content: oklch(97.807% 0.029 256.847);
     --color-primary: #005abb;
     --color-primary-content: oklch(93% 0.034 272.788);
+    --color-error: oklch(71% 0.194 13.428);
+    --color-error-content: oklch(27% 0.105 12.094);
 }
