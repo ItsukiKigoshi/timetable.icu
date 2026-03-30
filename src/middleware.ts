@@ -1,3 +1,8 @@
+import {getAuth} from "@/lib/auth.ts";
+import {defineMiddleware} from "astro:middleware";
+import {env} from "cloudflare:workers";
+import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
+
 // middleware.ts
 export const onRequest = defineMiddleware(async (context, next) => {
     if (!env) return next();
@@ -22,7 +27,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         context.locals.user = sessionData?.user ?? null;
         context.locals.dbError = false;
     } catch (error) {
-        console.error("D1 / Auth is down:", error);
+        console.error("D1 is down:", error);
         context.locals.user = null;
         context.locals.dbError = true;
     }
