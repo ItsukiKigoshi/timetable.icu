@@ -1,18 +1,18 @@
 // TODO - useTimetable.tsとともに最適化
 
 import type {FlatSchedule} from "@/db/schema";
-import {END_TIME, SELECTABLE_DAYS, START_TIME} from "@/constants/time";
+import {SELECTABLE_DAYS} from "@/constants/time";
 
 // Hour to Minute
 export const timeToMin = (timeStr: string) => {
     const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + m - START_TIME;
+    return h * 60 + m;
 };
 
 // サーバー・クライアント共通で使う型
 export interface ProcessedSchedule extends FlatSchedule {
     startMin: number;
-    displayEndMin: number;
+    endMin: number;
     col: number;
     groupMaxCols: number;
 }
@@ -53,22 +53,23 @@ export function computeProcessedSchedules(schedules: FlatSchedule[]): ProcessedS
         merged.forEach(sched => {
             const startMin = timeToMin(sched.startTime);
             const endMin = timeToMin(sched.endTime);
-            const displayEndMin = Math.min(endMin + 10, END_TIME - START_TIME);
 
             let col = 0;
+            // ...衝突判定ロジック...
             while (tempWithCol.some(c =>
                 c.col === col &&
-                Math.max(startMin, c.startMin) < Math.min(displayEndMin, c.displayEndMin)
+                // 衝突判定。ここでも絶対値(startMin)同士で比較するのでOK
+                Math.max(startMin, c.startMin) < Math.min(endMin, c.endMin)
             )) {
                 col++;
             }
-            tempWithCol.push({...sched, startMin, endMin, displayEndMin, col});
+            tempWithCol.push({...sched as any, startMin, endMin, col});
         });
 
         // 4. 幅計算
         tempWithCol.forEach(sched => {
             const group = tempWithCol.filter(other =>
-                Math.max(sched.startMin, other.startMin) < Math.min(sched.displayEndMin, other.displayEndMin)
+                Math.max(sched.startMin, other.startMin) < Math.min(sched.endMin, other.endMin)
             );
             const groupMaxCols = Math.max(...group.map(c => c.col)) + 1;
             allProcessed.push({...sched, groupMaxCols});

@@ -34,7 +34,6 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
 
     // 曜日を翻訳するヘルパー
     const translateDay = (day: string) => {
-        const dayKey = day.toLowerCase() as keyof typeof ui['en'];
         // もし keys に 'days.mon' 形式で入れたなら `days.${day.toLowerCase()}`
         const key = `days.${day.toLowerCase()}` as keyof typeof ui['en'];
         return ui[currentLang][key] || day;
@@ -74,10 +73,9 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
     const containerHeight = "calc(100vh - 140px)";
     const minuteUnit = `calc((${containerHeight} - ${HEADER_HEIGHT}px) / ${END_TIME - START_TIME})`;
 
-    const timeStyle = (start: number, end?: number) => ({
-        top: `calc(${start} * ${minuteUnit} + ${HEADER_HEIGHT}px)`,
-        height: end ? `calc(${end - start} * ${minuteUnit})` : undefined
-    });
+    // ヘルパー: START_TIME(525) からの差分をピクセル座標に変換
+    const getTop = (min: number) => `calc((${min} - ${START_TIME}) * ${minuteUnit} + ${HEADER_HEIGHT}px)`;
+    const getHeight = (duration: number) => `calc(${duration} * ${minuteUnit})`;
 
     const handleToggle = async (course: any) => {
         const cId = Number(course.courseId || course.id);
@@ -102,64 +100,78 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
     return (
         <div className="flex w-full overflow-hidden bg-base-100 border-t border-b border-base-content/50 select-none"
              style={{height: containerHeight}}>
-            {/* 時刻軸 */}
-            <div className="w-10 border-l border-r border-base-content/50 relative shrink-0">
+
+            {/* 時刻軸 (左端のカラム) */}
+            <div className="w-10 border-l border-r border-base-content/50 relative shrink-0 bg-base-100 z-20">
                 <div style={{height: HEADER_HEIGHT}} className="border-b border-base-content/50"/>
-                {PERIODS.map(p => (
-                    <div key={p.label}
-                         className="absolute w-full flex flex-col items-center border-t border-base-content/50"
-                         style={timeStyle(timeToMin(p.start), timeToMin(p.end))}>
-                        <span className="text-[9px] opacity-50 mt-0.5">{p.start}</span>
-                        <span className="font-bold text-xs m-auto">{translatePeriod(p.label)}</span>
-                    </div>
-                ))}
+                {PERIODS.map(p => {
+                    const sMin = timeToMin(p.start);
+                    return (
+                        <div key={p.label}
+                             className="absolute w-full flex flex-col items-center border-t border-base-content/50"
+                             style={{top: getTop(sMin)}}>
+                            <span className="text-[9px] opacity-60 leading-none mt-1">{p.start}</span>
+                            <span className="font-bold text-xs m-auto">{translatePeriod(p.label)}</span>
+                        </div>
+                    );
+                })}
             </div>
 
-            {/* 曜日カラム */}
+            {/* 曜日カラム内 */}
             {SELECTABLE_DAYS.map(day => (
                 <div key={day} className="flex-1 border-r border-base-content/50 relative h-full bg-base-100">
-                    {/* 背景スロット */}
-                    {PERIODS.map(p => {
+
+                    {/* 曜日ヘッダー */}
+                    <div
+                        className="text-center border-b border-base-content/50 text-xs font-bold bg-base-100 z-10 relative flex items-center justify-center"
+                        style={{height: HEADER_HEIGHT}}>
+                        {translateDay(day)}
+                    </div>
+
+                    {/* 背景スロット: 次のコマの開始時間まで広げて描画 */}
+                    {PERIODS.map((p, index) => {
+                        const sMin = timeToMin(p.start);
+                        const nextP = PERIODS[index + 1];
+                        // 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
+                        const visualEndMin = nextP ? timeToMin(nextP.start) : timeToMin(p.end);
+
                         const isOccupied = schedules.some(s => s.dayOfWeek === day && s.period === parseInt(p.label));
+
                         return (
                             <div
                                 key={`slot-${p.label}`}
-                                className={`absolute w-full border-t border-base-content/50 z-0 transition-colors ${isOccupied ? "cursor-pointer hover:bg-primary/5" : ""}`}
-                                style={timeStyle(timeToMin(p.start), timeToMin(p.end))}
-                                onClick={() => handleSlotClick(day, p.label)}
+                                className={`absolute w-full border-t border-base-content/10 z-0 transition-colors
+                                    ${isOccupied
+                                    ? "z-20 cursor-pointer hover:bg-primary/10" // 授業があるときは最前面へ
+                                    : "z-0 pointer-events-none opacity-50"// ないときは沈める
+                                }`}
+                                style={{
+                                    top: getTop(sMin),
+                                    height: getHeight(visualEndMin - sMin),
+                                }}
+                                onClick={() => isOccupied && handleSlotClick(day, p.label)}
                             />
                         );
                     })}
 
-                    {/* 授業カード */}
+                    {/* 授業カード: 実際の授業時間 (10分休みを含まない) で描画 */}
                     {displaySchedules.filter(s => s.dayOfWeek === day).map((sched, i) => (
                         <div key={`${sched.courseCode}-${i}`}
-                             className="card absolute z-10 overflow-hidden shadow-sm rounded-sm bg-base-100 pointer-events-none border"
+                             className="card absolute z-10 overflow-hidden shadow-sm rounded-sm bg-primary border border-primary/20"
                              style={{
-                                 ...timeStyle(sched.startMin, sched.displayEndMin),
+                                 top: getTop(sched.startMin),
+                                 height: getHeight(sched.endMin - sched.startMin),
                                  left: `${(sched.col * 100) / sched.groupMaxCols}%`,
                                  width: `calc(${(100 / sched.groupMaxCols)}% - 1px)`,
                              }}>
-                            <div className="absolute inset-0 bg-primary"/>
-                            <div className="relative p-2 grid gap-1">
-                                <p className="text-xs text-primary-content">{sched.startTime}</p>
-                                <h1 className="text-sm text-primary-content font-bold line-clamp-2 leading-tight">
-                                    {/* ★ タイトルの出し分け */}
+                            <div className="p-1.5 text-primary-content pointer-events-none">
+                                <p className="text-[10px] opacity-80">{sched.startTime}</p>
+                                <h1 className="text-xs font-bold line-clamp-2 leading-tight">
                                     {isJa ? sched.titleJa : sched.titleEn}
                                 </h1>
-                                <h2 className="text-xs text-primary-content line-clamp-1">
-                                    {sched.instructor}
-                                </h2>
                             </div>
                         </div>
                     ))}
-
-                    <div
-                        className="text-center border-b border-base-content/50 text-xs font-bold bg-base-100 z-10 relative pointer-events-none flex items-center justify-center shadow-sm"
-                        style={{height: HEADER_HEIGHT}}>
-                        {/* ★ 曜日の翻訳 */}
-                        {translateDay(day)}
-                    </div>
                 </div>
             ))}
 
