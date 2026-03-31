@@ -1,10 +1,10 @@
-# TimetableInterface.icu (あいしーゆーのじかんわり)
+# ICUのじかんわり | Timetable.icu
 
 # 目標
 
-- [ ] ようこに卒業までつかってもらう
+<!-- - [ ] ようこに卒業までつかってもらう -->
 - [ ] 100人のTermly Active UserをICU内で獲得する
-    - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」で1番目
+    - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [ ] iOSアプリ/Androidを作る (?)
 
 # 大切にしたいこと
@@ -26,17 +26,17 @@
 
 # ブランディング
 
-- [ ] 名前
+- [x] 名前
     - timetable.icu $7.20 Renews at $14.20
-        - ICUのじかんわり
-        - Timetable.icu
+        - [x] ICUのじかんわり
+        - [x] Timetable.icu
 - [x] ロゴつくりなおす
     - [x] 3Dみ
     - [x] たぬき
-- [ ] 開発者と顔を明示し，信頼を得る
+- [x] 開発者と顔を明示し，信頼を得る
 - [ ] かわいいデザイン
     - [ ] 絵文字を多用するAI-Designに負けない!
-- [ ] ちゃんとランディングページを作る: Astroのいいところ
+- [x] ちゃんとランディングページを作る: Astroのいいところ
 - [ ] SEO
     - [ ] リッチリザルト
 
@@ -47,22 +47,23 @@
     - [ ] マニュアル登録
     - [x] Google Oauth + Passkey
     - [ ] Google Calendar / .icsエクスポート？
-- [ ] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
+- [x] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
     - [ ] 空きコマに入る授業検索: query paramを`&dayPeriod=["M-2"and"T-1"]`みたいに持たせる？
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
     - [ ] With Upvote
-- [ ] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
-- [ ] 役立つリンク
-    - [ ] CTL
-    - [ ] Major一覧
+- [ ] 多言語対応
 
 # できないこと
 
 - [ ] 実際の履修登録 (リンク貼る)
+    - [ ] Registration Website
 - [ ] 卒業要件との照らし合わせ (リンク貼る)
-- [ ] シラバスを見ること (リンク貼る)
-- [ ] 授業評価（）を見ること (リンク貼る)
+    - [ ] Grad Requirement Checklist
+    - [ ] 卒業要件PDF (ehandbook)
+- [x] シラバスを見ること
+    - [x] リンク貼る
+- [ ] 授業評価（TES）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
 - [ ] オフラインで確認すること
     - [ ] 代わりに: Apple/Google Calendarへのエクスポート
@@ -74,7 +75,7 @@
     - 対面で宣伝
     - Instagram等でICU関連の団体/個人に宣伝してもらう
 - コンポーネントテスト
-- ちゃんとWebアナリティクスを取って開発の励みにする
+- [x] ちゃんと[Webアナリティクス](https://www.cloudflare.com/application-services/products/analytics/)を取って開発の励みにする
 
 # ライバル
 
@@ -96,7 +97,7 @@
 - [x] BetterAuth
     - [x] Google OAuth
     - [x] Passkey
-      ~~- [ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
+      - ~~[ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
       とりあえずはmiddlewareの情報を使って最適化できそう
 - [x] Get Syllabi Data
     - [x] ブラウザ保存->Pythonパース？
@@ -117,18 +118,21 @@
         - [x] 未ログインユーザはLocalStorageへ
             - [x] LocalStorageがSaveされたときに通知
     - [ ] show/hide機能
-        - [ ] Listにだけ表示されるようにするか，もしくは時間割上に網線で表示される（+"
-          非表示の授業は単位数にカウントされません"みたいなメッセージ）か
+        - [ ] Listにだけ表示されるようにする
+        - [ ] もしくは時間割上に網線で表示される（+"非表示の授業は単位数にカウントされません"みたいなメッセージ）か
+        - [ ] user courses schemaに追加（boolean; 0/1）
     - [ ] List形式で表示
     - [ ] Google Calendar / .icsエクスポート？
         - [ ] 授業開始日と終了日
         - [ ] 休講日を除く
 - [x] 授業検索
+    - [ ] 全体の条件クリアボタン（year, term以外）
     - [ ] **キーワード検索にCourse ID, regidを含む!**
     - [ ] **キャンセルされた授業をそのように明示: 追加できないように**
     - [ ] **開講言語で絞り込み**
-    - [ ] Foundation, Area Major
+    - [ ] Foundation, Area Majorの絞り込み
         - [ ] CourseCodeを「アルファベット」(String 3-4文字）と「数字」（0-999; 数字として保存してフロントで3文字に加工）の方が良い？
+        - [ ] そもそも100から始まればfoundation, 2-300から始まればarea major?そのルールは絶対？
         - [ ] SELECT * FROM courses WHERE course_code GLOB '[A-Z][A-Z][A-Z]1[0-9][0-9]';
           のようにGLOBを使えばワイルドカードで100番台は持ってこられる
         - [ ] 一番確実なのは公式の結果をそのまま挿入することだが，なるべくやりたくない: colistはこれをやらざるをえないかも
@@ -139,6 +143,7 @@
     - [ ] 空きコマ検索
     - [ ] slots(この名称もscheduleにするべき？)が2つ以上なら空きコマ検索モードにする？
         - [ ] デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)
+            - [ ] もし1つしか選択できないならわざわざモーダルにしなくても良いか？もしくは，コマをタップしたら条件が確定されていちいち「閉じる」ボタンを押さなくて良い
           」をチェックすると複数コマが選択できるようになる
             - [ ] 既にコースが登録されていれば勝手にスケジュールを入れてくれる
             - [ ] 「選択したスケジュールで履修できるコマを表示します」などヘルプメッセージを入れる
@@ -170,7 +175,7 @@
     - [ ] データ
         - [ ] ローカルからのsync
     - [ ] DB
-        - [ ] SQL Injection
+        - [ ] SQL Injection対策
         - [ ] SQL EXPLAINで実行計画を管理（READ数が爆発しないように）
 - [ ] Catalogue.icuで移行を促すMessage
     - [ ] 移行機能 (直接新アプリのAPIを叩く?)
@@ -182,47 +187,32 @@
 - [ ] Design
     - [x] カラーテーマ当てる
     - [ ] コンポーネントの丸みなど調整する
+    - [ ] Storybookなどcomponent test?
     - [ ] AIみの排除
         - [ ] グラデーション
         - [ ] アニメーション
         - [ ] ボーダー
         - [ ] 背景色
+        - [ ] 安易にtransparent/opacityいじらない
         - [ ] フォント（こだわろう; 明朝?）
         - [ ] 他のAIみの少ないサイトを参照
-            - [ ] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
+            - [x] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
             - [x] landingpageのみSSG?
 - [ ] Landing Page
+    - [ ] 背景画像最適化: そもそもブラーをかけておく，画質落とす
     - [x] できることとできないことを明示
         - [ ] まずはじめに「授業を検索して」「時間割を作れる」という基本機能をかくべき！（できればスクショ付きで？）
             - [ ] 検索->時間割（複数のコマから比較できるよ）->同期
-    - [ ] 比較
-        - [ ] 対象
-            - [ ] Penmark
-            - [ ] ICurriculum
-            - [ ] Timetable4ICU
-            - [ ] すごい時間割
-        - [ ] 項目
-            - [ ] 特徴
-            - [ ] コース一覧
-            - [ ] 時間割共有
-            - [ ] 多言語対応
-            - [ ] デバイス対応
-            - [ ] オフライン
-            - [ ] Long4
-            - [ ] 複数コマ
-            - [ ] シラバス参照
-            - [ ] 卒業要件
-            - [ ] 開発元
-            - [ ] 運営期間
-            - [ ] オープンソース: **ソースコードへのリンクを掲載**
+    - [ ] オープンソース: **ソースコードへのリンクを掲載**
     - [ ] QA
-        - [ ] なぜ？
+        - [ ] なぜつくったの？
             - [ ] 複数の授業を比較しながら履修を考えるため
             - [ ] Long4
             - [ ] 誰が運営？
             - [ ] 他Twinte参照
     - [ ] 会計開示
-        - [ ] 寄付受付
+        - [ ] Cloudflare Registrar
+        - [ ]  寄付受付
             - [ ] OpenCollective, Stripe
     - [ ] Members
         - [x] 自己紹介
@@ -231,7 +221,13 @@
             - [x] 連絡用のメールアドレス
                 - [ ] 独自domain
             - [ ] Form?
+- [ ] ログイン時にユーザの操作でログインが中止された状態をフロントで拾う
 - [ ] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
+    - [ ] Snack通知
+    - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
+- [ ] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
+    - [ ] Default localeをjaとenどっちにするか？
+        - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる． 
 - [x] Google OAuthをpublesh
     - [x] Privacy Policy
         - [ ] わかりやすく
@@ -239,26 +235,47 @@
         - [ ] ポチポチして利用規約つくれるサイト？
         - [ ] 卒業後のアカウント削除に関する規程
             - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
-    - [ ] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
+    - [x] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
         - [ ] [Google Search Console](https://search.google.com/search-console)
 - [ ] Known Issues: リリースまでに反映もしくは注意書き
     - [ ] 退会方法を設ける
     - [ ] スケジュールがない授業を追加できない
 - [ ] SEO
     - [ ] meta description
+    - [ ] リッチリザルト
+        - [ ] パンくず
     - [ ] タイトルつける
     - [ ] OGP
-        - og:title
-        - og:description
-        - og:url
-        - og:image
+        - [ ] og:title
+        - [ ] og:description
+        - [ ] og:url
+        - [ ] og:image
+    - [ ] Google Search Console
+    - [ ] Semantic HTML
+        - [ ] div乱用をrefactor
 - [x] Deploy to Workers
 - [ ] リンク
-    - [ ] Grad Reqへのリンク
-        - [ ] ツール
-        - [ ] PDF
+    - [ ] 学年暦
     - [ ] 4年間の全体像を考える
-    - [ ] Major Reqへのリンク
+    - [ ] ログインが必要なサイトはその旨を明示
+    - [ ] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
+    - [ ] ICU Portal
+    - [ ] ICU Map
+        - [ ] Course Offerings
+    - [ ] CTL
+        - [ ] 履修計画テンプレート
+        - [ ] 履修計画ワークショップ
+        - [ ] イベントなどでコラボレーション？
+    - [ ] Major一覧
+       - [ ] ehandbook
+       - [ ] メジャーインフォメーションサイト
+       - [ ] メジャー選択要件
+    - [ ] ICU IBS
+        - [ ] 相談方法
+        - [ ] Social Media
+    - [ ] Weekly Giants
+- [ ] performance
+   - [ ] 画像最適化: 必要なピクセル数以下に抑える
 - [ ] 表示するコマが無いときに「Explore」へ促す
 - [ ] PR
     - [ ] Zenn記事
@@ -267,15 +284,16 @@
 
 ## 課題
 
--[ ] 卒業後にログインできなくなる
+- [ ] 卒業後にログインできなくなる
     - [ ] 卒業後にアカウントが削除できなくなる
     - [ ] 対策として， 最終ログイン後から数年/IDの卒業年によるアカウント削除や，第2メールアドレスを持たせる？
     - [ ] 大学院進学でメールアドレスが変わると使えなくなる?
 - [ ] 逆に現状だと，Passkeyを持っていれば卒業後も在学生以外にアクセスさせたくない情報 (Room)が見られてしまう
 
-## 注意点
+## Checklist
 
 - [ ] Roomはicu.ac.jpを持つユーザのみ
+    - [ ] 未ログインユーザーにはAPIからも返さない
 
 ---
 
