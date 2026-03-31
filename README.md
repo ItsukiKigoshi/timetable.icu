@@ -3,6 +3,7 @@
 # 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
+
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [ ] iOSアプリ/Androidを作る (?)
@@ -71,9 +72,11 @@
 
 # 挑戦したいこと
 
-- PR
-    - 対面で宣伝
-    - Instagram等でICU関連の団体/個人に宣伝してもらう
+- [ ] PR
+    - [ ] 対面で宣伝
+    - [ ] Instagram等でICU関連の団体/個人に宣伝してもらう
+    - [ ] 受験生にリーチ
+        - [ ] 「こんなサイトを学生が作る大学なんだ！」+入学後に使ってもらう
 - コンポーネントテスト
 - [x] ちゃんと[Webアナリティクス](https://www.cloudflare.com/application-services/products/analytics/)を取って開発の励みにする
 
@@ -97,8 +100,8 @@
 - [x] BetterAuth
     - [x] Google OAuth
     - [x] Passkey
-      - ~~[ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
-      とりあえずはmiddlewareの情報を使って最適化できそう
+        - ~~[ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
+          とりあえずはmiddlewareの情報を使って最適化できそう
 - [x] Get Syllabi Data
     - [x] ブラウザ保存->Pythonパース？
     - [x] Pythonで完結
@@ -107,7 +110,8 @@
     - [x] Calendar形式で表示
         - [x] Termセレクター
         - [ ] 表示をSophisticate
-            ~~- [ ] クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？~~: スマホ操作を考えるなら今の挙動が良い
+          ~~- [ ] クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？~~:
+          スマホ操作を考えるなら今の挙動が良い
             - [ ] 開始時間->CorseID タイトル->場所かな
             - [ ] Roomを表示するのはログイン済みユーザだけ！
         - [ ] 理系の選択式の演習UI: 優先度低し
@@ -144,7 +148,7 @@
     - [ ] slots(この名称もscheduleにするべき？)が2つ以上なら空きコマ検索モードにする？
         - [ ] デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)
             - [ ] もし1つしか選択できないならわざわざモーダルにしなくても良いか？もしくは，コマをタップしたら条件が確定されていちいち「閉じる」ボタンを押さなくて良い
-          」をチェックすると複数コマが選択できるようになる
+              」をチェックすると複数コマが選択できるようになる
             - [ ] 既にコースが登録されていれば勝手にスケジュールを入れてくれる
             - [ ] 「選択したスケジュールで履修できるコマを表示します」などヘルプメッセージを入れる
     - [ ] 選択したコマ以外にscheduleを持たない授業を検索するオプション(
@@ -227,7 +231,7 @@
     - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
 - [ ] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
     - [ ] Default localeをjaとenどっちにするか？
-        - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる． 
+        - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
 - [x] Google OAuthをpublesh
     - [x] Privacy Policy
         - [ ] わかりやすく
@@ -267,15 +271,15 @@
         - [ ] 履修計画ワークショップ
         - [ ] イベントなどでコラボレーション？
     - [ ] Major一覧
-       - [ ] ehandbook
-       - [ ] メジャーインフォメーションサイト
-       - [ ] メジャー選択要件
+        - [ ] ehandbook
+        - [ ] メジャーインフォメーションサイト
+        - [ ] メジャー選択要件
     - [ ] ICU IBS
         - [ ] 相談方法
         - [ ] Social Media
     - [ ] Weekly Giants
 - [ ] performance
-   - [ ] 画像最適化: 必要なピクセル数以下に抑える
+    - [ ] 画像最適化: 必要なピクセル数以下に抑える
 - [ ] 表示するコマが無いときに「Explore」へ促す
 - [ ] PR
     - [ ] Zenn記事
@@ -415,6 +419,12 @@ HTML->JSON->Remote DBを一括で実行
 
 ```bash
 bun db:deploy
+```
+
+ライセンス出力
+
+```bash
+bun x generate-license-file --input package.json --output LICENSE.md
 ```
 
 ## Schema案
