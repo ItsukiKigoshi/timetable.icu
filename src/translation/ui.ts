@@ -50,8 +50,8 @@ export const ui = {
         'footer.terms': 'Terms of Service',
 
         // --- Landing Page ---
-        'lp.hero.subtitle': 'Welcome!',
-        'lp.hero.description': 'YOUR Academic Planning starts here.',
+        'lp.hero.subtitle': '',
+        'lp.hero.description': 'Your Academic Planning starts here.',
         'lp.nav.explore': 'Explore Courses',
         'lp.nav.timetable': 'View Timetable',
 
@@ -75,13 +75,14 @@ export const ui = {
 
         // Profile
         'lp.profile.made_with': 'Made with ♥ by',
-        'lp.profile.description.top': "With love from ICU '27 🏔️",
+        'lp.profile.description.top': "Maintenanced by ICU '27 🏔️",
         'lp.profile.description.middle': 'We are looking for contributors!',
         'lp.profile.description.bottom': 'If you are interested in design, PR, or coding, please ',
         'lp.profile.contact': 'contact us',
         'lp.profile.dot': '.',
 
         // Explore
+        'explore.title': 'Explore Courses',
         'explore.search_placeholder': 'Title, Instructor...',
         'explore.category_all': 'Category / Major',
         'explore.category_major': 'Majors',
@@ -96,8 +97,8 @@ export const ui = {
         'explore.no_schedule': 'No Schedule',
 
         // Timetable
+        'timetable.title': 'Timetable',
         'timetable.modal_title': 'Courses in', // "Courses in Mon 1" のような使い方
-        'timetable.period': 'Period',
         'timetable.close': 'Close',
         'timetable.remove': 'Remove',
         'timetable.syllabus': 'Syllabus',
@@ -154,7 +155,7 @@ export const ui = {
         // --- ランディングページ ---
         'lp.hero.title': 'ICUのじかんわり',
         'lp.hero.subtitle': 'へようこそ！',
-        'lp.hero.description': 'ICU生の時間割・履修計画がここに.',
+        'lp.hero.description': 'ICU生の時間割・履修計画が今ここに.',
         'lp.nav.explore': 'コースを探す',
         'lp.nav.timetable': '時間割を見る',
 
@@ -185,6 +186,7 @@ export const ui = {
         'lp.profile.dot': 'を.',
 
         // 探す
+        'explore.title': 'コースを探す',
         'explore.search_placeholder': 'タイトル、教員名...',
         'explore.category_all': 'カテゴリ / メジャー',
         'explore.category_major': 'メジャー',
@@ -199,8 +201,8 @@ export const ui = {
         'explore.no_schedule': 'スケジュールなし',
 
         // 時間割
+        'timetable.title': '時間割',
         'timetable.modal_title': 'の授業', // "月 1限の授業" のような使い方
-        'timetable.period': '限',
         'timetable.close': '閉じる',
         'timetable.remove': '削除',
         'timetable.syllabus': 'シラバス',

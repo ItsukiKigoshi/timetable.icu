@@ -8,9 +8,13 @@ import type {CourseWithSchedules} from "@/db/schema.ts";
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
 import {getCourseSearchConfig} from "@/lib/course-query.ts";
+import {ui} from "@/translation/ui.ts";
+import {useTranslations} from "@/translation/utils.ts";
 
 const {user, selectedYear, selectedTerm, lang} = Astro.locals;
 const db = drizzle(env.timetable_icu, {schema});
+const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
+const t = useTranslations(currentLang);
 
 const url = new URL(Astro.request.url);
 if (!url.searchParams.has('year')) url.searchParams.set('year', selectedYear.toString());
@@ -44,7 +48,7 @@ if (user) {
 Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
 ---
 
-<Layout title="授業検索 | ICUのじかんわり">
+<Layout title=`${t('explore.title')} | ${t('title')}`>
     <main class="max-w-7xl mx-auto px-4 py-6">
         <ExploreInterface
                 client:load

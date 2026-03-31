@@ -6,6 +6,7 @@ import {useTimetable} from "@/lib/useTimetable.ts";
 import React, {useEffect, useState} from "react"; // useEffectを追加
 import {SquareArrowOutUpRight, X} from "lucide-react";
 import {ui} from "@/translation/ui.ts";
+import {useTranslations} from "@/translation/utils.ts";
 
 const HEADER_HEIGHT = 20;
 
@@ -29,7 +30,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
 }) {
     // 翻訳セットアップ
     const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
-    const t = (key: keyof typeof ui['en']) => ui[currentLang][key];
+    const t = useTranslations(currentLang);
     const isJa = currentLang === 'ja';
 
     // 曜日を翻訳するヘルパー
@@ -111,7 +112,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
                              className="absolute w-full flex flex-col items-center border-t border-base-content/50"
                              style={{top: getTop(sMin)}}>
                             <span className="text-[9px] opacity-60 leading-none mt-1">{p.start}</span>
-                            <span className="font-bold text-xs m-auto">{translatePeriod(p.label)}</span>
+                            <span className="font-bold text-xs my-2 mx-auto">{translatePeriod(p.label)}</span>
                         </div>
                     );
                 })}
@@ -166,9 +167,11 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
                              }}>
                             <div className="p-1.5 text-primary-content pointer-events-none">
                                 <p className="text-[10px] opacity-80">{sched.startTime}</p>
-                                <h1 className="text-xs font-bold line-clamp-2 leading-tight">
-                                    {isJa ? sched.titleJa : sched.titleEn}
+                                <h1 className="text-xs line-clamp-2 leading-tight">
+                                    <span
+                                        className="font-bold">{sched.courseCode} </span> {isJa ? sched.titleJa : sched.titleEn}
                                 </h1>
+                                <h2 className="text-[10px]">{user && sched.room}</h2>
                             </div>
                         </div>
                     ))}
@@ -181,8 +184,8 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'e
                     <h3 className="font-bold text-lg">
                         {/* ★ モーダルタイトルの構成 */}
                         {isJa
-                            ? `${translateDay(selectedSlot?.day || "")} ${selectedSlot?.period}${t('timetable.period')}${t('timetable.modal_title')}`
-                            : `${t('timetable.modal_title')} ${translateDay(selectedSlot?.day || "")} ${t('timetable.period')} ${selectedSlot?.period}`
+                            ? `${translateDay(selectedSlot?.day || "")}${selectedSlot?.period}${t('timetable.modal_title')}`
+                            : `${t('timetable.modal_title')} ${translateDay(selectedSlot?.day || "")} ${selectedSlot?.period}`
                         }
                     </h3>
 

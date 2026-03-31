@@ -5,6 +5,7 @@ import {CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from 
 import {ui} from "@/translation/ui.ts";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
+import {useTranslations} from "@/translation/utils.ts";
 
 export interface SearchFilters {
     year: string | null;
@@ -45,7 +46,7 @@ export default function ExploreInterface({
                                          }: Props) {
     // 翻訳セットアップ
     const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
-    const t = (key: keyof typeof ui['en']) => ui[currentLang][key];
+    const t = useTranslations(currentLang);
     const isJa = currentLang === 'ja';
 
 

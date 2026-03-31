@@ -5,8 +5,12 @@ import Layout from "@/layouts/Layout.astro";
 import {env} from "cloudflare:workers";
 import TimetableInterface from "@/components/TimetableInterface.tsx";
 import type {FlatSchedule} from "@/db/schema.ts";
+import {defaultLang, ui} from "@/translation/ui.ts"
+import {useTranslations} from "@/translation/utils.ts";
 
 const {user, selectedYear, selectedTerm, lang} = Astro.locals;
+const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
+const t = useTranslations(currentLang);
 
 // 1. スコープの外側で空配列として初期化しておく
 let flatSchedules = [] as FlatSchedule[];
@@ -38,7 +42,7 @@ if (user) {
 }
 ---
 
-<Layout title="時間割 | ICUのじかんわり">
+<Layout title=`${t('timetable.title')} | ${t('title')}`>
     <div class="overflow-hidden p-2 md:px-6 max-w-7xl mx-auto">
         <TimetableInterface
                 initialRawSchedules={flatSchedules}
