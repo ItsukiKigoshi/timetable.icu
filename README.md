@@ -53,26 +53,6 @@
     - [ ] Google Formにいかずとも簡単に送れるように
     - [ ] With Upvote
 - [ ] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
-    - [ ] Default localeをjaとenどっちにするか？
-        - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
-- [ ] 役立つリンク
-    - [ ] ログインが必要なサイトはその旨を明示
-    - [ ] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
-    - [ ] ICU Portal
-    - [ ] ICU Map
-        - [ ] Course Offerings
-    - [ ] CTL
-        - [ ] 履修計画テンプレート
-        - [ ] 履修計画ワークショップ
-        - [ ] イベントなどでコラボレーション？
-    - [ ] Major一覧
-       - [ ] ehandbook
-       - [ ] メジャーインフォメーションサイト
-       - [ ] メジャー選択要件
-    - [ ] ICU IBS
-        - [ ] 相談方法
-        - [ ] Social Media
-    - [ ] Weekly Giants
 
 # できないこと
 
@@ -146,6 +126,7 @@
         - [ ] 授業開始日と終了日
         - [ ] 休講日を除く
 - [x] 授業検索
+    - [ ] 全体の条件クリアボタン（year, term以外）
     - [ ] **キーワード検索にCourse ID, regidを含む!**
     - [ ] **キャンセルされた授業をそのように明示: 追加できないように**
     - [ ] **開講言語で絞り込み**
@@ -213,7 +194,7 @@
         - [ ] 安易にtransparent/opacityいじらない
         - [ ] フォント（こだわろう; 明朝?）
         - [ ] 他のAIみの少ないサイトを参照
-            - [ ] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
+            - [x] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
             - [x] landingpageのみSSG?
 - [ ] Landing Page
     - [x] できることとできないことを明示
@@ -258,6 +239,9 @@
 - [ ] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
     - [ ] Snack通知
     - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
+- [ ] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
+    - [ ] Default localeをjaとenどっちにするか？
+        - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる． 
 - [x] Google OAuthをpublesh
     - [x] Privacy Policy
         - [ ] わかりやすく
@@ -276,17 +260,35 @@
         - [ ] パンくず
     - [ ] タイトルつける
     - [ ] OGP
-        - og:title
-        - og:description
-        - og:url
-        - og:image
+        - [ ] og:title
+        - [ ] og:description
+        - [ ] og:url
+        - [ ] og:image
+    - [ ] Google Search Console
+    - [ ] Semantic HTML
+        - [ ] div乱用をrefactor
 - [x] Deploy to Workers
 - [ ] リンク
-    - [ ] Grad Reqへのリンク
-        - [ ] ツール
-        - [ ] PDF
     - [ ] 4年間の全体像を考える
-    - [ ] Major Reqへのリンク
+    - [ ] ログインが必要なサイトはその旨を明示
+    - [ ] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
+    - [ ] ICU Portal
+    - [ ] ICU Map
+        - [ ] Course Offerings
+    - [ ] CTL
+        - [ ] 履修計画テンプレート
+        - [ ] 履修計画ワークショップ
+        - [ ] イベントなどでコラボレーション？
+    - [ ] Major一覧
+       - [ ] ehandbook
+       - [ ] メジャーインフォメーションサイト
+       - [ ] メジャー選択要件
+    - [ ] ICU IBS
+        - [ ] 相談方法
+        - [ ] Social Media
+    - [ ] Weekly Giants
+- [ ] performance
+   - [ ] 画像最適化: 必要なピクセル数以下に抑える
 - [ ] 表示するコマが無いときに「Explore」へ促す
 - [ ] PR
     - [ ] Zenn記事
@@ -301,9 +303,10 @@
     - [ ] 大学院進学でメールアドレスが変わると使えなくなる?
 - [ ] 逆に現状だと，Passkeyを持っていれば卒業後も在学生以外にアクセスさせたくない情報 (Room)が見られてしまう
 
-## 注意点
+## Checklist
 
 - [ ] Roomはicu.ac.jpを持つユーザのみ
+    - [ ] 未ログインユーザーにはAPIからも返さない
 
 ---
 
