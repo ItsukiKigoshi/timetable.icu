@@ -4,20 +4,24 @@ import PasskeyButton from "./PasskeyButton";
 import SyncHandler from "./SyncHandler";
 import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 import Logo from '@/assets/Logo.svg';
+import {useTranslations, useTranslatedPath} from "@/translation/utils";
+
+const lang = Astro.locals.lang || 'en';
+const t = useTranslations(lang);
+const l = useTranslatedPath(lang);
 
 const locals = Astro.locals ?? {};
 const {user, selectedYear, selectedTerm, dbError} = locals;
 const isLoggedIn = !!user;
 ---
 <header class="navbar sticky top-0 z-100 bg-base-100 shadow-sm">
-    <!-- Left - Title -->
     <div class="navbar-start">
-        <a class="btn btn-ghost text-xl flex gap-2 px-2" href="/">
+        <a class="btn btn-ghost text-xl flex gap-2 px-2" href={l('/')}>
             <Logo width={24} height={24}/>
-            <span class="hidden sm:inline">ICUのじかんわり α</span>
+            <span class="hidden sm:inline">{t('title')}</span>
         </a>
     </div>
-    <!-- Center - Term Selector -->
+
     <div class="navbar-center flex gap-2">
         <form method="GET" class="flex gap-1 items-center">
             <select
@@ -38,42 +42,35 @@ const isLoggedIn = !!user;
                     class="select select-bordered select-sm md:select-md w-fit font-bold"
                     autocomplete="off"
             >
-                {SELECTABLE_TERMS.map(t => (
-                        <option value={t.en} selected={selectedTerm === t.en}>
-                            {t.en} </option>
+                {SELECTABLE_TERMS.map(termObj => (
+                        <option value={termObj} selected={selectedTerm === termObj}>
+                            {/* 辞書に term.Spring などがあればそれを、なければ key そのまま表示 */}
+                            {t(`term.${termObj}` as any) || termObj}
+                        </option>
                 ))}
             </select>
-
         </form>
     </div>
 
-    <!-- Right - Login Button -->
     <nav class="navbar-end">
         {isLoggedIn &&
                 <SyncHandler client:load isLoggedIn={isLoggedIn}/>}
         {!dbError &&
-
                 <div class="relative inline-block ml-auto">
                     <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
+                    <label for="user-menu-toggle"
+                           class="fixed inset-0 h-screen w-screen cursor-default hidden peer-checked:block z-90"></label>
 
-                    <label
-                            for="user-menu-toggle"
-                            class="fixed inset-0 h-screen w-screen cursor-default hidden peer-checked:block z-90">
-                    </label>
-
-                    <label
-                            for="user-menu-toggle"
-                            class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer"
-                    >
+                    <label for="user-menu-toggle"
+                           class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer">
                         <div class="w-10 rounded-full shadow-inner ring-1 ring-base-content/10">
                             {user?.image ? (
                                     <img src={user.image} alt="User Avatar"/>
                             ) : (
                                     <div class="flex h-full w-full items-center justify-center bg-base-200 text-base-content/50">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                             viewBox="0 0 24 24"
-                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                             stroke-linejoin="round">
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round">
                                             <circle cx="12" cy="8" r="5"/>
                                             <path d="M20 21a8 8 0 0 0-16 0"/>
                                         </svg>
@@ -85,18 +82,23 @@ const isLoggedIn = !!user;
                     <ul class="hidden peer-checked:flex absolute right-0 z-101 mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl border border-base-200 flex-col items-center">
                         <li class="w-full">
                             <div class="w-full text-center space-y-1">
-                                <h3 class="font-bold text-lg">{user ? `Hi, ${user.name}!` : "おかえりなさい"}</h3>
+                                <h3 class="font-bold text-lg">
+                                    {user
+                                        ? t('header.hi').replace('{name}', user.name ?? '')
+                                        : t('header.welcome_back')}
+                                </h3>
                                 <p class="text-xs text-base-content/60">
-                                    {user ? "同期済み" : "ログインして同期"}
+                                    {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
                                 </p>
                             </div>
                         </li>
                         <div class="divider my-3 opacity-20 w-full"></div>
                         <li class="w-full flex flex-col gap-2">
-                            <LoginButton client:load isLoggedIn={isLoggedIn}/>
-                            <PasskeyButton client:load isLoggedIn={isLoggedIn}/>
+                            <LoginButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
+                            <PasskeyButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
                         </li>
                     </ul>
-                </div>}
+                </div>
+        }
     </nav>
 </header>

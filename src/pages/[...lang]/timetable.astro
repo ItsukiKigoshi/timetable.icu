@@ -3,7 +3,7 @@ import {drizzle} from "drizzle-orm/d1";
 import * as schema from "@/db/schema.ts";
 import Layout from "@/layouts/Layout.astro";
 import {env} from "cloudflare:workers";
-import TimetableInterface from "@/components/TimetableInterface";
+import TimetableInterface from "@/components/TimetableInterface.tsx";
 import type {FlatSchedule} from "@/db/schema.ts";
 
 const {user, selectedYear, selectedTerm} = Astro.locals;

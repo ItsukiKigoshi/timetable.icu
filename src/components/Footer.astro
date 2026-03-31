@@ -1,34 +1,39 @@
 ---
-import {Calendar, Plus, Telescope} from "lucide-astro";
+import {Calendar, Telescope} from "lucide-astro";
+import {useTranslations, useTranslatedPath} from "@/translation/utils";
+
+const lang = Astro.locals.lang || 'en';
+const t = useTranslations(lang);
+const l = useTranslatedPath(lang);
+
 const {pathname} = Astro.url;
 
 const isActive = (path: string) => {
-    return pathname === path || pathname === `${path}/`;
+    const translatedPath = l(path);
+    return pathname === translatedPath || pathname === `${translatedPath}/`;
 };
 ---
-<!-- Desktop -->
+
 <footer class="hidden md:flex dock bg-base-100/80 backdrop-blur-lg border-t border-white/10">
-    <a href="/explore"
+    <a href={l('/explore')}
        class={`transition-colors ${isActive('/explore') ? 'dock-active text-primary' : 'text-base-content'}`}>
         <Telescope size="24"/>
-        <span class="dock-label">Explore</span>
+        <span class="dock-label">{t('nav.explore')}</span>
     </a>
-    <a href="/timetable"
+    <a href={l('/timetable')}
        class={`transition-colors ${isActive('/timetable') ? 'dock-active text-primary' : 'text-base-content'}`}>
         <Calendar size="24"/>
-        <span class="dock-label">Timetable</span>
+        <span class="dock-label">{t('nav.timetable')}</span>
     </a>
 </footer>
 
-<!-- Mobile Toggle FAB -->
 <footer class="md:hidden fixed bottom-6 right-6 z-50">
     {isActive('/timetable') ? (
-            <a href="/explore" class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
+            <a href={l('/explore')} class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
                 <Telescope size="32" class="text-accent-content"/>
             </a>
     ) : (
-        /* それ以外（Exploreなど）の時は Timetable へのボタンを表示 */
-            <a href="/timetable" class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
+            <a href={l('/timetable')} class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
                 <Calendar size="32" class="text-accent-content"/>
             </a>
     )}

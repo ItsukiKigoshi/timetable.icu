@@ -2,16 +2,20 @@ import {getAuth} from "@/lib/auth.ts";
 import {defineMiddleware} from "astro:middleware";
 import {env} from "cloudflare:workers";
 import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
+import {defaultLang} from "@/translation/ui.ts";
 
 export const onRequest = defineMiddleware(async (context, next) => {
     if (!env) {
         return next();
     }
 
+    // i18n Language Management
+    const {lang} = context.params;
+    context.locals.lang = lang || defaultLang;
+
     // Session Management
     try {
         const auth = getAuth(env);
-        // ここでD1が制限に達していると例外が飛ぶ
         const sessionData = await auth.api.getSession({
             headers: context.request.headers,
         });
@@ -20,8 +24,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         context.locals.session = sessionData?.session ?? null;
         context.locals.dbError = false; // 正常
     } catch (error) {
-        // D1が落ちている時はここに来る
-        console.error("D1/Auth is down, proceeding as guest:", error);
+        console.error("D1 or Auth is down, proceeding as guest:", error);
 
         // ユーザー情報を明示的に null にして「未ログイン状態」として続行させる
         context.locals.user = null;

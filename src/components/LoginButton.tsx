@@ -1,10 +1,21 @@
 import React, {useState} from 'react';
 import {authClient, signInWithGoogle} from "@/lib/auth-client.ts";
+import {defaultLang, ui} from "@/translation/ui";
 
-export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
+type Lang = keyof typeof ui;
+
+export default function LoginButton({
+                                        isLoggedIn,
+                                        lang = defaultLang // Propsで言語を受け取る
+                                    }: {
+    isLoggedIn: boolean;
+    lang?: string
+}) {
     const [isLoading, setIsLoading] = useState(false);
+    
+    const currentLang = (lang in ui ? lang : defaultLang) as Lang;
+    const t = (key: keyof typeof ui['en']) => ui[currentLang][key] || ui['en'][key];
 
-    // ログアウト処理
     const handleLogout = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -12,22 +23,19 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
             await authClient.signOut({
                 fetchOptions: {
                     onSuccess: () => {
-                        window.location.href = "/";
+                        window.location.reload();
                     },
                 },
             });
-
-            // 万が一 onSuccess が呼ばれない場合の予備
             setTimeout(() => {
-                window.location.href = "/";
+                window.location.reload();
             }, 500);
         } catch (error) {
             console.error(error);
-            setIsLoading(false); // 失敗時のみ戻す（成功時はリロードされるため）
+            setIsLoading(false);
         }
     };
 
-    // Googleログイン処理
     const handleGoogleLogin = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -36,12 +44,12 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
         } catch (error) {
             console.error(error);
             setIsLoading(false);
-            alert("ログインに失敗しました");
+            alert(t('auth.error_login'));
         }
     };
 
     return (
-        <div>
+        <div className="w-full">
             {isLoggedIn ? (
                 <button
                     onClick={handleLogout}
@@ -50,13 +58,13 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
                     className="btn w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         className="lucide lucide-log-out-icon lucide-log-out">
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                         className="lucide lucide-log-out">
                         <path d="m16 17 5-5-5-5"/>
                         <path d="M21 12H9"/>
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     </svg>
-                    {isLoading ? "ログアウト中..." : "ログアウト"}
+                    {isLoading ? t('auth.logging_out') : t('auth.logout')}
                 </button>
             ) : (
                 <button onClick={handleGoogleLogin}
@@ -74,11 +82,9 @@ export default function LoginButton({isLoggedIn}: { isLoggedIn: boolean }) {
                             <path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path>
                         </g>
                     </svg>
-                    {isLoading ? "Googleへ接続中..." : "Googleでログイン"}
+                    {isLoading ? t('auth.connecting_google') : t('auth.login_google')}
                 </button>
-            )
-            }
+            )}
         </div>
-    )
-        ;
+    );
 }
