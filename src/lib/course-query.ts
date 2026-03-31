@@ -21,9 +21,11 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
     if (q) {
         const searchVal = `%${q}%`;
         conditions.push(or(
+            like(schema.courses.rgNo, searchVal),
+            like(schema.courses.courseCode, searchVal),
             like(schema.courses.titleJa, searchVal),
             like(schema.courses.titleEn, searchVal),
-            like(schema.courses.instructor, searchVal)
+            like(schema.courses.instructor, searchVal),
         ));
     }
 
