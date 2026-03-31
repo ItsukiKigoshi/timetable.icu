@@ -1,4 +1,4 @@
-# TimetableInterface.icu (あいしーゆーのじかんわり)
+# ICUのじかんわり | Timetable.icu
 
 # 目標
 
