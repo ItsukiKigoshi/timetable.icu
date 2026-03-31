@@ -4,7 +4,7 @@
 
 - [ ] ようこに卒業までつかってもらう
 - [ ] 100人のTermly Active UserをICU内で獲得する
-    - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」で1番目
+    - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [ ] iOSアプリ/Androidを作る (?)
 
 # 大切にしたいこと
@@ -56,14 +56,28 @@
     - [ ] Default localeをjaとenどっちにするか？
         - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
 - [ ] 役立つリンク
+    - [ ] ログインが必要なサイトはその旨を明示
+    - [ ] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
+    - [ ] ICU Portal
+    - [ ] ICU Map
+        - [ ] Course Offerings
     - [ ] CTL
+        - [ ] 履修計画テンプレート
         - [ ] 履修計画ワークショップ
         - [ ] イベントなどでコラボレーション？
     - [ ] Major一覧
+       - [ ] ehandbook
+       - [ ] メジャーインフォメーションサイト
+       - [ ] メジャー選択要件
+    - [ ] ICU IBS
+        - [ ] 相談方法
+        - [ ] Social Media
+    - [ ] Weekly Giants
 
 # できないこと
 
 - [ ] 実際の履修登録 (リンク貼る)
+    - [ ] Registration Website
 - [ ] 卒業要件との照らし合わせ (リンク貼る)
     - [ ] Grad Requirement Checklist
     - [ ] 卒業要件PDF (ehandbook)
@@ -124,8 +138,9 @@
         - [x] 未ログインユーザはLocalStorageへ
             - [x] LocalStorageがSaveされたときに通知
     - [ ] show/hide機能
-        - [ ] Listにだけ表示されるようにするか，もしくは時間割上に網線で表示される（+"
-          非表示の授業は単位数にカウントされません"みたいなメッセージ）か
+        - [ ] Listにだけ表示されるようにする
+        - [ ] もしくは時間割上に網線で表示される（+"非表示の授業は単位数にカウントされません"みたいなメッセージ）か
+        - [ ] user courses schemaに追加（boolean; 0/1）
     - [ ] List形式で表示
     - [ ] Google Calendar / .icsエクスポート？
         - [ ] 授業開始日と終了日
