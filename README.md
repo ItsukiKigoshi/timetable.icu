@@ -75,7 +75,7 @@
     - 対面で宣伝
     - Instagram等でICU関連の団体/個人に宣伝してもらう
 - コンポーネントテスト
-- ちゃんとWebアナリティクスを取って開発の励みにする
+- [x] ちゃんと[Webアナリティクス](https://www.cloudflare.com/application-services/products/analytics/)を取って開発の励みにする
 
 # ライバル
 
