@@ -53,39 +53,39 @@ export const prerender = true;
         <section
                 class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] p-10 md:p-20 shadow-2xl w-full max-w-7xl mx-auto mt-12 border border-white/20"
         >
-            <header class="hero-content flex-col lg:flex-row gap-12 lg:gap-20">
+            <header class="hero-content lg:flex-row flex-col gap-12 lg:gap-16">
                 <Logo
                         width={200}
                         height={200}
                         class="drop-shadow-2xl"
                 />
-                <div class="text-center lg:text-left">
-                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tighter leading-tight text-base-content">
+                <div class="lg:text-left text-center">
+                    <h1 class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content">
                         ICUのじかんわり
                         <span
-                                class="block text-md md:text-2xl lg:inline lg:ml-4  opacity-80"
+                                class="block text-2xl lg:inline lg:ml-1 opacity-80"
                         >へようこそ！</span
                         >
                     </h1>
-                    <p class="py-4 text-sm md:text-lg font-medium opacity-70 leading-relaxed max-w-3xl">
-                        ICU生の時間割、履修登録ツールの決定版
+                    <p class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl">
+                        ICU生の時間割・履修計画がここに.
                     </p>
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-4">
+                    <nav class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4">
                         <a
                                 href="/explore"
-                                class="btn btn-primary btn-md rounded-full px-12"
+                                class="btn btn-primary btn-lg rounded-full px-16"
                         >
                             <Telescope size="24"/>
                             <span>コースを探す</span>
                         </a>
                         <a
                                 href="/timetable"
-                                class="btn btn-neutral btn-md rounded-full px-12"
+                                class="btn btn-neutral btn-lg rounded-full px-16"
                         >
                             <Calendar size="24"/>
                             <span>時間割を見る</span>
                         </a>
-                    </div>
+                    </nav>
                 </div>
             </header>
         </section>
@@ -225,21 +225,6 @@ export const prerender = true;
                             href="mailto:itsukikigoshi+timetableicu@gmail.com"
                     >
                         ご連絡
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="lucide lucide-mail opacity-70"
-                        >
-                            <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
-                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                        </svg>
                     </a>
                     を。
                 </p>

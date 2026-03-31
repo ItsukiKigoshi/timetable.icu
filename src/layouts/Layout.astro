@@ -37,8 +37,8 @@ const {
     <link rel="manifest" href="/site.webmanifest"/>
     <meta name="generator" content={Astro.generator}/>
     <title>{title}</title>
-    <!--OG description (dynamic change might be needed)-->
     <meta property="og:title" content={title}/>
+    <!--OG description (dynamic change might be needed)-->
     <meta property="og:description" content={description}/>
     <meta property="og:type" content={ogType}/>
     <meta
@@ -52,42 +52,24 @@ const {
     />
 </head>
 <body class="min-h-screen flex flex-col">
-<div class="p-4 container mx-auto">
-    <div role="alert" class="alert alert-error">
-        <TriangleAlert/>
-        <span
-        >本サイトは試験運用中です．本番運用開始までの間，データ等は予告無く削除される可能性があります．</span
-        >
-    </div>
-    {
-        (!isLanding && dbError) && (
 
+{
+    (!isLanding && dbError) && (
+                <div class="p-4 container mx-auto">
                     <div role="alert" class="alert alert-warning shadow-lg">
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6 shrink-0 stroke-current"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                        >
-                            <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                            />
-                        </svg>
+                        <TriangleAlert/>
                         <div>
                             <h3 class="font-bold">アクセス制限中</h3>
                             <div class="text-xs">
                                 現在データベースの読み取り制限に達しているため，検索及び同期などログインが必要な機能が利用できません．1日以内に復旧見込みです．
-                                あなたのデータは保存されているのでご安心ください．
+                                データは保存されているのでご安心ください．
                             </div>
                         </div>
                     </div>
+                </div>
+    )
+}
 
-        )
-    }
-</div>
 {!isLanding &&
         <Header user={user}/>}
 <main class="grow">

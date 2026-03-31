@@ -3,6 +3,7 @@ import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
+import {X} from "lucide-react";
 
 export interface SearchFilters {
     year: string | null;
@@ -18,7 +19,7 @@ export interface SearchFilters {
 
 interface SearchResponse {
     results: CourseWithSchedules[];
-    hasNextPage: boolean; // totalCount から変更
+    hasNextPage: boolean;
 }
 
 interface Props {
@@ -166,11 +167,11 @@ export default function ExploreInterface({
                         value={filters.categoryId || ''}
                         onChange={(e) => update({categoryId: e.target.value})}
                     >
-                        <option value="">全てのカテゴリ / メジャー</option>
-                        <optgroup label="メジャー (Majors)">
+                        <option value="">カテゴリ / メジャー</option>
+                        <optgroup label="メジャー">
                             {majorCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
                         </optgroup>
-                        <optgroup label="一般カテゴリ / その他">
+                        <optgroup label="その他">
                             {otherCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
                         </optgroup>
                     </select>
@@ -353,9 +354,9 @@ export default function ExploreInterface({
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={loading}
-                                            className={`btn btn-sm gap-1 transition-all duration-300 ${
+                                            className={`btn btn-sm gap-1 ${
                                                 isAdded
-                                                    ? 'btn-error btn-outline'
+                                                    ? 'btn-error'
                                                     : 'btn-primary'
                                             }`}
                                         >
@@ -364,13 +365,7 @@ export default function ExploreInterface({
                                             ) : isAdded ? (
                                                 <>
                                                     <span>削除</span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    >
-                                                        <path d="M18 6 6 18"/>
-                                                        <path d="m6 6 12 12"/>
-                                                    </svg>
+                                                    <X size="16"/>
                                                 </>
                                             ) : (
                                                 <>

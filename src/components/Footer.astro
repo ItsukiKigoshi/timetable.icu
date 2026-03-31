@@ -1,47 +1,35 @@
 ---
+import {Calendar, Plus, Telescope} from "lucide-astro";
 const {pathname} = Astro.url;
 
 const isActive = (path: string) => {
     return pathname === path || pathname === `${path}/`;
 };
 ---
-
-<footer class="dock bg-base-100/80 backdrop-blur-lg border-t border-white/10">
-    <a
-            href="/explore"
-            class={`transition-colors ${isActive('/explore') ? 'dock-active text-primary' : 'text-base-content'}`}
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-             class="lucide lucide-telescope">
-            <path d="m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.15a1.07 1.07 0 0 1 .691-1.265l13.504-4.44"/>
-            <path d="m13.56 11.747 4.332-.924"/>
-            <path d="m16 21-3.105-6.21"/>
-            <path d="M16.485 5.94a2 2 0 0 1 1.455-2.425l1.09-.272a1 1 0 0 1 1.212.727l1.515 6.06a1 1 0 0 1-.727 1.213l-1.09.272a2 2 0 0 1-2.425-1.455z"/>
-            <path d="m6.158 8.633 1.114 4.456"/>
-            <path d="m8 21 3.105-6.21"/>
-            <circle cx="12" cy="13" r="2"/>
-        </svg>
+<!-- Desktop -->
+<footer class="hidden md:flex dock bg-base-100/80 backdrop-blur-lg border-t border-white/10">
+    <a href="/explore"
+       class={`transition-colors ${isActive('/explore') ? 'dock-active text-primary' : 'text-base-content'}`}>
+        <Telescope size="24"/>
         <span class="dock-label">Explore</span>
     </a>
-    <a
-            href="/timetable"
-            class={`transition-colors ${isActive('/timetable') ? 'dock-active text-primary' : 'text-base-content'}`}
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-             class="lucide lucide-calendar-days">
-            <path d="M8 2v4"/>
-            <path d="M16 2v4"/>
-            <rect width="18" height="18" x="3" y="4" rx="2"/>
-            <path d="M3 10h18"/>
-            <path d="M8 14h.01"/>
-            <path d="M12 14h.01"/>
-            <path d="M16 14h.01"/>
-            <path d="M8 18h.01"/>
-            <path d="M12 18h.01"/>
-            <path d="M16 18h.01"/>
-        </svg>
+    <a href="/timetable"
+       class={`transition-colors ${isActive('/timetable') ? 'dock-active text-primary' : 'text-base-content'}`}>
+        <Calendar size="24"/>
         <span class="dock-label">Timetable</span>
     </a>
+</footer>
+
+<!-- Mobile Toggle FAB -->
+<footer class="md:hidden fixed bottom-6 right-6 z-50">
+    {isActive('/timetable') ? (
+            <a href="/explore" class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
+                <Telescope size="32" class="text-accent-content"/>
+            </a>
+    ) : (
+        /* それ以外（Exploreなど）の時は Timetable へのボタンを表示 */
+            <a href="/timetable" class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
+                <Calendar size="32" class="text-accent-content"/>
+            </a>
+    )}
 </footer>
