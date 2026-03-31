@@ -6,7 +6,7 @@ import {env} from "cloudflare:workers";
 import TimetableInterface from "@/components/TimetableInterface.tsx";
 import type {FlatSchedule} from "@/db/schema.ts";
 
-const {user, selectedYear, selectedTerm} = Astro.locals;
+const {user, selectedYear, selectedTerm, lang} = Astro.locals;
 
 // 1. スコープの外側で空配列として初期化しておく
 let flatSchedules = [] as FlatSchedule[];
@@ -43,6 +43,7 @@ if (user) {
         <TimetableInterface
                 initialRawSchedules={flatSchedules}
                 user={user}
+                lang={lang}
                 client:load
         />
     </div>

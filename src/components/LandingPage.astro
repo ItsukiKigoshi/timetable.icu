@@ -55,11 +55,24 @@ const l = useTranslatedPath(lang);
 
     <!--Main Content-->
     <section class="flex flex-col items-center gap-16 p-6 max-w-5xl mx-auto mb-20 min-h-screen relative">
+        <div class="flex justify-center gap-2 text-sm font-medium opacity-70 my-4">
+            {lang === 'en' ? (
+                    <span>EN</span>
+            ) : (
+                    <a href="/" class="underline text-base-content/50">EN</a>
+            )}
+            <span class="text-base-content/30">/</span>
+            {lang === 'ja' ? (
+                    <span>JA</span>
+            ) : (
+                    <a href="/ja/" class="underline text-base-content/50">JA</a>
+            )}
+        </div>
         <!--Hero-->
         <section
-                class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] p-10 md:p-20 shadow-2xl w-full max-w-7xl mx-auto mt-12 border border-white/20"
+                class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-10 shadow-2xl w-full max-w-7xl mx-auto mt-12 border border-white/20"
         >
-            <header class="hero-content lg:flex-row flex-col gap-12 lg:gap-16">
+            <header class="hero-content lg:flex-row flex-col lg:gap-16 gap-12">
                 <Logo
                         width={200}
                         height={200}
@@ -79,7 +92,7 @@ const l = useTranslatedPath(lang);
                     <nav class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4">
                         <a
                                 href={l('/explore')}
-                                class="btn btn-primary btn-lg rounded-full px-16"
+                                class="btn btn-primary md:btn-lg btn-sm rounded-full px-16"
                         >
                             <Telescope size="24"/>
                             <span>{t('lp.nav.explore')}</span>
@@ -87,7 +100,7 @@ const l = useTranslatedPath(lang);
 
                         <a
                                 href={l('/timetable')}
-                                class="btn btn-neutral btn-lg rounded-full px-16"
+                                class="btn btn-neutral md:btn-lg btn-sm rounded-full px-16"
                         >
                             <Calendar size="24"/>
                             <span>{t('lp.nav.timetable')}</span>

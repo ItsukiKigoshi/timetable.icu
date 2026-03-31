@@ -14,6 +14,7 @@ const locals = Astro.locals ?? {};
 const {user, selectedYear, selectedTerm, dbError} = locals;
 const isLoggedIn = !!user;
 ---
+
 <header class="navbar sticky top-0 z-100 bg-base-100 shadow-sm">
     <div class="navbar-start">
         <a class="btn btn-ghost text-xl flex gap-2 px-2" href={l('/')}>
@@ -23,10 +24,9 @@ const isLoggedIn = !!user;
     </div>
 
     <div class="navbar-center flex gap-2">
-        <form method="GET" class="flex gap-1 items-center">
+        <div class="flex gap-1 items-center">
             <select
-                    name="year"
-                    onchange="this.form.submit()"
+                    id="year-select"
                     class="select select-bordered select-sm md:select-md w-fit font-bold"
                     autocomplete="off"
             >
@@ -37,25 +37,22 @@ const isLoggedIn = !!user;
                 ))}
             </select>
             <select
-                    name="term"
-                    onchange="this.form.submit()"
+                    id="term-select"
                     class="select select-bordered select-sm md:select-md w-fit font-bold"
                     autocomplete="off"
             >
                 {SELECTABLE_TERMS.map(termObj => (
                         <option value={termObj} selected={selectedTerm === termObj}>
-                            {/* 辞書に term.Spring などがあればそれを、なければ key そのまま表示 */}
                             {t(`term.${termObj}` as any) || termObj}
                         </option>
                 ))}
             </select>
-        </form>
+        </div>
     </div>
-
     <nav class="navbar-end">
         {isLoggedIn &&
                 <SyncHandler client:load isLoggedIn={isLoggedIn}/>}
-        {!dbError &&
+        {!dbError && (
                 <div class="relative inline-block ml-auto">
                     <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
                     <label for="user-menu-toggle"
@@ -80,16 +77,23 @@ const isLoggedIn = !!user;
                     </label>
 
                     <ul class="hidden peer-checked:flex absolute right-0 z-101 mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl border border-base-200 flex-col items-center">
-                        <li class="w-full">
-                            <div class="w-full text-center space-y-1">
-                                <h3 class="font-bold text-lg">
-                                    {user
-                                        ? t('header.hi').replace('{name}', user.name ?? '')
-                                        : t('header.welcome_back')}
-                                </h3>
-                                <p class="text-xs text-base-content/60">
-                                    {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
-                                </p>
+                        <li class="w-full text-center space-y-1">
+                            <h3 class="font-bold text-lg">
+                                {user ? t('header.hi').replace('{name}', user.name ?? '') : t('header.welcome_back')}
+                            </h3>
+                            <div class="w-full join mt-2 border border-base-300">
+                                <button
+                                        class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
+                                        data-lang-switch="en"
+                                >
+                                    EN
+                                </button>
+                                <button
+                                        class={`join-item btn btn-sm flex-1 ${lang === 'ja' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
+                                        data-lang-switch="ja"
+                                >
+                                    JA
+                                </button>
                             </div>
                         </li>
                         <div class="divider my-3 opacity-20 w-full"></div>
@@ -99,6 +103,60 @@ const isLoggedIn = !!user;
                         </li>
                     </ul>
                 </div>
-        }
+        )}
     </nav>
 </header>
+
+<script>
+    /**
+     * 現在のURLのクエリパラメータを維持したまま
+     * Year と Term だけを書き換えて遷移する
+     */
+    const updateYearTerm = () => {
+        const yearSelect = document.getElementById('year-select') as unknown as HTMLSelectElement;
+        const termSelect = document.getElementById('term-select') as unknown as HTMLSelectElement;
+
+        if (!yearSelect || !termSelect) return;
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('year', yearSelect.value);
+        url.searchParams.set('term', termSelect.value);
+
+        // ページネーションがある場合、年度が変わったら1ページ目に戻すのが一般的
+        if (url.searchParams.has('page')) {
+            url.searchParams.set('page', '1');
+        }
+
+        window.location.assign(url.toString());
+    };
+
+    // イベントリスナーの登録
+    document.getElementById('year-select')?.addEventListener('change', updateYearTerm);
+    document.getElementById('term-select')?.addEventListener('change', updateYearTerm);
+
+
+    // --- 言語切り替えロジック ---
+    document.querySelectorAll('[data-lang-switch]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
+            const currentUrl = new URL(window.location.href);
+            const segments = currentUrl.pathname.split('/');
+
+            // 現在のパスが /ja で始まっているかチェック
+            const isCurrentlyJa = segments[1] === 'ja';
+
+            if (targetLang === 'ja' && !isCurrentlyJa) {
+                // 日本語へ切り替え: パスの先頭に /ja を挿入
+                segments.splice(1, 0, 'ja');
+            } else if (targetLang === 'en' && isCurrentlyJa) {
+                // 英語へ切り替え: パスの先頭から /ja を削除
+                segments.splice(1, 1);
+            } else {
+                return; // すでにその言語なら何もしない
+            }
+
+            currentUrl.pathname = segments.join('/').replace(/\/+/g, '/');
+            window.location.assign(currentUrl.toString());
+        });
+    });
+</script>

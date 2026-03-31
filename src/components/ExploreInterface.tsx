@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
+import {CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from "lucide-react";
+import {ui} from "@/translation/ui.ts";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
-import {X} from "lucide-react";
 
 export interface SearchFilters {
     year: string | null;
@@ -30,16 +31,24 @@ interface Props {
     initialUserCourseIds: number[];
     user?: any;
     hasNextPage: boolean;
+    lang?: string;
 }
 
 export default function ExploreInterface({
                                              initialResults,
-                                             initialFilters: initialFilters,
+                                             initialFilters,
                                              categories,
                                              initialUserCourseIds,
                                              user,
-                                             hasNextPage: initialHasNext
+                                             hasNextPage: initialHasNext,
+                                             lang = 'en' // デフォルト
                                          }: Props) {
+    // 翻訳セットアップ
+    const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
+    const t = (key: keyof typeof ui['en']) => ui[currentLang][key];
+    const isJa = currentLang === 'ja';
+
+
     // 1. 状態管理
     const [courses, setCourses] = useState<CourseWithSchedules[]>(initialResults);
     const [hasNextPage, setHasNextPage] = useState(initialHasNext);
@@ -137,17 +146,11 @@ export default function ExploreInterface({
             <div className="flex flex-col md:flex-row gap-4 items-start">
                 <label
                     className="input input-bordered flex items-center gap-2 w-full max-w-xs shadow-sm bg-base-100/50 backdrop-blur-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M11 22H5.5a1 1 0 0 1 0-5h4.501"/>
-                        <path d="m21 22-1.879-1.878"/>
-                        <path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8"/>
-                        <circle cx="17" cy="18" r="3"/>
-                    </svg>
+                    <Search/>
                     <input
                         type="text"
                         className="grow"
-                        placeholder="タイトル、教員名..."
+                        placeholder={t('explore.search_placeholder')}
                         defaultValue={filters.q || ''}
                         onKeyDown={(e) => e.key === 'Enter' && update({q: e.currentTarget.value})}
                     />
@@ -155,24 +158,26 @@ export default function ExploreInterface({
 
                 <label
                     className="input input-bordered flex items-center gap-2 w-full max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm group">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         className="lucide lucide-list-filter-icon lucide-list-filter">
-                        <path d="M2 5h20"/>
-                        <path d="M6 12h12"/>
-                        <path d="M9 19h6"/>
-                    </svg>
+                    <ListFilter/>
                     <select
                         className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none"
                         value={filters.categoryId || ''}
                         onChange={(e) => update({categoryId: e.target.value})}
                     >
-                        <option value="">カテゴリ / メジャー</option>
-                        <optgroup label="メジャー">
-                            {majorCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
+                        <option value="">{t('explore.category_all')}</option>
+                        <optgroup label={t('explore.category_major')}>
+                            {majorCategories.map(c => (
+                                <option key={c.id} value={c.id}>
+                                    {isJa ? c.nameJa : c.nameEn}
+                                </option>
+                            ))}
                         </optgroup>
-                        <optgroup label="その他">
-                            {otherCategories.map(c => <option key={c.id} value={c.id}>{c.nameJa}</option>)}
+                        <optgroup label={t('explore.category_others')}>
+                            {otherCategories.map(c => (
+                                <option key={c.id} value={c.id}>
+                                    {isJa ? c.nameJa : c.nameEn}
+                                </option>
+                            ))}
                         </optgroup>
                     </select>
                 </label>
@@ -182,22 +187,9 @@ export default function ExploreInterface({
                     className="btn btn-md flex items-center gap-2 w-fi max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm border-white/20 font-normal text-base-content"
                     onClick={() => (window as any).slot_modal.showModal()}
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24" height="24"
-                        viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" strokeWidth="2"
-                        strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 2v4"/>
-                        <path d="M21 11.75V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7.25"/>
-                        <path d="m22 22-1.875-1.875"/>
-                        <path d="M3 10h18"/>
-                        <path d="M8 2v4"/>
-                        <circle cx="18" cy="18" r="3"/>
-                    </svg>
-
+                    <CalendarCheck/>
                     <span className="grow text-left">
-                    時限を選択
+                        {t('explore.select_slots')}
                         <span
                             className={`ml-2 text-xs ${(filters.slots?.length ?? 0) > 0 ? 'font-bold' : 'opacity-50'}`}>
                             ({filters.slots?.length ?? 0})
@@ -255,26 +247,20 @@ export default function ExploreInterface({
                                 className="btn btn-ghost btn-sm text-error"
                                 onClick={() => update({slots: []})}
                             >
-                                選択をクリア
+                                {t('explore.clear_selection')}
                             </button>
                             <form method="dialog">
                                 <button className="btn btn-outline border-base-100/40 px-10 shadow-lg">
-                                    閉じる
+                                    {t('explore.close')}
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
-
-                {/* 背景（オーバーレイ） */}
-                <form method="dialog" className="modal-backdrop ">
-                    <button>close</button>
-                </form>
             </dialog>
 
-
             {/* ページネーション上 */}
-            <div className="flex flex-col items-center gap-4">
+            <nav className="flex flex-col items-center gap-4 py-6 mb-6">
                 <div className="join">
                     <button
                         className="join-item btn"
@@ -294,7 +280,7 @@ export default function ExploreInterface({
                         »
                     </button>
                 </div>
-            </div>
+            </nav>
 
             {/* 結果表示セクション */}
             <div
@@ -302,22 +288,25 @@ export default function ExploreInterface({
                 {courses.map((course) => {
                     const isAdded = registeredIds.has(course.id);
                     const hasSchedules = course.schedules && course.schedules.length > 0;
-                    // 1. API送信中 2. 初期化(localStorage読み込み)中 のどちらかであればローディング
                     const loading = isSubmitting === course.id || !isInitialized;
+
                     return (
                         <div key={course.id} className="card bg-base-100 shadow-sm border border-base-200">
                             <div className="card-body p-4">
                                 <div className="flex justify-between items-center w-full">
-                                     <span className="text-xs text-base-content/50 font-mono">
-                                        {course.courseCode}
-                                    </span>
+                                    <span className="text-xs text-base-content/50 font-mono">{course.courseCode}</span>
                                     <span className="text-xs text-base-content/50">
                                         {course.year} {course.term}
                                     </span>
                                 </div>
 
-                                <h2 className="card-title text-base mt-2 line-clamp-2">{course.titleJa}</h2>
+                                {/* タイトルの翻訳出し分け */}
+                                <h2 className="card-title text-base mt-2 line-clamp-2">
+                                    {isJa ? course.titleJa : course.titleEn}
+                                </h2>
+
                                 <p className="text-sm text-base-content/70">{course.instructor}</p>
+
                                 <div className="flex flex-wrap gap-1 mt-1">
                                     {hasSchedules ? (
                                         course.schedules.map((s, i) => (
@@ -326,60 +315,33 @@ export default function ExploreInterface({
                                             </span>
                                         ))
                                     ) : (
-                                        <span className="text-xs">No Schedule</span>
+                                        <span className="text-xs opacity-50">{t('explore.no_schedule')}</span>
                                     )}
                                 </div>
 
                                 <div className="card-actions flex justify-between mt-4">
-                                    {/* 「スケジュールがある」または「すでに登録されている（削除用）」場合のみボタンを表示。
-                                      スケジュールがなく、かつ登録もされていない授業は、ボタンが非表示になります。
-                                    */}
                                     <a target='_blank'
                                        href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${
                                            course.rgNo
                                        }&year=${course.year}&term=${seasonToNumber(
                                            course.term
-                                       )}`} className="btn btn-sm">
-                                        <span>シラバス</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                             stroke-linecap="round" stroke-linejoin="round"
-                                             className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right">
-                                            <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/>
-                                            <path d="m21 3-9 9"/>
-                                            <path d="M15 3h6v6"/>
-                                        </svg>
+                                       )}`}
+                                       className="btn btn-sm">
+                                        <span>{t('explore.syllabus')}</span>
+                                        <SquareArrowOutUpRight size="16"/>
                                     </a>
                                     {(hasSchedules || isAdded) && (
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={loading}
-                                            className={`btn btn-sm gap-1 ${
-                                                isAdded
-                                                    ? 'btn-error'
-                                                    : 'btn-primary'
-                                            }`}
+                                            className={`btn btn-sm gap-1 ${isAdded ? 'btn-error' : 'btn-primary'}`}
                                         >
                                             {loading ? (
                                                 <span className="loading loading-spinner loading-xs"></span>
                                             ) : isAdded ? (
-                                                <>
-                                                    <span>削除</span>
-                                                    <X size="16"/>
-                                                </>
+                                                <>{t('explore.remove')} <X size="16"/></>
                                             ) : (
-                                                <>
-                                                    <span>追加</span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                         stroke-width="2" stroke-linecap="round"
-                                                         stroke-linejoin="round">
-                                                        <path d="M12 7v6"/>
-                                                        <path d="M15 10H9"/>
-                                                        <path
-                                                            d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/>
-                                                    </svg>
-                                                </>
+                                                <>{t('explore.add')} <Plus size="16"/></>
                                             )}
                                         </button>
                                     )}
@@ -389,14 +351,14 @@ export default function ExploreInterface({
                     );
                 })}
                 {courses.length === 0 && (
-                    <div>
-                        該当する授業が見つかりませんでした。
+                    <div className="col-span-full text-center py-12 opacity-50">
+                        {t('explore.no_results')}
                     </div>
                 )}
             </div>
 
             {/* ページネーション下 */}
-            <div className="flex flex-col items-center gap-4 py-6 mb-6">
+            <nav className="flex flex-col items-center gap-4 py-6 mb-6">
                 <div className="join">
                     <button
                         className="join-item btn"
@@ -416,7 +378,7 @@ export default function ExploreInterface({
                         »
                     </button>
                 </div>
-            </div>
+            </nav>
         </div>
     );
 }

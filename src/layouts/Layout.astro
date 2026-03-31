@@ -14,7 +14,6 @@ const lang = Astro.locals.lang || defaultLang;
 const t = useTranslations(lang);
 
 const {
-    // 翻訳がない場合のデフォルト値としてt()を仕込む
     title = t('site.title'),
     description = t('site.description'),
     ogImage = "https://timetable.icu/timetableicu-ogp.jpg",

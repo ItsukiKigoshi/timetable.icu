@@ -4,7 +4,8 @@ import type {User} from "better-auth";
 import {timeToMin} from "@/lib/timetable.ts";
 import {useTimetable} from "@/lib/useTimetable.ts";
 import React, {useEffect, useState} from "react"; // useEffectを追加
-import {X} from "lucide-react";
+import {SquareArrowOutUpRight, X} from "lucide-react";
+import {ui} from "@/translation/ui.ts";
 
 const HEADER_HEIGHT = 20;
 
@@ -21,10 +22,30 @@ export const seasonToNumber = (season: string | null): number => {
     }
 };
 
-export default function TimetableInterface({initialRawSchedules, user}: {
+export default function TimetableInterface({initialRawSchedules, user, lang = 'en'}: {
     initialRawSchedules: FlatSchedule[],
-    user?: User | null
+    user?: User | null,
+    lang?: string
 }) {
+    // 翻訳セットアップ
+    const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
+    const t = (key: keyof typeof ui['en']) => ui[currentLang][key];
+    const isJa = currentLang === 'ja';
+
+    // 曜日を翻訳するヘルパー
+    const translateDay = (day: string) => {
+        const dayKey = day.toLowerCase() as keyof typeof ui['en'];
+        // もし keys に 'days.mon' 形式で入れたなら `days.${day.toLowerCase()}`
+        const key = `days.${day.toLowerCase()}` as keyof typeof ui['en'];
+        return ui[currentLang][key] || day;
+    };
+
+    const translatePeriod = (label: string) => {
+        if (label === '昼') return t('period.lunch');
+        if (label === '夜') return t('period.night');
+        return label; // 1, 2, 3... はそのまま
+    };
+
     const {schedules, displaySchedules, toggleCourse} = useTimetable({
         initialSchedules: initialRawSchedules,
         initialCourseIds: Array.from(new Set(initialRawSchedules.map(s => s.courseId))),
@@ -39,7 +60,7 @@ export default function TimetableInterface({initialRawSchedules, user}: {
         ? schedules.filter(s => s.dayOfWeek === selectedSlot.day && s.period === parseInt(selectedSlot.period))
         : [];
 
-    // ★ 追加: 要素が0になったら自動で閉じる処理
+    // ★ 要素が0になったら自動で閉じる処理
     useEffect(() => {
         if (selectedSlot && coursesInSelectedSlot.length === 0) {
             const modal = document.getElementById('course_detail_modal') as HTMLDialogElement;
@@ -78,7 +99,6 @@ export default function TimetableInterface({initialRawSchedules, user}: {
         }
     };
 
-
     return (
         <div className="flex w-full overflow-hidden bg-base-100 border-t border-b border-base-content/50 select-none"
              style={{height: containerHeight}}>
@@ -90,7 +110,7 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                          className="absolute w-full flex flex-col items-center border-t border-base-content/50"
                          style={timeStyle(timeToMin(p.start), timeToMin(p.end))}>
                         <span className="text-[9px] opacity-50 mt-0.5">{p.start}</span>
-                        <span className="font-bold text-xs m-auto">{p.label}</span>
+                        <span className="font-bold text-xs m-auto">{translatePeriod(p.label)}</span>
                     </div>
                 ))}
             </div>
@@ -113,20 +133,19 @@ export default function TimetableInterface({initialRawSchedules, user}: {
 
                     {/* 授業カード */}
                     {displaySchedules.filter(s => s.dayOfWeek === day).map((sched, i) => (
-                        <div
-                            key={`${sched.courseCode}-${i}`}
-                            className="card absolute z-10 overflow-hidden shadow-sm rounded-sm bg-base-100 pointer-events-none"
-                            style={{
-                                ...timeStyle(sched.startMin, sched.displayEndMin),
-                                left: `${(sched.col * 100) / sched.groupMaxCols}%`,
-                                width: `calc(${(100 / sched.groupMaxCols)}% - 1px)`,
-                            }}
-                        >
+                        <div key={`${sched.courseCode}-${i}`}
+                             className="card absolute z-10 overflow-hidden shadow-sm rounded-sm bg-base-100 pointer-events-none border"
+                             style={{
+                                 ...timeStyle(sched.startMin, sched.displayEndMin),
+                                 left: `${(sched.col * 100) / sched.groupMaxCols}%`,
+                                 width: `calc(${(100 / sched.groupMaxCols)}% - 1px)`,
+                             }}>
                             <div className="absolute inset-0 bg-primary"/>
                             <div className="relative p-2 grid gap-1">
                                 <p className="text-xs text-primary-content">{sched.startTime}</p>
                                 <h1 className="text-sm text-primary-content font-bold line-clamp-2 leading-tight">
-                                    {sched.titleJa}
+                                    {/* ★ タイトルの出し分け */}
+                                    {isJa ? sched.titleJa : sched.titleEn}
                                 </h1>
                                 <h2 className="text-xs text-primary-content line-clamp-1">
                                     {sched.instructor}
@@ -138,15 +157,23 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                     <div
                         className="text-center border-b border-base-content/50 text-xs font-bold bg-base-100 z-10 relative pointer-events-none flex items-center justify-center shadow-sm"
                         style={{height: HEADER_HEIGHT}}>
-                        {day}
+                        {/* ★ 曜日の翻訳 */}
+                        {translateDay(day)}
                     </div>
                 </div>
             ))}
 
-            {/* 授業詳細・削除モーダル */}
+            {/* 授業詳細モーダル */}
             <dialog id="course_detail_modal" className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">{selectedSlot?.day} {selectedSlot?.period}限の授業</h3>
+                    <h3 className="font-bold text-lg">
+                        {/* ★ モーダルタイトルの構成 */}
+                        {isJa
+                            ? `${translateDay(selectedSlot?.day || "")} ${selectedSlot?.period}${t('timetable.period')}${t('timetable.modal_title')}`
+                            : `${t('timetable.modal_title')} ${translateDay(selectedSlot?.day || "")} ${t('timetable.period')} ${selectedSlot?.period}`
+                        }
+                    </h3>
+
                     <div className="py-4 space-y-3">
                         {coursesInSelectedSlot.map((course) => {
                             const cId = Number(course.courseId || (course as any).id);
@@ -154,7 +181,10 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                                 <div key={cId}
                                      className="p-4 bg-base-200 rounded-xl flex justify-between items-center border border-base-300">
                                     <div className="flex-1 min-w-0 mr-4">
-                                        <div className="font-bold truncate text-sm">{course.titleJa}</div>
+                                        <div className="font-bold truncate text-sm">
+                                            {/* ★ タイトルの出し分け */}
+                                            {isJa ? course.titleJa : course.titleEn}
+                                        </div>
                                         <div className="text-xs opacity-60 truncate">{course.instructor}</div>
                                     </div>
                                     <div className="flex gap-2 shrink-0">
@@ -164,15 +194,8 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                                            }&year=${course.year}&term=${seasonToNumber(
                                                course.term
                                            )}`} className="btn btn-sm">
-                                            <span>シラバス</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round"
-                                                 className="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right">
-                                                <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/>
-                                                <path d="m21 3-9 9"/>
-                                                <path d="M15 3h6v6"/>
-                                            </svg>
+                                            <span>{t('timetable.syllabus')}</span>
+                                            <SquareArrowOutUpRight size="16"/>
                                         </a>
                                         <button
                                             onClick={() => handleToggle(course)}
@@ -183,7 +206,7 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                                                 <span className="loading loading-spinner loading-xs"/>
                                             ) : (
                                                 <>
-                                                    <span className="font-bold">削除</span>
+                                                    <span className="font-bold">{t('timetable.remove')}</span>
                                                     <X size="16"/>
                                                 </>
                                             )}
@@ -195,7 +218,9 @@ export default function TimetableInterface({initialRawSchedules, user}: {
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
-                            <button className="btn w-full" onClick={() => setSelectedSlot(null)}>閉じる</button>
+                            <button className="btn w-full" onClick={() => setSelectedSlot(null)}>
+                                {t('timetable.close')}
+                            </button>
                         </form>
                     </div>
                 </div>

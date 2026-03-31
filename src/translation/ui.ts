@@ -11,6 +11,7 @@ export const ui = {
         // Meta
         'site.title': 'ICU Timetable | The Ultimate Course Registration Tool',
         'site.description': 'Plan your academic life at ICU with ease!',
+
         // Auth
         'auth.login': 'Login',
         'auth.logout': 'Logout',
@@ -26,12 +27,15 @@ export const ui = {
         'auth.passkey.success_add': 'Passkey registered!',
         'auth.passkey.error_login': 'Authentication failed.',
         'auth.passkey.error_add_hint': 'Failed to add Passkey. If you haven\'t registered yet, please login with Google first.',
+
         // Error
         'error.db.title': 'Access Restricted',
         'error.db.description': 'Database limit reached. Please try again later.',
+
         // Navigation
         'nav.explore': 'Explore',
         'nav.timetable': 'Timetable',
+
         // Header
         'header.welcome_back': 'Welcome back!',
         'header.hi': 'Hi, {name}!',
@@ -40,11 +44,17 @@ export const ui = {
         'term.Spring': 'Spring',
         'term.Autumn': 'Autumn',
         'term.Winter': 'Winter',
+
+        // Footer
+        'footer.privacy': 'Privacy Policy',
+        'footer.terms': 'Terms of Service',
+
         // --- Landing Page ---
         'lp.hero.subtitle': 'Welcome!',
-        'lp.hero.description': 'Your academic planning, simplified.',
+        'lp.hero.description': 'Academic planning in ICU, starts here.',
         'lp.nav.explore': 'Explore Courses',
         'lp.nav.timetable': 'View Timetable',
+
         // Features - Can
         'lp.features.can.label': 'Features',
         'lp.features.can.search.title': 'Search All Courses',
@@ -55,8 +65,8 @@ export const ui = {
         'lp.features.can.sync.desc': 'Log in to sync your latest timetable across all your devices.',
 
         // Features - Todo
-        'lp.features.todo.label': 'Coming Soon',
-        'lp.features.todo.offline.title': 'Offline Mode',
+        'lp.features.todo.label': 'Limitation',
+        'lp.features.todo.offline.title': 'Requires Online',
         'lp.features.todo.offline.desc': 'An internet connection is currently required to view courses.',
         'lp.features.todo.custom.title': 'Custom Course Entry',
         'lp.features.todo.custom.desc': 'Currently official courses only. Custom entry is being planned.',
@@ -71,9 +81,36 @@ export const ui = {
         'lp.profile.contact': 'contact us',
         'lp.profile.dot': '.',
 
-        // Footer
-        'footer.privacy': 'Privacy Policy',
-        'footer.terms': 'Terms of Service',
+        // Explore
+        'explore.search_placeholder': 'Title, Instructor...',
+        'explore.category_all': 'Category / Major',
+        'explore.category_major': 'Majors',
+        'explore.category_others': 'Others',
+        'explore.select_slots': 'Select Slots',
+        'explore.clear_selection': 'Clear Selection',
+        'explore.close': 'Close',
+        'explore.no_results': 'No courses found matching your criteria.',
+        'explore.syllabus': 'Syllabus',
+        'explore.add': 'Add',
+        'explore.remove': 'Remove',
+        'explore.no_schedule': 'No Schedule',
+
+        // Timetable
+        'timetable.modal_title': 'Courses in', // "Courses in Mon 1" のような使い方
+        'timetable.period': 'Period',
+        'timetable.close': 'Close',
+        'timetable.remove': 'Remove',
+        'timetable.syllabus': 'Syllabus',
+
+        'days.mon': 'Mon',
+        'days.tue': 'Tue',
+        'days.wed': 'Wed',
+        'days.thu': 'Thu',
+        'days.fri': 'Fri',
+        'days.sat': 'Sat',
+
+        'period.lunch': 'L',
+        'period.night': 'N',
     },
     ja: {
         'title': 'ICUのじかんわり',
@@ -96,6 +133,7 @@ export const ui = {
         'auth.passkey.error_add_hint': 'Passkeyの登録に失敗しました。まだ登録していない場合は、まずGoogleでログインしてください。',
         'error.db.title': 'アクセス制限中',
         'error.db.description': 'データベースの読み取り制限に達しています．',
+
         // ヘッダー
         'header.welcome_back': 'おかえりなさい',
         'header.hi': '{name} さん、こんにちは！',
@@ -104,15 +142,22 @@ export const ui = {
         'term.Spring': '春学期',
         'term.Autumn': '秋学期',
         'term.Winter': '冬学期',
+
+        // フッター
+        'footer.privacy': '個人情報規約',
+        'footer.terms': '利用規約',
+
         // ナビゲーション
         'nav.explore': '探す',
         'nav.timetable': '時間割',
+
         // --- ランディングページ ---
         'lp.hero.title': 'ICUのじかんわり',
         'lp.hero.subtitle': 'へようこそ！',
         'lp.hero.description': 'ICU生の時間割・履修計画がここに.',
         'lp.nav.explore': 'コースを探す',
         'lp.nav.timetable': '時間割を見る',
+
         // できること
         'lp.features.can.label': 'できること',
         'lp.features.can.search.title': 'すべてのコースから探す',
@@ -139,8 +184,35 @@ export const ui = {
         'lp.profile.contact': 'ご連絡',
         'lp.profile.dot': 'を.',
 
-        // フッター
-        'footer.privacy': 'プライバシーポリシー',
-        'footer.terms': '利用規約',
+        // 探す
+        'explore.search_placeholder': 'タイトル、教員名...',
+        'explore.category_all': 'カテゴリ / メジャー',
+        'explore.category_major': 'メジャー',
+        'explore.category_others': 'その他',
+        'explore.select_slots': '時限を選択',
+        'explore.clear_selection': '選択をクリア',
+        'explore.close': '閉じる',
+        'explore.no_results': '該当する授業が見つかりませんでした。',
+        'explore.syllabus': 'シラバス',
+        'explore.add': '追加',
+        'explore.remove': '削除',
+        'explore.no_schedule': 'スケジュールなし',
+
+        // 時間割
+        'timetable.modal_title': 'の授業', // "月 1限の授業" のような使い方
+        'timetable.period': '限',
+        'timetable.close': '閉じる',
+        'timetable.remove': '削除',
+        'timetable.syllabus': 'シラバス',
+
+        'days.mon': '月',
+        'days.tue': '火',
+        'days.wed': '水',
+        'days.thu': '木',
+        'days.fri': '金',
+        'days.sat': '土',
+
+        'period.lunch': '昼',
+        'period.night': '夜',
     },
 } as const;

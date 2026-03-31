@@ -71,7 +71,7 @@ export default function PasskeyButton({
                     alert(t('auth.passkey.success_add'));
                     window.location.reload();
                 },
-                onError: (ctx) => {
+                onError: () => {
                     setIsLoading(false);
                     alert(t('auth.passkey.error_add_hint'));
                 }

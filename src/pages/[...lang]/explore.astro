@@ -4,12 +4,12 @@ import {eq} from 'drizzle-orm';
 import * as schema from '@/db/schema.ts';
 import ExploreInterface from '@/components/ExploreInterface.tsx';
 import Layout from "@/layouts/Layout.astro";
-import type {Course, CourseWithSchedules} from "@/db/schema.ts";
+import type {CourseWithSchedules} from "@/db/schema.ts";
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
 import {getCourseSearchConfig} from "@/lib/course-query.ts";
 
-const {user, selectedYear, selectedTerm} = Astro.locals;
+const {user, selectedYear, selectedTerm, lang} = Astro.locals;
 const db = drizzle(env.timetable_icu, {schema});
 
 const url = new URL(Astro.request.url);
@@ -55,6 +55,7 @@ Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
                 initialUserCourseIds={userCourseIds}
                 user={user}
                 hasNextPage={hasNextPage}
+                lang={lang}
         />
     </main>
 </Layout>
