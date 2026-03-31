@@ -61,8 +61,11 @@
 
 - [ ] 実際の履修登録 (リンク貼る)
 - [ ] 卒業要件との照らし合わせ (リンク貼る)
-- [ ] シラバスを見ること (リンク貼る)
-- [ ] 授業評価（）を見ること (リンク貼る)
+    - [ ] Grad Requirement Checklist
+    - [ ] 卒業要件PDF (ehandbook)
+- [x] シラバスを見ること
+    - [x] リンク貼る
+- [ ] 授業評価（TES）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
 - [ ] オフラインで確認すること
     - [ ] 代わりに: Apple/Google Calendarへのエクスポート
@@ -170,7 +173,7 @@
     - [ ] データ
         - [ ] ローカルからのsync
     - [ ] DB
-        - [ ] SQL Injection
+        - [ ] SQL Injection対策
         - [ ] SQL EXPLAINで実行計画を管理（READ数が爆発しないように）
 - [ ] Catalogue.icuで移行を促すMessage
     - [ ] 移行機能 (直接新アプリのAPIを叩く?)
@@ -182,11 +185,13 @@
 - [ ] Design
     - [x] カラーテーマ当てる
     - [ ] コンポーネントの丸みなど調整する
+    - [ ] Storybookなどcomponent test?
     - [ ] AIみの排除
         - [ ] グラデーション
         - [ ] アニメーション
         - [ ] ボーダー
         - [ ] 背景色
+        - [ ] 安易にtransparent/opacityいじらない
         - [ ] フォント（こだわろう; 明朝?）
         - [ ] 他のAIみの少ないサイトを参照
             - [ ] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
@@ -232,6 +237,8 @@
                 - [ ] 独自domain
             - [ ] Form?
 - [ ] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
+    - [ ] Snack通知
+    - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
 - [x] Google OAuthをpublesh
     - [x] Privacy Policy
         - [ ] わかりやすく
@@ -239,13 +246,15 @@
         - [ ] ポチポチして利用規約つくれるサイト？
         - [ ] 卒業後のアカウント削除に関する規程
             - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
-    - [ ] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
+    - [x] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
         - [ ] [Google Search Console](https://search.google.com/search-console)
 - [ ] Known Issues: リリースまでに反映もしくは注意書き
     - [ ] 退会方法を設ける
     - [ ] スケジュールがない授業を追加できない
 - [ ] SEO
     - [ ] meta description
+    - [ ] リッチリザルト
+        - [ ] パンくず
     - [ ] タイトルつける
     - [ ] OGP
         - og:title
