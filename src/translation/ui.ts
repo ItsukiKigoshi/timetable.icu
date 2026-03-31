@@ -51,7 +51,7 @@ export const ui = {
 
         // --- Landing Page ---
         'lp.hero.subtitle': 'Welcome!',
-        'lp.hero.description': 'Academic planning in ICU, starts here.',
+        'lp.hero.description': 'YOUR Academic Planning starts here.',
         'lp.nav.explore': 'Explore Courses',
         'lp.nav.timetable': 'View Timetable',
 
