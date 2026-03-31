@@ -21,6 +21,7 @@ import Cover2 from "@/assets/cover2.webp";
                 sizes="(max-width: 768px) 400px, 800px"
                 quality={50}
                 format="webp"
+                loading="eager"
                 class="absolute -top-10 -right-10 w-185 md:w-200 rotate-12"
         />
         <Image
@@ -30,6 +31,7 @@ import Cover2 from "@/assets/cover2.webp";
                 sizes="(max-width: 768px) 400px, 800px"
                 quality={50}
                 format="webp"
+                loading="eager"
                 class="absolute -bottom-40 -left-20 w-150 md:w-225 -rotate-12"
         />
     </div>
@@ -458,13 +460,15 @@ import Cover2 from "@/assets/cover2.webp";
                 class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200"
         >
             <div class="flex flex-col md:flex-row items-center gap-10">
-                <div class="avatar">
-                    <div
-                            class="w-32 h-32 rounded-3xl ring overflow-hidden shadow-2xl"
-                    >
-                        <Image src={ProfileImg} alt="Itsuki Kigoshi"/>
-                    </div>
-                </div>
+                <Image
+                        src={ProfileImg}
+                        alt="Itsuki Kigoshi"
+                        width={256}
+                        height={256}
+                        format="webp"
+                        quality={80}
+                        class="w-32 h-32 rounded-3xl ring overflow-hidden shadow-2xl"
+                />
                 <div class="text-center md:text-left flex-1">
                     <h2 class="text-2xl font-black mb-4 items-center gap-2">
                         <span>Made with ♥ by</span>
