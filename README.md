@@ -26,17 +26,17 @@
 
 # ブランディング
 
-- [ ] 名前
+- [x] 名前
     - timetable.icu $7.20 Renews at $14.20
-        - ICUのじかんわり
-        - Timetable.icu
+        - [x] ICUのじかんわり
+        - [x] Timetable.icu
 - [x] ロゴつくりなおす
     - [x] 3Dみ
     - [x] たぬき
-- [ ] 開発者と顔を明示し，信頼を得る
+- [x] 開発者と顔を明示し，信頼を得る
 - [ ] かわいいデザイン
     - [ ] 絵文字を多用するAI-Designに負けない!
-- [ ] ちゃんとランディングページを作る: Astroのいいところ
+- [x] ちゃんとランディングページを作る: Astroのいいところ
 - [ ] SEO
     - [ ] リッチリザルト
 
@@ -47,14 +47,18 @@
     - [ ] マニュアル登録
     - [x] Google Oauth + Passkey
     - [ ] Google Calendar / .icsエクスポート？
-- [ ] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
+- [x] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
     - [ ] 空きコマに入る授業検索: query paramを`&dayPeriod=["M-2"and"T-1"]`みたいに持たせる？
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
     - [ ] With Upvote
-- [ ] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
+- [ ] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
+    - [ ] Default localeをjaとenどっちにするか？
+        - [ ] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
 - [ ] 役立つリンク
     - [ ] CTL
+        - [ ] 履修計画ワークショップ
+        - [ ] イベントなどでコラボレーション？
     - [ ] Major一覧
 
 # できないこと
@@ -276,7 +280,7 @@
 
 ## 課題
 
--[ ] 卒業後にログインできなくなる
+- [ ] 卒業後にログインできなくなる
     - [ ] 卒業後にアカウントが削除できなくなる
     - [ ] 対策として， 最終ログイン後から数年/IDの卒業年によるアカウント削除や，第2メールアドレスを持たせる？
     - [ ] 大学院進学でメールアドレスが変わると使えなくなる?
