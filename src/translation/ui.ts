@@ -57,7 +57,7 @@ export const ui = {
 
         // Features - Can
         'lp.features.can.label': 'Features',
-        'lp.features.can.search.title': 'Search All Courses',
+        'lp.features.can.search.title': 'Find the perfect course for you',
         'lp.features.can.search.desc': 'Search through every course retrieved from the official syllabus.',
         'lp.features.can.schedule.title': 'ICU-Specific Schedules',
         'lp.features.can.schedule.desc': 'Support for ICU-unique periods like Long 4, 5, 6, and 7.',
@@ -160,7 +160,7 @@ export const ui = {
 
         // できること
         'lp.features.can.label': 'できること',
-        'lp.features.can.search.title': 'すべてのコースから探す',
+        'lp.features.can.search.title': 'あなたにピッタリなコースを見つける',
         'lp.features.can.search.desc': '公式授業一覧から取得されたすべてのコースを検索',
         'lp.features.can.schedule.title': 'ICU独自のスケジュールに対応',
         'lp.features.can.schedule.desc': 'Long 4, 5, 6, 7など、ICUならではのコマ割りも表示',
