@@ -2,7 +2,7 @@
 
 # 目標
 
-- [ ] ようこに卒業までつかってもらう
+<!-- - [ ] ようこに卒業までつかってもらう -->
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [ ] iOSアプリ/Androidを作る (?)
@@ -52,7 +52,7 @@
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
     - [ ] With Upvote
-- [ ] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
+- [ ] 多言語対応
 
 # できないこと
 
