@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {authClient, signInWithGoogle} from "@/lib/auth-client.ts";
 import {defaultLang, ui} from "@/translation/ui";
 
@@ -6,13 +6,13 @@ type Lang = keyof typeof ui;
 
 export default function LoginButton({
                                         isLoggedIn,
-                                        lang = defaultLang // Propsで言語を受け取る
+                                        lang = defaultLang
                                     }: {
     isLoggedIn: boolean;
     lang?: string
 }) {
     const [isLoading, setIsLoading] = useState(false);
-    
+
     const currentLang = (lang in ui ? lang : defaultLang) as Lang;
     const t = (key: keyof typeof ui['en']) => ui[currentLang][key] || ui['en'][key];
 

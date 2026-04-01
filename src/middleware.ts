@@ -2,64 +2,65 @@ import {getAuth} from "@/lib/auth.ts";
 import {defineMiddleware} from "astro:middleware";
 import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
 import {env} from "cloudflare:workers";
+import {defaultLang, type Language, ui} from "@/translation/ui.ts";
 
 export const onRequest = defineMiddleware(async (context, next) => {
     // 開発環境などで env がない場合のフォールバック（Workers上では通常 env は存在する）
     if (!env) return next();
 
-    const {url} = context;
+    const {url, cookies, request, redirect} = context;
     const pathname = url.pathname;
 
-    // アセットや画像リクエストならスキップ ---
+    // 静的アセットの除外
     if (
         pathname.startsWith('/_image') ||
         pathname.startsWith('/_astro') ||
-        pathname.includes('.') // .png, .svg などの静的ファイル対策
+        pathname.includes('.')  // .png, .svg などの静的ファイル対策を雑に対策
     ) {
         return next();
     }
 
-    const {cookies, request, redirect} = context;
-
     // --- 1. i18n Language Management ---
-    const segments = pathname.split('/');
-    const langInUrl = segments[1]; // 'ja' or 'en' or other
-    const isJaUrl = langInUrl === 'ja';
+    const isEnUrl = pathname.startsWith('/en/') || pathname === '/en';
+    const currentLang = isEnUrl ? 'en' : 'ja';
 
-    // Cookieの取得
-    let lang = cookies.get('lang')?.value;
-
-    // 【初回アクセス かつ トップページ】のみブラウザ言語で判定
-    if (!lang && (pathname === '/' || pathname === '')) {
-        const acceptLang = request.headers.get('accept-language');
-        const detectedLang = (acceptLang && acceptLang.toLowerCase().startsWith('ja')) ? 'ja' : 'en';
-
-        // 1. まずCookieを焼く
-        cookies.set('lang', detectedLang, {path: '/', maxAge: 60 * 60 * 24 * 365});
-
-        // 2. 日本語なら /ja/ へリダイレクトして即終了
-        if (detectedLang === 'ja') {
-            return redirect('/ja/');
-        }
-
-        // 3. 英語ならそのまま locals にセットして next() で即終了
-        context.locals.lang = 'en';
-        return next();
-    }
-
-// --- 2. URLベースの言語確定とCookie同期 (2回目以降や直リンク) ---
-    const currentLang = isJaUrl ? 'ja' : 'en';
+    // locals にセット（各 .astro ファイルで Astro.locals.lang として使う）
     context.locals.lang = currentLang;
 
-// URLとCookieが食い違っている場合のみCookieを更新
-    if (lang !== currentLang) {
+    let langCookie = cookies.get('lang')?.value;
+
+    // A. 初回訪問（Cookieなし）でルートに来た時だけ自動振り分け
+    if (!langCookie && (pathname === '/' || pathname === '')) {
+        const acceptLang = request.headers.get('accept-language')?.split(',')[0].toLowerCase() || "";
+        // ブラウザの第1言語コード（例: "ja-JP" -> "ja"）を取得
+        const browserLang = acceptLang.split('-')[0];
+
+        // browserLang が ui のキー（'en', 'ja'）に含まれているか判定
+        // 含まれていればその言語、そうでなければ 'en' を採用
+        const detectedLang: Language = (browserLang in ui)
+            ? (browserLang as Language)
+            : 'en';
+
+        // 判定結果をCookieに保存
+        cookies.set('lang', detectedLang, { path: '/', maxAge: 60 * 60 * 24 * 365 });
+
+        // デフォルトでないなら、その言語のディレクトリ（/en/ など）へ飛ばす
+        if (detectedLang !== defaultLang) {
+            return redirect(`/${detectedLang}/`);
+        }
+
+        context.locals.lang = defaultLang;
+    }
+
+    // B. URLの言語と現在のCookieがズレていたら、Cookie側をURLに合わせる（同期）
+    // これにより、ユーザーが手動でURLを書き換えても設定が保存される
+    if (langCookie !== currentLang) {
         cookies.set('lang', currentLang, {path: '/', maxAge: 60 * 60 * 24 * 365});
     }
 
-    // --- 2. Session Management (Early return 後に実行) ---
+    // --- 2. Session Management (リダイレクトしない場合のみ実行) ---
     try {
         const auth = getAuth(env);
-        // getSessionは内部でDB(D1)を叩くため、リダイレクトが確定している場合は呼び出さないのが正解
         const sessionData = await auth.api.getSession({
             headers: request.headers,
         });
@@ -68,7 +69,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         context.locals.session = sessionData?.session ?? null;
         context.locals.dbError = false;
     } catch (error) {
-        console.error("D1 or Auth is down, proceeding as guest:", error);
+        console.error("D1 or Auth error, proceeding as guest:", error);
         context.locals.user = null;
         context.locals.session = null;
         context.locals.dbError = true;

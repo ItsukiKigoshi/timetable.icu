@@ -17,18 +17,17 @@ import {
     CalendarArrowUp
 } from "lucide-astro";
 import {WifiOff} from "lucide-react";
+import {useLanguage} from "@/translation/utils";
 
 // Landing Page is Rendered as SSG
 export const prerender = true;
 
-import {useTranslations, useTranslatedPath} from "@/translation/utils";
-import {defaultLang} from "@/translation/ui.ts";
-const lang = Astro.locals.lang || defaultLang;
-const t = useTranslations(lang);
-const l = useTranslatedPath(lang);
+
+const lang = Astro.locals.lang;
+const {t, l, currentLang} = useLanguage(lang);
 ---
 
-<Layout title="ICUのじかんわり | 時間割・履修登録ツールの決定版" isLanding={true}>
+<Layout title=`${t('site.title')} | ${t('site.tagline')}` isLanding={true}>
     <!--背景画像-->
     <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none ">
         <Image
@@ -56,16 +55,16 @@ const l = useTranslatedPath(lang);
     <!--Main Content-->
     <section class="flex flex-col items-center gap-16 p-6 max-w-5xl mx-auto mb-10 min-h-screen relative">
         <div class="flex justify-center gap-2 text-sm font-medium opacity-70">
-            {lang === 'en' ? (
-                    <span>EN</span>
-            ) : (
-                    <a href="/" class="underline text-base-content/50">EN</a>
-            )}
-            <span class="text-base-content/30">/</span>
-            {lang === 'ja' ? (
+            {currentLang === 'ja' ? (
                     <span>JA</span>
             ) : (
-                    <a href="/ja/" class="underline text-base-content/50">JA</a>
+                    <a href="/" class="underline text-base-content/50">JA</a>
+            )}
+            <span class="text-base-content/30">/</span>
+            {currentLang === 'en' ? (
+                    <span>EN</span>
+            ) : (
+                    <a href="/en/" class="underline text-base-content/50">EN</a>
             )}
         </div>
         <!--Hero-->
@@ -80,7 +79,7 @@ const l = useTranslatedPath(lang);
                 />
                 <div class="lg:text-left text-center">
                     <h1 class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content">
-                        {t('title')}
+                        {t('site.title')}
                         <span
                                 class="block text-2xl lg:inline lg:ml-1 opacity-80"
                         >{t('lp.hero.subtitle')}</span

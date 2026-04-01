@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {authClient} from "@/lib/auth-client.ts";
-import {ui} from "@/translation/ui";
-
-type Lang = keyof typeof ui;
+import {useLanguage} from "@/translation/utils.ts";
+import {defaultLang} from "@/translation/ui.ts";
 
 const getDeviceDisplayName = () => {
     const ua = navigator.userAgent;
@@ -26,15 +25,13 @@ const getDeviceDisplayName = () => {
 
 export default function PasskeyButton({
                                           isLoggedIn,
-                                          lang = 'en'
+                                          lang = defaultLang
                                       }: {
     isLoggedIn: boolean;
     lang?: string
 }) {
     const [isLoading, setIsLoading] = useState(false);
-
-    const currentLang = (lang in ui ? lang : 'en') as Lang;
-    const t = (key: keyof typeof ui['en']) => ui[currentLang][key] || ui['en'][key];
+    const {t} = useLanguage(lang);
 
     // ログイン処理
     const handlePasskeySignIn = async (e: React.MouseEvent) => {

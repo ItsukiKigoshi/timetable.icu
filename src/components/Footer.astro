@@ -1,10 +1,9 @@
 ---
 import {Calendar, Telescope} from "lucide-astro";
-import {useTranslations, useTranslatedPath} from "@/translation/utils";
+import {useLanguage} from "@/translation/utils";
 
-const lang = Astro.locals.lang || 'en';
-const t = useTranslations(lang);
-const l = useTranslatedPath(lang);
+const lang = Astro.locals.lang;
+const {t, l} = useLanguage(lang);
 
 const {pathname} = Astro.url;
 

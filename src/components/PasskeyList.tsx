@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {authClient} from "@/lib/auth-client.ts";
 
 export default function PasskeyList({isLoggedIn}: { isLoggedIn: boolean }) {
@@ -8,7 +8,7 @@ export default function PasskeyList({isLoggedIn}: { isLoggedIn: boolean }) {
 
     // パスキー一覧を取得する関数
     const fetchPasskeys = async () => {
-        const {data, error} = await authClient.passkey.listUserPasskeys();
+        const {data} = await authClient.passkey.listUserPasskeys();
         if (data) {
             setPasskeys(data);
         }

@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
 import {CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from "lucide-react";
-import {ui} from "@/translation/ui.ts";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
-import {useTranslations} from "@/translation/utils.ts";
+import {useLanguage} from "@/translation/utils.ts";
 
 export interface SearchFilters {
     year: string | null;
@@ -45,9 +44,7 @@ export default function ExploreInterface({
                                              lang = 'en' // デフォルト
                                          }: Props) {
     // 翻訳セットアップ
-    const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
-    const t = useTranslations(currentLang);
-    const isJa = currentLang === 'ja';
+    const {t, isJa} = useLanguage(lang);
 
 
     // 1. 状態管理

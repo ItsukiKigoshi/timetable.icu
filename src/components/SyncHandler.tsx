@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'; // 保存先に応じて調整import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 
 const syncData = async (courseIds: number[]) => {
     const res = await fetch('/api/user-courses/sync', {

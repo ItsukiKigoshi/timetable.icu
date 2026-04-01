@@ -16,7 +16,7 @@ export function useTranslations(lang: string | undefined) {
 
 /**
  * 現在の言語に応じたURLパスを生成する関数
- * 例: l('/home') -> 日本語なら '/ja/home', 英語なら '/home'
+ * 例: l('/home') -> 日本語なら '/home', 英語なら '/en/home'
  */
 export function useTranslatedPath(lang: string | undefined) {
     const currentLang = (lang && lang in ui) ? (lang as keyof typeof ui) : defaultLang;
@@ -30,5 +30,23 @@ export function useTranslatedPath(lang: string | undefined) {
         if (cleanPath === "/") return base === "" ? "/" : base;
 
         return `${base}${cleanPath}`;
+    };
+}
+
+/**
+ * Reactコンポーネントでよく使う翻訳関連機能をひとまとめにする
+ */
+export function useLanguage(lang: string | undefined) {
+    const t = useTranslations(lang);
+    const l = useTranslatedPath(lang);
+
+    const currentLang = (lang && lang in ui) ? (lang as keyof typeof ui) : defaultLang;
+    const isJa = currentLang === 'ja';
+
+    return {
+        t,
+        l,
+        isJa,
+        currentLang
     };
 }

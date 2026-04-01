@@ -3,10 +3,10 @@ import {END_TIME, PERIODS, SELECTABLE_DAYS, START_TIME} from "@/constants/time.t
 import type {User} from "better-auth";
 import {timeToMin} from "@/lib/timetable.ts";
 import {useTimetable} from "@/lib/useTimetable.ts";
-import React, {useEffect, useState} from "react"; // useEffectを追加
+import {useEffect, useState} from "react";
 import {SquareArrowOutUpRight, X} from "lucide-react";
 import {ui} from "@/translation/ui.ts";
-import {useTranslations} from "@/translation/utils.ts";
+import {useLanguage} from "@/translation/utils.ts";
 
 const HEADER_HEIGHT = 20;
 
@@ -23,15 +23,13 @@ export const seasonToNumber = (season: string | null): number => {
     }
 };
 
-export default function TimetableInterface({initialRawSchedules, user, lang = 'en'}: {
+export default function TimetableInterface({initialRawSchedules, user, lang = 'ja'}: {
     initialRawSchedules: FlatSchedule[],
     user?: User | null,
     lang?: string
 }) {
     // 翻訳セットアップ
-    const currentLang = (lang in ui ? lang : 'en') as keyof typeof ui;
-    const t = useTranslations(currentLang);
-    const isJa = currentLang === 'ja';
+    const {t, isJa, currentLang} = useLanguage(lang);
 
     // 曜日を翻訳するヘルパー
     const translateDay = (day: string) => {

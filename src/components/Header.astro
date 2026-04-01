@@ -4,14 +4,13 @@ import PasskeyButton from "./PasskeyButton";
 import SyncHandler from "./SyncHandler";
 import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 import Logo from '@/assets/Logo.svg';
-import {useTranslations, useTranslatedPath} from "@/translation/utils";
+import {useLanguage} from "@/translation/utils";
+import {defaultLang} from "@/translation/ui.ts";
 
-const lang = Astro.locals.lang || 'en';
-const t = useTranslations(lang);
-const l = useTranslatedPath(lang);
+const lang = Astro.locals.lang || defaultLang;
+const {t, l} = useLanguage(lang);
 
-const locals = Astro.locals ?? {};
-const {user, selectedYear, selectedTerm, dbError} = locals;
+const {user, selectedYear, selectedTerm, dbError} = Astro.locals;
 const isLoggedIn = !!user;
 ---
 
@@ -19,7 +18,7 @@ const isLoggedIn = !!user;
     <div class="navbar-start">
         <a class="btn btn-ghost text-xl flex gap-2 px-2" href={l('/')}>
             <Logo width={24} height={24}/>
-            <span class="hidden sm:inline">{t('title')}</span>
+            <span class="hidden sm:inline">{t('site.title')}</span>
         </a>
     </div>
 
@@ -140,22 +139,23 @@ const isLoggedIn = !!user;
         btn.addEventListener('click', (e) => {
             const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
             const currentUrl = new URL(window.location.href);
-            const segments = currentUrl.pathname.split('/');
+            let segments = currentUrl.pathname.split('/').filter(Boolean); // 空の要素を除去
 
-            // 現在のパスが /ja で始まっているかチェック
-            const isCurrentlyJa = segments[1] === 'ja';
+            // 現在英語 (/en) かどうかを判定
+            const isCurrentlyEn = segments[0] === 'en';
 
-            if (targetLang === 'ja' && !isCurrentlyJa) {
-                // 日本語へ切り替え: パスの先頭に /ja を挿入
-                segments.splice(1, 0, 'ja');
-            } else if (targetLang === 'en' && isCurrentlyJa) {
-                // 英語へ切り替え: パスの先頭から /ja を削除
-                segments.splice(1, 1);
+            if (targetLang === 'en' && !isCurrentlyEn) {
+                // 英語へ切り替え: パスの先頭に /en を追加
+                segments.unshift('en');
+            } else if (targetLang === 'ja' && isCurrentlyEn) {
+                // 日本語へ切り替え: パスの先頭から en を削除
+                segments.shift();
             } else {
-                return; // すでにその言語なら何もしない
+                return; // 変更の必要がない場合は終了
             }
 
-            currentUrl.pathname = segments.join('/').replace(/\/+/g, '/');
+            // パスを再構築 (先頭にスラッシュを忘れずに)
+            currentUrl.pathname = '/' + segments.join('/');
             window.location.assign(currentUrl.toString());
         });
     });
