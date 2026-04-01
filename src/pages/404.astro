@@ -10,34 +10,48 @@ const lang = Astro.locals.lang || defaultLang;
 const {t, l} = useLanguage(lang);
 ---
 <Layout title={`404 - ${t('404.title')}`}>
-    <section class="space-y-6 p-6">
-        <h1 class="text-5xl font-extrabold">404 - {t('404.title')}</h1>
-        <h2 class="text-2xl sm:text-3xl font-bold ">
-            {t('404.message')}
-        </h2>
-        <p class="text-sm sm:text-base leading-relaxed">
-            {t('404.secret')}
-        </p>
-        <p class="mt-4  font-medium not-italic">
-            {t('404.closing')}
-        </p>
-    </section>
-    <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
-        <Image
-                src={Secret2}
-                alt=""
-                width={800}
-                format="webp"
-                loading="eager"
-                class="absolute -top-2 -right-2  w-150 md:w-225 rotate-12"
-        />
-        <Image
-                src={Secret1}
-                alt=""
-                width={1200}
-                format="webp"
-                loading="eager"
-                class="absolute -bottom-2 -left-2 w-185 md:w-200 -rotate-12"
-        />
-    </aside>
+    <main class="hero min-h-[85vh] relative overflow-hidden">
+        <div class="hero-content text-center z-10 px-4">
+            <section
+                    class="card bg-base-100/80 backdrop-blur-lg shadow-xl max-w-xl border border-base-content/5 p-8 md:p-12">
+                <p class="text-xs font-mono opacity-50 mb-4">
+                    404_{t('404.title')}
+                </p>
+
+                <h1 class="text-lg md:text-xl font-medium">
+                    {t('404.message')}
+                </h1>
+
+
+                <p class="text-sm md:text-base leading-relaxed text-left font-serif italic my-10">
+                    {t('404.secret')}
+                </p>
+
+                <p class="text-sm md:text-base opacity-50 font-serif">
+                    {t('404.closing')}
+                </p>
+
+            </section>
+        </div>
+
+        <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
+            <div class="absolute inset-0 bg-base-100/30"></div>
+            <Image
+                    src={Secret2}
+                    alt="ICUの空"
+                    width={800}
+                    format="webp"
+                    loading="eager"
+                    class="absolute -top-4 -right-4 w-120 md:w-180 rotate-12 opacity-60"
+            />
+            <Image
+                    src={Secret1}
+                    alt="学生がいかだを作っている様子"
+                    width={1200}
+                    format="webp"
+                    loading="eager"
+                    class="absolute -bottom-4 -left-4 w-150 md:w-200 -rotate-12 opacity-60"
+            />
+        </aside>
+    </main>
 </Layout>

@@ -80,10 +80,6 @@ const {t, l, currentLang} = useLanguage(lang);
                 <div class="lg:text-left text-center">
                     <h1 class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content">
                         {t('site.title')}
-                        <span
-                                class="block text-2xl lg:inline lg:ml-1 opacity-80"
-                        >{t('lp.hero.subtitle')}</span
-                        >
                     </h1>
                     <p class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl">
                         {t('lp.hero.description')}
@@ -159,7 +155,7 @@ const {t, l, currentLang} = useLanguage(lang);
             </section>
 
             <section class="flex flex-col gap-4">
-                <h2 class="flex items-center gap-3 text-2xl font-black text-base-content/40 px-2">
+                <h2 class="flex items-center gap-3 text-2xl font-black text-base-content/60 px-2">
                     <Bug size="32"/>
                     {t('lp.features.todo.label')}
                 </h2>

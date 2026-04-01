@@ -39,7 +39,6 @@ const ja = {
 
     // --- ランディングページ ---
     // Hero
-    'lp.hero.subtitle': 'へようこそ！',
     'lp.hero.description': 'ICU生の時間割・履修登録ツールの決定版',
     'lp.nav.explore': 'コースを探す',
     'lp.nav.timetable': '時間割を見る',
@@ -105,7 +104,7 @@ const ja = {
     // 404
     '404.title': 'ページが見つかりません',
     '404.message': 'おっと, ここはキャンパスの端っこです.',
-    '404.secret': 'でも，ICUでは「迷うこと」も学びのひとつ．\n' + '例えば，西太平洋を渡った遠洋航海者たちの交易を再現するためにキャンパスにいかだが出現することだってあります．',
+    '404.secret': 'でも，ICUでは「迷うこと」も学びのひとつ．例えば，西太平洋を渡った遠洋航海者たちの交易を再現するためにキャンパスにいかだが出現することだってあります．',
     '404.closing': '冒険を再開する準備はいいですか？'
 };
 
@@ -152,7 +151,6 @@ const en = {
     'footer.terms': 'Terms of Service',
 
     // --- Landing Page ---
-    'lp.hero.subtitle': '',
     'lp.hero.description': 'Your Academic Planning starts here.',
     'lp.nav.explore': 'Explore Courses',
     'lp.nav.timetable': 'View Timetable',
@@ -216,10 +214,10 @@ const en = {
     'period.night': 'N',
 
     // 404
-    '404.title': 'Page Not Found',
+    '404.title': 'PageNotFound',
     '404.message': "You've drifted into the \"Unknown Area.\"",
     '404.secret': "You've wandered off the map—but at ICU, that's where the real learning begins. Did you know students once built rafts on campus to recreate the ancient Pacific navigators' trade routes? Every detour is an opportunity for discovery.",
-    '404.closing': 'Ready to set sail back to your schedule?',
+    '404.closing': 'Ready to set sail back to your course?',
 } satisfies typeof ja;
 
 export const ui = {en, ja} as const;
