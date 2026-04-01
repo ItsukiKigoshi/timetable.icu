@@ -5,6 +5,7 @@ import {CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from 
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
 import {useLanguage} from "@/translation/utils.ts";
+import {defaultLang} from "@/translation/ui.ts";
 
 export interface SearchFilters {
     year: string | null;
@@ -41,7 +42,7 @@ export default function ExploreInterface({
                                              initialUserCourseIds,
                                              user,
                                              hasNextPage: initialHasNext,
-                                             lang = 'en' // デフォルト
+                                             lang = defaultLang
                                          }: Props) {
     // 翻訳セットアップ
     const {t, isJa} = useLanguage(lang);
@@ -289,61 +290,75 @@ export default function ExploreInterface({
                     const loading = isSubmitting === course.id || !isInitialized;
 
                     return (
-                        <div key={course.id} className="card bg-base-100 shadow-sm border border-base-200">
-                            <div className="card-body p-4">
+                        <div key={course.id}
+                             className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+                            <div className="card-body p-4 gap-3">
+                                {/* ヘッダー：コード、時期 */}
                                 <div className="flex justify-between items-center w-full">
-                                    <span className="text-xs text-base-content/50 font-mono">{course.courseCode}</span>
+                                   <span className="text-xs text-base-content/50 font-mono">
+                                       {course.courseCode}
+                                       {course.units > 0 && (
+                                           <span>
+                                               ・{course.units}
+                                           </span>
+                                       )}
+</span>
                                     <span className="text-xs text-base-content/50">
                                         {course.year} {course.term}
                                     </span>
                                 </div>
 
-                                {/* タイトルの翻訳出し分け */}
-                                <h2 className="card-title text-base mt-2 line-clamp-2">
-                                    {isJa ? course.titleJa : course.titleEn}
-                                </h2>
+                                {/* メイン：タイトル，講師，単位 */}
+                                <div>
+                                    <h2 className="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-1">
+                                        {isJa ? course.titleJa : course.titleEn}
+                                    </h2>
+                                    <p className="text-xs sm:text-sm text-base-content/60 truncate">
+                                        {course.instructor}
+                                    </p>
+                                </div>
 
-                                <p className="text-sm text-base-content/70">{course.instructor}</p>
-
-                                <div className="flex flex-wrap gap-1 mt-1">
+                                {/* スケジュール表示 */}
+                                <div className="flex flex-wrap gap-1">
                                     {hasSchedules ? (
                                         course.schedules.map((s, i) => (
-                                            <span key={i} className="badge badge-ghost badge-sm font-mono uppercase">
-                                                {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
-                                            </span>
+                                            <span key={i}
+                                                  className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold">
+                        {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
+                    </span>
                                         ))
                                     ) : (
-                                        <span className="text-xs opacity-50">{t('explore.no_schedule')}</span>
+                                        <span
+                                            className="text-[10px] opacity-40 italic">{t('explore.no_schedule')}</span>
                                     )}
                                 </div>
 
-                                <div className="card-actions flex justify-between mt-4">
+                                {/* アクションボタン*/}
+                                <nav className="card-actions flex justify-between items-center mt-2">
                                     <a target='_blank'
-                                       href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${
-                                           course.rgNo
-                                       }&year=${course.year}&term=${seasonToNumber(
-                                           course.term
-                                       )}`}
-                                       className="btn btn-sm">
-                                        <span>{t('explore.syllabus')}</span>
-                                        <SquareArrowOutUpRight size="16"/>
+                                       rel="noopener noreferrer"
+                                       href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
+                                       className="btn btn-xs sm:btn-sm gap-1.5 px-2 font-normal">
+                                        <span className="text-[10px] sm:text-xs">{t('explore.syllabus')}</span>
+                                        <SquareArrowOutUpRight size="14"/>
                                     </a>
+
                                     {(hasSchedules || isAdded) && (
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={loading}
-                                            className={`btn btn-sm gap-1 ${isAdded ? 'btn-error' : 'btn-primary'}`}
+                                            className={`btn btn-xs sm:btn-sm min-w-20 ${isAdded ? 'btn-error btn-outline' : 'btn-primary'}`}
                                         >
                                             {loading ? (
                                                 <span className="loading loading-spinner loading-xs"></span>
                                             ) : isAdded ? (
-                                                <>{t('explore.remove')} <X size="16"/></>
+                                                <><X size="14"/>{t('explore.remove')}</>
                                             ) : (
-                                                <>{t('explore.add')} <Plus size="16"/></>
+                                                <><Plus size="14"/>{t('explore.add')}</>
                                             )}
                                         </button>
                                     )}
-                                </div>
+                                </nav>
                             </div>
                         </div>
                     );
