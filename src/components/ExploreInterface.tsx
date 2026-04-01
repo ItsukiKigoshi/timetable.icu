@@ -35,6 +35,15 @@ interface Props {
     lang?: string;
 }
 
+const formatUnits = (units: number): string => {
+    // 0.333... の対策（浮動小数点の誤差を考慮して 0.33 より大きく 0.34 未満なら 1/3）
+    if (units > 0.33 && units < 0.34) return "1/3";
+    if (units > 0.66 && units < 0.67) return "2/3";
+
+    // それ以外は通常の数値を文字列にして返す（整数ならそのまま、小数なら適宜丸める）
+    return units.toString();
+};
+
 export default function ExploreInterface({
                                              initialResults,
                                              initialFilters,
@@ -44,11 +53,7 @@ export default function ExploreInterface({
                                              hasNextPage: initialHasNext,
                                              lang = defaultLang
                                          }: Props) {
-    // 翻訳セットアップ
     const {t, isJa} = useLanguage(lang);
-
-
-    // 1. 状態管理
     const [courses, setCourses] = useState<CourseWithSchedules[]>(initialResults);
     const [hasNextPage, setHasNextPage] = useState(initialHasNext);
     const [filters, setFilters] = useState<SearchFilters>(initialFilters);
@@ -60,7 +65,6 @@ export default function ExploreInterface({
         user
     });
 
-    // 2. APIフェッチ関数
     const fetchData = async (nextFilters: SearchFilters) => {
         setIsFetching(true);
         try {
@@ -72,10 +76,8 @@ export default function ExploreInterface({
                     params.set(key, value.toString());
                 }
             });
-
             const res = await fetch(`/api/courses?${params.toString()}`);
             const data = (await res.json()) as SearchResponse;
-
             setCourses(data.results);
             setHasNextPage(data.hasNextPage);
         } catch (e) {
@@ -85,36 +87,39 @@ export default function ExploreInterface({
         }
     };
 
-    // 3. 検索条件の更新（URLのみ更新 & データ取得）
     const update = (newParams: Partial<SearchFilters>) => {
-        // 新しいフィルタ状態を作成
         const nextFilters = {...filters, ...newParams};
-
-        // ページ番号の調整（検索条件が変わったら1ページ目へ）
-        if (newParams.page === undefined) {
-            nextFilters.page = 1;
-        } else {
-            nextFilters.page = Number(newParams.page);
-        }
+        nextFilters.page = newParams.page === undefined ? 1 : Number(newParams.page);
 
         window.scrollTo({top: 0, behavior: 'smooth'});
 
-        // URLパラメータの同期（見た目上のURLを書き換え）
         const url = new URL(window.location.href);
         Object.entries(nextFilters).forEach(([key, value]) => {
-            if (value === null || value === '' || (Array.isArray(value) && value.length === 0)) {
+            if (!value || (Array.isArray(value) && value.length === 0)) {
                 url.searchParams.delete(key);
             } else {
                 url.searchParams.set(key, Array.isArray(value) ? value.join(',') : value.toString());
             }
         });
         window.history.pushState({}, '', url);
-
-        // 状態更新とデータ取得
         setFilters(nextFilters);
         fetchData(nextFilters);
     };
 
+    const Pagination = () => (
+        <nav className="flex justify-center py-6">
+            <div className="join shadow-sm">
+                <button className="join-item btn btn-sm sm:btn-md" disabled={filters.page <= 1}
+                        onClick={() => update({page: filters.page - 1})}>«
+                </button>
+                <button
+                    className="join-item btn btn-sm sm:btn-md no-animation cursor-default pointer-events-none font-mono">Page {filters.page}</button>
+                <button className="join-item btn btn-sm sm:btn-md" disabled={!hasNextPage}
+                        onClick={() => update({page: filters.page + 1})}>»
+                </button>
+            </div>
+        </nav>
+    );
 
     const handleToggle = async (course: CourseWithSchedules) => {
         if (isSubmitting === course.id) return;
@@ -136,13 +141,14 @@ export default function ExploreInterface({
         update({slots: newSlots});
     };
 
-    const majorCategories = categories.filter(c => c.id?.startsWith('M') && (c.id !== "MSTH"));
-    const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && (c.id !== "MSTH")));
+
+    const majorCategories = categories.filter(c => c.id?.startsWith('M') && c.id !== "MSTH");
+    const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && c.id !== "MSTH"));
 
     return (
         <div className="space-y-6">
             {/* フィルターセクション */}
-            <div className="flex flex-col md:flex-row gap-4 items-start">
+            <div className="flex flex-wrap gap-3 items-center">
                 <label
                     className="input input-bordered flex items-center gap-2 w-full max-w-xs shadow-sm bg-base-100/50 backdrop-blur-md">
                     <Search/>
@@ -180,7 +186,6 @@ export default function ExploreInterface({
                         </optgroup>
                     </select>
                 </label>
-
                 <button
                     type="button"
                     className="btn btn-md flex items-center gap-2 w-fi max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm border-white/20 font-normal text-base-content"
@@ -196,6 +201,79 @@ export default function ExploreInterface({
                     </span>
                 </button>
             </div>
+
+            <Pagination/>
+
+            {/* 結果表示 */}
+            <div
+                className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300 ${isFetching ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+                {courses.map((course) => {
+                    const isAdded = registeredIds.has(course.id);
+                    const loading = isSubmitting === course.id || !isInitialized;
+
+                    return (
+                        <div key={course.id}
+                             className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+                            <div className="card-body p-4 gap-3">
+                                <div
+                                    className="flex justify-between items-center text-[10px] sm:text-xs text-base-content/50">
+                                    <span className="text-xs text-base-content/50">
+                                        {course.courseCode}
+                                        {course.units > 0 && (
+                                            <span>
+                                                ・{formatUnits(course.units)}
+                                            </span>
+                                        )}
+                                    </span>
+                                    <span className="whitespace-nowrap">{course.year} {course.term}</span>
+                                </div>
+
+                                <div>
+                                    <h2 className="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-1">{isJa ? course.titleJa : course.titleEn}</h2>
+                                    <p className="text-xs sm:text-sm text-base-content/60 truncate">{course.instructor}</p>
+                                </div>
+
+                                <div className="flex flex-wrap gap-1">
+                                    {course.schedules?.length > 0 ? (
+                                        course.schedules.map((s, i) => (
+                                            <span key={i}
+                                                  className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold uppercase">
+                                                {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span
+                                            className="text-[10px] opacity-40 italic">{t('explore.no_schedule')}</span>
+                                    )}
+                                </div>
+
+                                <div
+                                    className="card-actions flex justify-between items-center mt-2 pt-3">
+                                    <a target='_blank' rel="noopener noreferrer"
+                                       href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
+                                       className="btn btn-xs sm:btn-sm gap-1.5 px-2 font-normal">
+                                        <span className="text-[10px] sm:text-xs">{t('explore.syllabus')}</span>
+                                        <SquareArrowOutUpRight size="14"/>
+                                    </a>
+
+                                    <button
+                                        onClick={() => handleToggle(course)}
+                                        disabled={loading}
+                                        className={`btn btn-xs sm:btn-sm min-w-20 ${isAdded ? 'btn-error border-none bg-error text-error-content' : 'btn-primary'}`}
+                                    >
+                                        {loading ?
+                                            <span className="loading loading-spinner loading-xs"></span> : isAdded ? <>
+                                                <X size="14"/>{t('explore.remove')}</> : <><Plus
+                                                size="14"/>{t('explore.add')}</>}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <Pagination/>
 
             {/* 時限モーダル */}
             <dialog id="slot_modal" className="modal modal-bottom">
@@ -256,142 +334,10 @@ export default function ExploreInterface({
                         </div>
                     </div>
                 </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
             </dialog>
-
-            {/* ページネーション上 */}
-            <nav className="flex flex-col items-center gap-4 py-6 mb-6">
-                <div className="join">
-                    <button
-                        className="join-item btn"
-                        disabled={filters.page <= 1}
-                        onClick={() => update({page: filters.page - 1})}
-                    >
-                        «
-                    </button>
-                    <button className="join-item btn no-animation">
-                        Page {filters.page}
-                    </button>
-                    <button
-                        className="join-item btn"
-                        disabled={!hasNextPage} // 次のページがあるかどうかで判定
-                        onClick={() => update({page: filters.page + 1})}
-                    >
-                        »
-                    </button>
-                </div>
-            </nav>
-
-            {/* 結果表示セクション */}
-            <div
-                className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
-                {courses.map((course) => {
-                    const isAdded = registeredIds.has(course.id);
-                    const hasSchedules = course.schedules && course.schedules.length > 0;
-                    const loading = isSubmitting === course.id || !isInitialized;
-
-                    return (
-                        <div key={course.id}
-                             className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
-                            <div className="card-body p-4 gap-3">
-                                {/* ヘッダー：コード、時期 */}
-                                <div className="flex justify-between items-center w-full">
-                                   <span className="text-xs text-base-content/50 font-mono">
-                                       {course.courseCode}
-                                       {course.units > 0 && (
-                                           <span>
-                                               ・{course.units}
-                                           </span>
-                                       )}
-</span>
-                                    <span className="text-xs text-base-content/50">
-                                        {course.year} {course.term}
-                                    </span>
-                                </div>
-
-                                {/* メイン：タイトル，講師，単位 */}
-                                <div>
-                                    <h2 className="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-1">
-                                        {isJa ? course.titleJa : course.titleEn}
-                                    </h2>
-                                    <p className="text-xs sm:text-sm text-base-content/60 truncate">
-                                        {course.instructor}
-                                    </p>
-                                </div>
-
-                                {/* スケジュール表示 */}
-                                <div className="flex flex-wrap gap-1">
-                                    {hasSchedules ? (
-                                        course.schedules.map((s, i) => (
-                                            <span key={i}
-                                                  className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold">
-                        {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
-                    </span>
-                                        ))
-                                    ) : (
-                                        <span
-                                            className="text-[10px] opacity-40 italic">{t('explore.no_schedule')}</span>
-                                    )}
-                                </div>
-
-                                {/* アクションボタン*/}
-                                <nav className="card-actions flex justify-between items-center mt-2">
-                                    <a target='_blank'
-                                       rel="noopener noreferrer"
-                                       href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
-                                       className="btn btn-xs sm:btn-sm gap-1.5 px-2 font-normal">
-                                        <span className="text-[10px] sm:text-xs">{t('explore.syllabus')}</span>
-                                        <SquareArrowOutUpRight size="14"/>
-                                    </a>
-
-                                    {(hasSchedules || isAdded) && (
-                                        <button
-                                            onClick={() => handleToggle(course)}
-                                            disabled={loading}
-                                            className={`btn btn-xs sm:btn-sm min-w-20 ${isAdded ? 'btn-error btn-outline' : 'btn-primary'}`}
-                                        >
-                                            {loading ? (
-                                                <span className="loading loading-spinner loading-xs"></span>
-                                            ) : isAdded ? (
-                                                <><X size="14"/>{t('explore.remove')}</>
-                                            ) : (
-                                                <><Plus size="14"/>{t('explore.add')}</>
-                                            )}
-                                        </button>
-                                    )}
-                                </nav>
-                            </div>
-                        </div>
-                    );
-                })}
-                {courses.length === 0 && (
-                    <div className="col-span-full text-center py-12 opacity-50">
-                        {t('explore.no_results')}
-                    </div>
-                )}
-            </div>
-
-            {/* ページネーション下 */}
-            <nav className="flex flex-col items-center gap-4 py-6 mb-6">
-                <div className="join">
-                    <button
-                        className="join-item btn"
-                        disabled={filters.page <= 1}
-                        onClick={() => update({page: filters.page - 1})}
-                    >
-                        «
-                    </button>
-                    <button className="join-item btn no-animation">
-                        Page {filters.page}
-                    </button>
-                    <button
-                        className="join-item btn"
-                        disabled={!hasNextPage} // 次のページがあるかどうかで判定
-                        onClick={() => update({page: filters.page + 1})}
-                    >
-                        »
-                    </button>
-                </div>
-            </nav>
         </div>
     );
 }
