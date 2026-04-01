@@ -86,6 +86,38 @@ def parse_full_schedule(schedule_raw):
     return final_schedules
 
 
+# Unitsを取り出す
+def parse_units(s):
+    """
+    ICUの単位表記を数値(float)に変換する
+    - "2" -> 2.0
+    - "1/3" -> 0.3333...
+    - "3/(9)" -> 3.0 (括弧内のコマ数は無視)
+    - "(9)" -> 0.0 (単位としての実体がない場合)
+    """
+    if not s:
+        return 0.0
+
+    # 1. 括弧とその中身を削除 (例: "3/(9)" -> "3/")
+    s_cleaned = re.sub(r'\(.*?\)', '', s).strip()
+
+    # 2. 末尾に残る可能性があるスラッシュを削除 (例: "3/" -> "3")
+    s_cleaned = s_cleaned.rstrip('/')
+
+    if not s_cleaned:
+        return 0.0
+
+    try:
+        # 分数形式 (1/3 など) の処理
+        if '/' in s_cleaned:
+            num, den = s_cleaned.split('/')
+            return float(num) / float(den)
+        # 通常の数値
+        return float(s_cleaned)
+    except (ValueError, ZeroDivisionError):
+        return 0.0
+
+
 # --- Category判定 ---
 def get_category_id_from_code(course_code):
     # 先頭の英字部分を抽出 (例: ELA010 -> ELA, JLP001 -> JLP)
@@ -193,6 +225,9 @@ def get_course_data_json(html_content):
         # 5. オブジェクトの組み立て
         course_code = get_text("course_no")  # 変数に入れておく
 
+        # 単位数
+        unit_str = get_text("unit")
+
         # カテゴリIDを判定
         cat_id = get_category_id_from_code(course_code)
 
@@ -207,7 +242,8 @@ def get_course_data_json(html_content):
             "instructor": get_text("instructor"),
             "room": get_text("room"),
             "language": get_text("lang"),
-            "categoryId": cat_id,  # ここで追加
+            "categoryId": cat_id,
+            "units": parse_units(unit_str),
             "schedules": parse_full_schedule(get_text("schedule")) if get_text("schedule") else []
         }
 

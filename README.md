@@ -135,7 +135,7 @@
     - [x] **キーワード検索にCourse ID, regidを含む!**
     - [ ] **キャンセルされた授業をそのように明示: 追加できないように**
     - [ ] **開講言語**
-         - [ ] 絞り込み機能
+        - [ ] 絞り込み機能
     - [ ] Foundation, Area Majorの絞り込み
         - [ ] CourseCodeを「アルファベット」(String 3-4文字）と「数字」（0-999; 数字として保存してフロントで3文字に加工）の方が良い？
         - [ ] そもそも100から始まればfoundation, 2-300から始まればarea major?そのルールは絶対？
@@ -148,7 +148,8 @@
       ~~- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
     - [ ] 空きコマ検索
     - [ ] slots(この名称もscheduleにするべき？)が2つ以上なら空きコマ検索モードにする？
-        - [ ] デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)」をチェックすると複数コマが選択できるようになる
+        - [ ] デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)
+          」をチェックすると複数コマが選択できるようになる
             - [ ] 既にコースが登録されていれば勝手にスケジュールを入れてくれる
             - [ ] 「選択したスケジュールで履修できるコマを表示します」などヘルプメッセージを入れる
     - [ ] 選択したコマ以外にscheduleを持たない授業を検索するオプション(
@@ -367,6 +368,8 @@ Create types from wrangler.jsonc
 bunx wrangler types
 ```
 
+### Schema Definition, Migration
+
 Create schema for BetterAuth
 
 ```bash
@@ -380,6 +383,7 @@ bun x drizzle-kit generate
 ```
 
 Migration to D1 (--remote if applicable)
+Local->Remoteの順で1つずつ実行しないとエラーがでるときがある
 
 ```bash
 bun wrangler d1 migrations apply timetable_icu
@@ -391,6 +395,8 @@ Debug with Cloudflare Environment
 ```bash
 bun run build && bun x wrangler dev
 ```
+
+### Corse data insertion
 
 Create JSON from HTML
 

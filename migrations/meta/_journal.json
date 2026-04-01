@@ -85,6 +85,13 @@
       "when": 1774872677006,
       "tag": "0011_vengeful_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1775063356373,
+      "tag": "0012_smart_mojo",
+      "breakpoints": true
     }
   ]
 }
