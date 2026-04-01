@@ -18,6 +18,18 @@ const {
     ogType = "website",
     isLanding = false,
 } = Astro.props;
+
+const {pathname} = Astro.url;
+
+// /en/explore -> /explore
+// /en -> /
+// / -> /
+let purePath = pathname.replace(/^\/en(\/|$)/, '$1');
+if (!purePath.startsWith('/')) purePath = '/' + purePath;
+
+const baseUrl = "https://timetable.icu";
+const jaUrl = new URL(purePath, baseUrl).href;
+const enUrl = new URL('/en' + purePath, baseUrl).href;
 ---
 <!doctype html>
 <html lang={currentLang}>
@@ -25,7 +37,6 @@ const {
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="generator" content={Astro.generator}/>
-
     <title>{title}</title>
     <meta property="og:title" content={title}/>
     <meta property="og:description" content={description}/>
@@ -33,6 +44,9 @@ const {
     <meta property="og:url" content="https://timetable.icu"/>
     <meta property="og:image" content={ogImage}/>
     <meta property="og:site_name" content={t('site.title')}/>
+    <link rel="alternate" hreflang="ja" href={jaUrl}/>
+    <link rel="alternate" hreflang="en" href={enUrl}/>
+    <link rel="alternate" hreflang="x-default" href={jaUrl}/>
 </head>
 <body class="min-h-screen flex flex-col">
 
