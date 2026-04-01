@@ -398,6 +398,7 @@ bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mo
 
 などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
 sqlファイルの中身を一旦空にしてapplyする方法がある．推奨されてはいなさそう．
+
 Debug with Cloudflare Environment
 
 ```bash

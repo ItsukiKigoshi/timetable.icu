@@ -27,15 +27,28 @@ def generate_sql():
 
     for item in data:
         # 1. courses テーブルへの Upsert
-        # カラム名は適宜 Drizzle の schema (snake_case) に合わせてください
+        # units カラムを追加。SQLiteの REAL 型なので、そのまま数値を入れます。
+        units_val = item.get('units', 0.0)
+
         course_sql = f"""
-        INSERT INTO courses (year, term, course_code, rg_no, title_ja, title_en, instructor, room, language, status, updated_at)
-        VALUES ({item['year']}, {escape_sql(item['term'])}, {escape_sql(item['courseCode'])}, {escape_sql(item['rgNo'])}, 
-                {escape_sql(item['titleJa'])}, {escape_sql(item['titleEn'])}, {escape_sql(item['instructor'])}, 
-                {escape_sql(item['room'])}, {escape_sql(item['language'])}, {escape_sql(item['status'])}, CURRENT_TIMESTAMP)
+        INSERT INTO courses (
+            year, term, course_code, rg_no, title_ja, title_en, 
+            instructor, room, language, status, units, updated_at
+        )
+        VALUES (
+            {item['year']}, {escape_sql(item['term'])}, {escape_sql(item['courseCode'])}, 
+            {escape_sql(item['rgNo'])}, {escape_sql(item['titleJa'])}, {escape_sql(item['titleEn'])}, 
+            {escape_sql(item['instructor'])}, {escape_sql(item['room'])}, {escape_sql(item['language'])}, 
+            {escape_sql(item['status'])}, {units_val}, strftime('%s', 'now')
+        )
         ON CONFLICT(year, rg_no) DO UPDATE SET 
-            title_ja=excluded.title_ja, title_en=excluded.title_en, instructor=excluded.instructor, 
-            room=excluded.room, status=excluded.status, updated_at=strftime('%s', 'now');
+            title_ja=excluded.title_ja, 
+            title_en=excluded.title_en, 
+            instructor=excluded.instructor, 
+            room=excluded.room, 
+            status=excluded.status, 
+            units=excluded.units, 
+            updated_at=strftime('%s', 'now');
         """
         output.append(course_sql.strip())
 

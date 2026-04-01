@@ -31,7 +31,7 @@ async function runSeed() {
     await db.transaction(async (tx) => {
         for (const item of coursesData) {
             try {
-                // 2. Course の Upsert (既存)
+                // 2. Course の Upsert
                 const [upserted] = await tx.insert(courses)
                     .values({
                         year: item.year,
@@ -44,6 +44,7 @@ async function runSeed() {
                         room: item.room,
                         language: item.language,
                         status: item.status || "active",
+                        units: item.units || 0,
                         updatedAt: new Date().getTime(),
                     })
                     .onConflictDoUpdate({
@@ -54,6 +55,7 @@ async function runSeed() {
                             instructor: item.instructor,
                             room: item.room,
                             status: item.status || "active",
+                            units: item.units || 0,
                             updatedAt: new Date().getTime(),
                         },
                     })
