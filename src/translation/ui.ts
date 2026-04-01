@@ -101,6 +101,12 @@ const ja = {
 
     'period.lunch': '昼',
     'period.night': '夜',
+
+    // 404
+    '404.title': 'ページが見つかりません',
+    '404.message': 'おっと, ここはキャンパスの端っこです.',
+    '404.secret': 'でも，ICUでは「迷うこと」も学びのひとつ．\n' + '例えば，西太平洋を渡った遠洋航海者たちの交易を再現するためにキャンパスにいかだが出現することだってあります．',
+    '404.closing': '冒険を再開する準備はいいですか？'
 };
 
 const en = {
@@ -208,6 +214,12 @@ const en = {
 
     'period.lunch': 'L',
     'period.night': 'N',
+
+    // 404
+    '404.title': 'Page Not Found',
+    '404.message': "You've drifted into the \"Unknown Area.\"",
+    '404.secret': "You've wandered off the map—but at ICU, that's where the real learning begins. Did you know students once built rafts on campus to recreate the ancient Pacific navigators' trade routes? Every detour is an opportunity for discovery.",
+    '404.closing': 'Ready to set sail back to your schedule?',
 } satisfies typeof ja;
 
 export const ui = {en, ja} as const;
