@@ -12,6 +12,7 @@ export const GET: APIRoute = async ({request}) => {
     const results = await db.query.courses.findMany({
         where,
         with: {schedules: true},
+        orderBy: (courses, {asc}) => [asc(courses.courseCode)], // courseCode順, ELAが最初にでないように
         limit: limitPerPage + 1,
         offset: (page - 1) * limitPerPage,
     });

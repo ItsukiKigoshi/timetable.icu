@@ -41,6 +41,7 @@ export const courses = sqliteTable(
     },
     (table) => [
         uniqueIndex("year_rgno_unique_idx").on(table.year, table.rgNo),
+        index('course_no_idx').on(table.courseCode),
         index("year_term_idx").on(table.year, table.term),
         index("year_term_status_idx").on(table.year, table.term, table.status),
     ],
