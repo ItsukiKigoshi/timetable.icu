@@ -390,6 +390,14 @@ bun wrangler d1 migrations apply timetable_icu
 bun wrangler d1 migrations apply timetable_icu --remote
 ```
 
+もし外部キー制約が通らない場合
+
+```shell
+bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
+```
+
+などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
+sqlファイルの中身を一旦空にしてapplyする方法がある．推奨されてはいなさそう．
 Debug with Cloudflare Environment
 
 ```bash
