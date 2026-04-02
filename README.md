@@ -3,6 +3,7 @@
 # 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
+
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
@@ -10,7 +11,7 @@
 # 大切にしたいこと
 
 - [ ] とにかく時間割作成に使いやすいものである
-    - [x] long時間割対応 (しょうもないことだがアイデンティティ) 
+    - [x] long時間割対応 (しょうもないことだがアイデンティティ)
     - [ ] 軽量 (めざせ 全ページPageSpeedInsights 100)
 - [ ] ICUらしくある
     - [ ] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
@@ -66,7 +67,8 @@
     - [x] リンク貼る
 - [ ] 授業評価（TES）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
-    - [ ] TODO - Over Year TES解析 (RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python)
+    - [ ] TODO - Over Year TES解析 (RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析;
+      Python)
         - [ ] 経年評価や同一講師の授業評価を可視化
 - [ ] オフラインで確認すること
     - [ ] 代わりに: Apple/Google Calendarへのエクスポート
@@ -114,7 +116,8 @@
     - [x] Calendar形式で表示
         - [x] Termセレクター
         - [x] 表示をSophisticate
-            - [x] ~~クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？~~: スマホ操作を考えるなら今の挙動が良い
+            - [x] ~~クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？~~:
+              スマホ操作を考えるなら今の挙動が良い
             - [x] 開始時間->CorseID タイトル->場所かな
             - [x] Roomを表示するのはログイン済みユーザだけ！
         - [ ] 理系の選択式の演習UI: 優先度低し
@@ -274,7 +277,8 @@
         - [x] og:image
             - [ ] よいもの？
     - [x] [Google Search Console](https://search.google.com/search-console)
-    - [ ] [Bing Webmaster Tool](https://www.bing.com/webmasters): DuckDuckGo
+    - [x] [Bing Webmaster Tool](https://www.bing.com/webmasters): DuckDuckGo
+        - [ ] IndexNow
     - [ ] Semantic HTML
         - [ ] div乱用をrefactor
 - [x] Deploy to Workers
@@ -282,23 +286,25 @@
     - [ ] 学年暦
     - [ ] 4年間の全体像を考える
     - [ ] ログインが必要なサイトはその旨を明示
+    - [ ] 公式リンク
+        - [ ] ICU Portal
+        - [ ] ICU Map
+            - [ ] Course Offerings
     - [ ] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
-    - [ ] ICU Portal
-    - [ ] ICU Map
-        - [ ] Course Offerings
-    - [ ] CTL
-        - [ ] 履修計画テンプレート
-        - [ ] 履修計画ワークショップ
-        - [ ] イベントなどでコラボレーション？
-    - [ ] Major一覧
-        - [ ] ehandbook
-        - [ ] メジャーインフォメーションサイト
-        - [ ] メジャー選択要件
-    - [ ] ICU IBS
-        - [ ] 相談方法
-        - [ ] Social Media
-    - [ ] Weekly Giants
-    - [ ] 選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？
+        - [ ] CTL
+            - [ ] 履修計画テンプレート
+            - [ ] 履修計画ワークショップ
+            - [ ] イベントなどでコラボレーション？
+        - [ ] Major一覧
+            - [ ] ehandbook
+            - [ ] メジャーインフォメーションサイト
+            - [ ] メジャー選択要件
+        - [ ] ICU IBS
+            - [ ] 相談方法
+            - [ ] Social Media
+    - [ ] 学生による活動
+        - [ ] Weekly Giants
+        - [ ] 選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？
     - [ ] トップページのロード速度は落とさぬように．
 - [ ] performance
     - [x] 画像最適化: 必要なピクセル数以下に抑える

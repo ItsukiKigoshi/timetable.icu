@@ -19,10 +19,6 @@ import {
 import {WifiOff} from "lucide-react";
 import {useLanguage} from "@/translation/utils";
 
-// Landing Page is Rendered as SSG
-export const prerender = true;
-
-
 const lang = Astro.locals.lang;
 const {t, l, currentLang} = useLanguage(lang);
 ---
@@ -37,7 +33,6 @@ const {t, l, currentLang} = useLanguage(lang);
                 sizes="(max-width: 768px) 400px, 800px"
                 quality={50}
                 format="webp"
-                loading="eager"
                 class="absolute -top-10 -right-10 w-185 md:w-200 rotate-12"
         />
         <Image
@@ -47,24 +42,26 @@ const {t, l, currentLang} = useLanguage(lang);
                 sizes="(max-width: 768px) 400px, 800px"
                 quality={50}
                 format="webp"
-                loading="eager"
                 class="absolute -bottom-40 -left-20 w-150 md:w-225 -rotate-12"
         />
     </aside>
 
     <!--Main Content-->
     <section class="flex flex-col items-center gap-16 p-6 max-w-5xl mx-auto min-h-screen relative">
-        <div class="flex justify-center gap-2 text-sm font-medium opacity-70">
+        <!-- Toggle Language-->
+        <div class="flex justify-center items-center gap-1 p-1 rounded-xl bg-base-200/30 backdrop-blur-sm border border-base-content/5">
             {currentLang === 'ja' ? (
-                    <span>JA</span>
+                    <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">JA</span>
             ) : (
-                    <a href="/" class="underline text-base-content/50">JA</a>
+                    <a href="/"
+                       class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors">JA</a>
             )}
-            <span class="text-base-content/30">/</span>
+
             {currentLang === 'en' ? (
-                    <span>EN</span>
+                    <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">EN</span>
             ) : (
-                    <a href="/en/" class="underline text-base-content/50">EN</a>
+                    <a href="/en/"
+                       class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors">EN</a>
             )}
         </div>
         <!--Hero-->
