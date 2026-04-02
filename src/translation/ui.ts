@@ -30,7 +30,7 @@ const ja = {
     'term.Winter': '冬学期',
 
     // フッター
-    'footer.privacy': '個人情報規約',
+    'footer.privacy': 'プライバシーポリシー', //個人情報規約
     'footer.terms': '利用規約',
     'footer.sourcecode': 'ソースコード',
 
@@ -172,7 +172,7 @@ const en = {
     'lp.features.can.schedule.title': 'Create your ideal timetable',
     'lp.features.can.schedule.desc': 'Support for ICU-unique periods like Long 4, 5, 6, and 7.',
     'lp.features.can.sync.title': 'Multi-Device Sync',
-    'lp.features.can.sync.desc': 'Login Google to sync your latest timetable across all your devices.',
+    'lp.features.can.sync.desc': 'Login with Google to sync your latest timetable across all your devices.',
 
     // Features - Todo
     'lp.features.todo.label': 'Planned Features',
@@ -185,7 +185,7 @@ const en = {
 
     // Profile
     'lp.profile.made_with': 'Made with ♥ by',
-    'lp.profile.description.top': "Maintenanced by ICU '27 🏔️",
+    'lp.profile.description.top': "Developed by ICU '27 🏔️",
     'lp.profile.description.middle': 'We are looking for contributors!',
     'lp.profile.description.bottom': 'If you are interested in design, PR, or coding, please ',
     'lp.profile.contact': 'contact us',
