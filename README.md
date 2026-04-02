@@ -373,7 +373,7 @@ bunx wrangler types
 Create schema for BetterAuth
 
 ```bash
-bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/lib/auth-schema.ts
+bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/db/auth-schema.ts
 ```
 
 Create schema by Drizzle Kit

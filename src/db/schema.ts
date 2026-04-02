@@ -1,8 +1,8 @@
-export * from "./auth-schema.ts";
+import * as authSchema from "./auth-schema.ts";
+import {user} from "./auth-schema.ts";
 
 import {type InferSelectModel, relations, sql} from "drizzle-orm";
 import {index, integer, primaryKey, real, sqliteTable, text, uniqueIndex,} from "drizzle-orm/sqlite-core";
-import {user} from "./auth-schema.ts";
 
 export * from "./auth-schema.ts";
 
@@ -95,14 +95,22 @@ export const userCourses = sqliteTable(
             .notNull()
             .references(() => courses.id, {onDelete: "cascade"}),
 
-        // ここには色とメモだけ残す
+        // 時間割上での表示・非表示を切り替えるフラグ
+        isVisible: integer("is_visible", {mode: "boolean"}).notNull().default(true),
+
+        // 理系科目などの「グループ選択」が必要な場合、どのグループを選んだかを保持
+        // 例: altGroupId = 1 のコマ群を表示する場合、ここに 1 を入れる
+        selectedAltGroupId: integer("selected_alt_group_id"),
         colorCustom: text("color_custom"),
         memo: text("memo"),
 
         createdAt: integer("created_at").default(sql`(unixepoch()
                                                      )`),
     },
-    (table) => [index("user_courses_uid_idx").on(table.userId)],
+    (table) => [
+        index("user_courses_uid_idx").on(table.userId),
+        uniqueIndex("user_course_unique_idx").on(table.userId, table.courseId),
+    ],
 );
 
 // --- カスタム科目 (他校・手打ち) ---
@@ -164,7 +172,11 @@ export const courseToCategories = sqliteTable(
 
 // --- User側からのリレーション ---
 // 1人のユーザーは「複数の履修登録(公式)」と「複数のカスタム科目」を持つ
+// Authのuserとのrelationもここでまとめる
 export const userRelations = relations(user, ({many}) => ({
+    sessions: many(authSchema.session),
+    accounts: many(authSchema.account),
+    passkeys: many(authSchema.passkey),
     userCourses: many(userCourses),
     customCourses: many(customCourses),
 }));
@@ -200,11 +212,20 @@ export const courseSchedulesRelations = relations(
 
 // --- Types ---
 
-// 基本の型
-export type Course = InferSelectModel<typeof courses>;
-export type CustomCourse = InferSelectModel<typeof customCourses>;
-export type Schedule = InferSelectModel<typeof courseSchedules>;
 
+// --- Base Types (DBから直接抽出) ---
+export type Course = InferSelectModel<typeof courses>;
+export type Schedule = InferSelectModel<typeof courseSchedules>;
+export type UserCourseEntry = InferSelectModel<typeof userCourses>;
+
+// --- Helper: メタデータ部分だけを抽出 ---
+// userId や createdAt などの不要なカラムを除いた「ユーザー設定」のみの型
+export type UserCourseMetadata = Pick<
+    UserCourseEntry,
+    "isVisible" | "selectedAltGroupId" | "colorCustom" | "memo"
+>;
+
+// --- Final Types ---
 // リレーション込みの型
 export type CourseWithSchedules = Course & {
     schedules: Schedule[];
@@ -212,4 +233,7 @@ export type CourseWithSchedules = Course & {
 
 export type Categories = InferSelectModel<typeof categories>;
 
-export type FlatSchedule = Schedule & Course;
+// Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
+export type FlatSchedule = Schedule & Course & Partial<UserCourseMetadata> & {
+    scheduleId: number;
+};

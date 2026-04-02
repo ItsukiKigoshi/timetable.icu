@@ -39,7 +39,11 @@ if (user) {
                 ...uc.course,
                 ...s,
                 courseId: uc.course.id,
-                scheduleId: s.id
+                scheduleId: s.id,
+                isVisible: uc.isVisible,
+                selectedAltGroupId: uc.selectedAltGroupId,
+                colorCustom: uc.colorCustom,
+                memo: uc.memo,
             }))
         );
 }

@@ -239,21 +239,32 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                                      className="p-4 bg-base-200 rounded-xl flex justify-between items-center border border-base-300">
                                     <div className="flex-1 min-w-0 mr-4">
                                         <div className="font-bold truncate text-sm">
-                                            {/* ★ タイトルの出し分け */}
                                             {isJa ? course.titleJa : course.titleEn}
                                         </div>
                                         <div className="text-xs opacity-60 truncate">{course.instructor}</div>
                                     </div>
-                                    <div className="flex gap-2 shrink-0">
+
+                                    {/* 右側のボタンエリアを垂直方向のflexに変更 */}
+                                    <div className="flex flex-col gap-2 shrink-0">
                                         <a target='_blank'
-                                           href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${
-                                               course.rgNo
-                                           }&year=${course.year}&term=${seasonToNumber(
-                                               course.term
-                                           )}`} className="btn btn-sm">
+                                           href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
+                                           className="btn btn-sm">
                                             <span>{t('timetable.syllabus')}</span>
-                                            <SquareArrowOutUpRight size="16"/>
+                                            <SquareArrowOutUpRight size="14"/>
                                         </a>
+
+                                        {/* 非表示/表示ボタン (削除ボタンの上) */}
+                                        <button
+                                            onClick={() => {/* toggleVisibility(course) */
+                                            }}
+                                            className="btn btn-sm btn-ghost border-base-300 gap-1.5"
+                                        >
+                                            {/* isVisibleの値によって翻訳を出し分け */}
+                                            <span className="font-bold">
+                                                {course.isVisible ? t('timetable.hide') : t('timetable.show')}
+                                            </span>
+                                        </button>
+
                                         <button
                                             onClick={() => handleToggle(course)}
                                             disabled={isSubmitting === cId}
@@ -264,7 +275,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                                             ) : (
                                                 <>
                                                     <span className="font-bold">{t('timetable.remove')}</span>
-                                                    <X size="16"/>
+                                                    <X size="14"/>
                                                 </>
                                             )}
                                         </button>

@@ -295,7 +295,7 @@ export default function ExploreInterface({
                                     className="card-actions flex justify-between items-center mt-2 pt-3">
                                     <a target='_blank' rel="noopener noreferrer"
                                        href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
-                                       className="btn btn-xs sm:btn-sm gap-1.5 px-2 font-normal">
+                                       className="btn gap-1.5 px-2 font-normal">
                                         <span className="text-[10px] sm:text-xs">{t('explore.syllabus')}</span>
                                         <SquareArrowOutUpRight size="14"/>
                                     </a>
@@ -303,7 +303,7 @@ export default function ExploreInterface({
                                     <button
                                         onClick={() => handleToggle(course)}
                                         disabled={loading}
-                                        className={`btn btn-xs sm:btn-sm min-w-20 ${isAdded ? 'btn-error border-none bg-error text-error-content' : 'btn-primary'}`}
+                                        className={`btn min-w-20 ${isAdded ? 'btn-error border-none bg-error text-error-content' : 'btn-primary'}`}
                                     >
                                         {loading ?
                                             <span className="loading loading-spinner loading-xs"></span> : isAdded ? <>

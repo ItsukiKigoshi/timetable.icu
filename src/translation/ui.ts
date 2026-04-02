@@ -92,6 +92,8 @@ const ja = {
     'timetable.remove': '削除',
     'timetable.syllabus': 'シラバス',
     'timetable.units': '単位',
+    'timetable.show': '表示',
+    'timetable.hide': '隠す',
 
     'days.mon': '月',
     'days.tue': '火',
@@ -206,6 +208,8 @@ const en = {
     'timetable.remove': 'Remove',
     'timetable.syllabus': 'Syllabus',
     'timetable.units': 'Units',
+    'timetable.show': 'Show',
+    'timetable.hide': 'Hide',
 
     'days.mon': 'Mon',
     'days.tue': 'Tue',
