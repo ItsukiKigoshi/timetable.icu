@@ -49,8 +49,9 @@ const isLoggedIn = !!user;
         </div>
     </div>
     <nav class="navbar-end">
-        {isLoggedIn &&
-                <SyncHandler client:load isLoggedIn={isLoggedIn}/>}
+        {isLoggedIn && (
+                <SyncHandler client:load user={user}/>
+        )}
         {!dbError && (
                 <div class="relative inline-block ml-auto">
                     <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>

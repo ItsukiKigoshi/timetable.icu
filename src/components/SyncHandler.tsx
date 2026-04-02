@@ -5,7 +5,7 @@ const syncData = async (courseItems: any[]) => {
     const res = await fetch('/api/user-courses/sync', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({courseItems}), // ID配列ではなくオブジェクト配列を送る
+        body: JSON.stringify({courseItems}),
     });
     if (!res.ok) throw new Error("Sync failed");
 };
@@ -15,17 +15,16 @@ export default function SyncHandler({user}: { user: any }) {
     const [showToast, setShowToast] = useState(false);
 
     const handleSync = async () => {
-        // 1. ゲスト用データの確認
         const guestData = localStorage.getItem('guest_timetable');
-        // 2. ログインユーザー用キャッシュ（オフライン編集分）の確認
         const cacheKey = user ? `cache_timetable_${user.id}` : null;
         const cachedData = cacheKey ? localStorage.getItem(cacheKey) : null;
 
-        const rawData = guestData || cachedData;
-        if (!user || !rawData) return;
+        // 同期すべきソースを決定（ゲスト優先）
+        const targetData = guestData || cachedData;
+        if (!user || !targetData) return;
 
         try {
-            const items = JSON.parse(rawData);
+            const items = JSON.parse(targetData);
             if (!Array.isArray(items) || items.length === 0) return;
 
             setStatus('syncing');
@@ -34,10 +33,14 @@ export default function SyncHandler({user}: { user: any }) {
             await syncData(items);
 
             setStatus('done');
-            // 同期が終わったらゲストデータを削除
-            if (guestData) localStorage.removeItem('guest_timetable');
 
-            // 3秒後にリロードして最新状態を反映
+            // 重要：同期に成功したソースだけを削除
+            if (guestData) {
+                localStorage.removeItem('guest_timetable');
+            } else if (cacheKey) {
+                localStorage.removeItem(cacheKey); // キャッシュもクリアしてDBを正とする
+            }
+
             setTimeout(() => window.location.reload(), 2000);
         } catch (e) {
             console.error(e);
@@ -78,7 +81,7 @@ export default function SyncHandler({user}: { user: any }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span>同期完了！再読み込みします。</span>
+                        <span>同期完了！再読み込みします．</span>
                     </div>
                 </div>
             )}
@@ -90,7 +93,7 @@ export default function SyncHandler({user}: { user: any }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                   d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span>同期に失敗しました。接続を確認してください。</span>
+                        <span>同期に失敗しました．接続を確認してください．</span>
                     </div>
                 </div>
             )}
