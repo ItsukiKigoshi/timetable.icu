@@ -36,7 +36,7 @@ interface Props {
     lang?: string;
 }
 
-const formatUnits = (units: number): string => {
+export const formatUnits = (units: number): string => {
     // 0.333... の対策（浮動小数点の誤差を考慮して 0.33 より大きく 0.34 未満なら 1/3）
     if (units > 0.33 && units < 0.34) return "1/3";
     if (units > 0.66 && units < 0.67) return "2/3";

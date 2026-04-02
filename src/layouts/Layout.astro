@@ -68,10 +68,10 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
 
 {!isLanding &&
         <Header user={user}/>}
-<main class="grow">
+<main class="grow min-h-0">
     <slot/>
 </main>
 {!isLanding &&
-        <Footer/>}
+        <Footer class="z-50"/>}
 </body>
 </html>

@@ -87,6 +87,9 @@ const ja = {
 
     // 時間割
     'timetable.title': '時間割',
+    'timetable.list_view': 'リスト',
+    'timetable.my_courses': '授業一覧',
+    'timetable.no_courses': '授業が追加されていません',
     'timetable.modal_title': 'の授業', // "月 1限の授業" のような使い方
     'timetable.close': '閉じる',
     'timetable.remove': '削除',
@@ -203,6 +206,9 @@ const en = {
 
     // Timetable
     'timetable.title': 'Timetable',
+    'timetable.list_view': 'List',
+    'timetable.my_courses': 'Courses',
+    'timetable.no_courses': 'No Course is Added',
     'timetable.modal_title': 'Courses in', // "Courses in Mon 1" のような使い方
     'timetable.close': 'Close',
     'timetable.remove': 'Remove',

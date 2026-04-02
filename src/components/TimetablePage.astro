@@ -48,8 +48,8 @@ if (user) {
         );
 }
 ---
-<Layout title=`${t('timetable.title')} | ${t('site.title')}`>
-    <div class="overflow-hidden p-2 md:px-6 max-w-7xl mx-auto">
+<Layout title={`${t('timetable.title')} | ${t('site.title')}`}>
+    <div class="p-2 md:px-6 mx-auto h-[calc(100vh-128px)] overflow-hidden">
         <TimetableInterface
                 initialRawSchedules={flatSchedules}
                 user={user}
