@@ -105,7 +105,7 @@
 - [x] BetterAuth
     - [x] Google OAuth
     - [x] Passkey
-        - ~~[ ] Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
+        - [x] ~~Session情報最適化 (KV/JWT?; 毎RequestでWorkersに行かなくてもいいようにできる?)~~:
           とりあえずはmiddlewareの情報を使って最適化できそう
 - [x] Get Syllabi Data
     - [x] ブラウザ保存->Pythonパース？
@@ -115,8 +115,7 @@
     - [x] Calendar形式で表示
         - [x] Termセレクター
         - [x] 表示をSophisticate
-          ~~- [ ] クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？~~:
-          スマホ操作を考えるなら今の挙動が良い
+            - [x] ~~クリック時の挙動は, カレンダーアプリなどと同様にその1つのイベントにdropdownが出てくるのが良い？~~: スマホ操作を考えるなら今の挙動が良い
             - [x] 開始時間->CorseID タイトル->場所かな
             - [x] Roomを表示するのはログイン済みユーザだけ！
         - [ ] 理系の選択式の演習UI: 優先度低し
@@ -155,8 +154,8 @@
         - [ ] 一番確実なのは公式の結果をそのまま挿入することだが，なるべくやりたくない: colistはこれをやらざるをえないかも
     - [x] メジャーとそれ以外を分離, もしくはタグ形式で
     - [ ] Issue: Co-Listに非対応; ehandbookを参照しながらColistが何かを解説
-      ~~- [ ] コマをクリックでその時間の授業を検索~~
-      ~~- [ ] 授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
+        - [x] ~~コマをクリックでその時間の授業を検索~~
+        - [x] ~~授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
     - [ ] 空きコマ検索: 現状の機能でも工夫次第で対応できるのでとりあえずは優先度低い
     - [ ] slots(この名称もscheduleにするべき？)が2つ以上なら空きコマ検索モードにする？
         - [ ] デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)
@@ -459,7 +458,7 @@ bun db:deploy
 ライセンス出力
 
 ```bash
-bun x generate-license-file --input package.json --output LICENSE.md
+bun x generate-license-file --input package.json --output CREDITS
 ```
 
 リモートのログ出力
