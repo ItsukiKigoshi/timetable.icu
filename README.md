@@ -443,6 +443,12 @@ bun db:deploy
 bun x generate-license-file --input package.json --output LICENSE.md
 ```
 
+リモートのログ出力
+
+```bash
+bun wrangler tail
+```
+
 ## Schema案
 
 - [x] auth関連 (BetterAuthに任せる)

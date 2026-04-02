@@ -158,12 +158,40 @@ export function useTimetable({
         }
     };
 
+    const updateMemo = async (course: FlatSchedule, nextMemo: string) => {
+        const targetCourseId = Number(course.courseId || (course as any).id);
+
+        // 1. ローカル状態の更新
+        const nextRaw = rawSchedules.map(s => {
+            const sId = Number(s.courseId || (s as any).id);
+            return sId === targetCourseId ? {...s, memo: nextMemo} : s;
+        });
+        updateAll(nextRaw);
+
+        // 2. サーバー同期
+        if (user) {
+            try {
+                await fetch('/api/user-courses/', {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        courseId: targetCourseId,
+                        memo: nextMemo
+                    })
+                });
+            } catch (e) {
+                console.error("Memo sync failed", e);
+            }
+        }
+    };
+
     return {
         schedules: rawSchedules, // 全リスト（isVisible=falseも含む）
         displaySchedules,        // 描画用（isVisible=trueのみ）
         registeredIds,
         toggleCourse,
         toggleVisibility,
+        updateMemo,
         isInitialized
     };
 }

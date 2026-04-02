@@ -4,7 +4,7 @@ import type {User} from "better-auth";
 import {timeToMin} from "@/lib/timetable.ts";
 import {useTimetable} from "@/lib/useTimetable.ts";
 import {useEffect, useMemo, useState} from "react";
-import {Eye, EyeOff, LayoutGrid, List, SquareArrowOutUpRight, Trash2} from "lucide-react"; // アイコン追加
+import {Eye, EyeOff, LayoutGrid, List, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
 import {ui} from "@/translation/ui.ts";
 import {useLanguage} from "@/translation/utils.ts";
 import {formatUnits} from "@/components/ExploreInterface.tsx";
@@ -58,7 +58,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
     lang?: string
 }) {
     const {t, isJa, currentLang} = useLanguage(lang);
-    const {schedules, displaySchedules, toggleCourse, toggleVisibility} = useTimetable({
+    const {schedules, displaySchedules, toggleCourse, toggleVisibility, updateMemo} = useTimetable({
         initialSchedules: initialRawSchedules,
         initialCourseIds: Array.from(new Set(initialRawSchedules.map(s => s.courseId))),
         user
@@ -67,6 +67,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string } | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
+    const [selectedCourse, setSelectedCourse] = useState<FlatSchedule | null>(null);
 
     // 曜日を翻訳するヘルパー
     const translateDay = (day: string) => {
@@ -86,12 +87,6 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
         ? schedules.filter(s => s.dayOfWeek === selectedSlot.day && s.period === parseInt(selectedSlot.period))
         : [];
 
-    useEffect(() => {
-        if (selectedSlot && coursesInSelectedSlot.length === 0) {
-            (document.getElementById('course_detail_modal') as HTMLDialogElement)?.close();
-            setSelectedSlot(null);
-        }
-    }, [coursesInSelectedSlot.length, selectedSlot]);
 
     const containerHeight = "100%";
     const minuteUnit = `calc((${containerHeight} - ${HEADER_HEIGHT}px) / ${END_TIME - START_TIME})`;
@@ -109,7 +104,21 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
         }
     };
 
-    const handleSlotClick = (day: string, p: any) => { // p を PERIOD オブジェクトとして受ける
+    // 1. useEffectでステートを監視してモーダルを開閉する
+    useEffect(() => {
+        const modal = document.getElementById('course_detail_modal') as HTMLDialogElement;
+        if (!modal) return;
+
+        if (selectedSlot) {
+            // すでに開いている場合は二重に呼ばないようにチェック
+            if (!modal.open) modal.showModal();
+        } else {
+            if (modal.open) modal.close();
+        }
+    }, [selectedSlot]);
+
+    // 2. クリックハンドラーはステートの更新だけにする
+    const handleSlotClick = (day: string, p: any) => {
         const sMin = timeToMin(p.start);
         const nextP = PERIODS[PERIODS.indexOf(p) + 1];
         const visualEndMin = nextP ? timeToMin(nextP.start) : timeToMin(p.end);
@@ -122,11 +131,22 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
         );
 
         if (isOccupied) {
-            // period は表示上のラベルとしてセット
+            // ステートをセットするだけ。開く処理は useEffect に任せる
             setSelectedSlot({day, period: p.label});
-            (document.getElementById('course_detail_modal') as HTMLDialogElement)?.showModal();
         }
     };
+
+    // 3. 同様に single_course_modal もステートで管理
+    useEffect(() => {
+        const modal = document.getElementById('single_course_modal') as HTMLDialogElement;
+        if (!modal) return;
+
+        if (selectedCourse) { // CourseList内で定義しているステート
+            if (!modal.open) modal.showModal();
+        } else {
+            if (modal.open) modal.close();
+        }
+    }, [selectedCourse]);
 
     const uniqueCourses = useMemo(() => {
         const seen = new Set();
@@ -142,10 +162,10 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
 
     // --- 補助コンポーネント: 授業の「中身」を詳しく表示する ---
     const CourseDetailContent = ({
-                                     course, isJa, t, toggleVisibility, handleToggle, isSubmitting
+                                     course, t, toggleVisibility, handleToggle, isSubmitting, updateMemo
                                  }: {
         course: FlatSchedule,
-        isJa: boolean,
+        updateMemo: (c: FlatSchedule, memo: string) => void,
         t: any,
         toggleVisibility: (c: any) => void,
         handleToggle: (c: any) => void,
@@ -184,25 +204,25 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                     </button>
                 </div>
 
-                {/* TODO - メモ */}
-                {/*<div className="form-control w-full">
+                {/* メモ */}
+                <div className="form-control w-full">
                     <label className="label pt-0">
                     <span className="label-text flex items-center gap-2 font-bold opacity-70">
-                        <StickyNote size="14"/> メモ
+                        <StickyNote size="14"/> {t('timetable.memo')}
                     </span>
                     </label>
                     <textarea
                         className="textarea textarea-bordered w-full h-24 text-sm focus:textarea-primary"
                         placeholder="課題や教室のメモ..."
+                        defaultValue={course.memo || ""}
+                        onBlur={(e) => updateMemo(course, e.target.value)} // フォーカスが外れた時に保存
                     ></textarea>
-                </div>*/}
+                </div>
             </div>
         );
     };
 
     const CourseList = ({items, padding = true}: { items: FlatSchedule[], padding?: boolean }) => {
-        const [selectedCourse, setSelectedCourse] = useState<FlatSchedule | null>(null);
-
         return (
             <div className={`flex flex-col gap-2 w-full ${padding ? 'p-2' : ''}`}>
                 {items.map(course => {
@@ -242,40 +262,6 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                         </div>
                     );
                 })}
-
-                {/* --- 個別授業詳細モーダル --- */}
-                <dialog id="single_course_modal" className="modal modal-bottom sm:modal-middle">
-                    <div className="modal-box">
-                        <form method="dialog">
-                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                        </form>
-                        {selectedCourse && (
-                            <div className="flex flex-col gap-2">
-                                {/* 基本情報セクションを追加 */}
-                                <div className="mb-2 border-b pb-4 ">
-                                    <div
-                                        className="text-[10px] font-mono opacity-50">{selectedCourse.courseCode} {formatUnits(selectedCourse.units)}{t('timetable.units')}</div>
-                                    <div
-                                        className="font-bold text-lg">{isJa ? selectedCourse.titleJa : selectedCourse.titleEn}</div>
-                                    <div className="text-sm opacity-70">{selectedCourse.instructor}</div>
-                                </div>
-
-                                {/* アクションとメモ */}
-                                <CourseDetailContent
-                                    course={selectedCourse}
-                                    isJa={isJa}
-                                    t={t}
-                                    toggleVisibility={toggleVisibility}
-                                    handleToggle={handleToggle}
-                                    isSubmitting={isSubmitting}
-                                />
-                            </div>
-                        )}
-                    </div>
-                    <form method="dialog" className="modal-backdrop bg-black/60">
-                        <button>close</button>
-                    </form>
-                </dialog>
 
                 {items.length === 0 && (
                     <div className="text-center py-10 opacity-50 text-sm">{t('timetable.no_courses')}</div>
@@ -355,7 +341,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                                  width: `calc(${(100 / sched.groupMaxCols)}% - 1px)`,
                              }}>
                             <div className="text-primary-content pointer-events-none">
-                                <h1 className="text-xs line-clamp-2 leading-tight">
+                                <h1 className="text-xs text-wrap">
                                     <span
                                         className="font-bold">{sched.courseCode} </span> {isJa ? sched.titleJa : sched.titleEn}
                                 </h1>
@@ -367,6 +353,11 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
             ))}
         </div>
     );
+
+    const currentSelectedCourse = useMemo(() => {
+        if (!selectedCourse) return null;
+        return schedules.find(s => s.courseId === selectedCourse.courseId) || selectedCourse;
+    }, [selectedCourse, schedules]);
 
     return (
         <section className="flex flex-col w-full select-none h-full relative overflow-hidden">
@@ -437,7 +428,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
 
             {/* 詳細モーダル */}
             <dialog id="course_detail_modal" className="modal modal-bottom sm:modal-middle">
-                <div className="modal-box p-6 max-w-lg">
+                <div className="modal-box p-6">
                     <h3 className="font-bold text-xl mb-4 border-b pb-2">
                         {isJa ? `${translateDay(selectedSlot?.day || "")} ${selectedSlot?.period}限` : `${translateDay(selectedSlot?.day || "")} Period ${selectedSlot?.period}`}
                     </h3>
@@ -455,7 +446,8 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                                 </div>
                                 <CourseDetailContent
                                     course={coursesInSelectedSlot[0]}
-                                    isJa={isJa} t={t}
+                                    t={t}
+                                    updateMemo={updateMemo}
                                     toggleVisibility={toggleVisibility}
                                     handleToggle={handleToggle}
                                     isSubmitting={isSubmitting}
@@ -478,7 +470,8 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                                         <div className="collapse-content border-t border-base-300 bg-base-100">
                                             <CourseDetailContent
                                                 course={c}
-                                                isJa={isJa} t={t}
+                                                t={t}
+                                                updateMemo={updateMemo}
                                                 toggleVisibility={toggleVisibility}
                                                 handleToggle={handleToggle}
                                                 isSubmitting={isSubmitting}
@@ -495,6 +488,41 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                 </div>
                 <form method="dialog" className="modal-backdrop bg-black/60">
                     <button onClick={() => setSelectedSlot(null)}>close</button>
+                </form>
+            </dialog>
+
+            {/* --- 個別授業詳細モーダル --- */}
+            <dialog id="single_course_modal" className="modal modal-bottom sm:modal-middle">
+                <div className="modal-box">
+                    <form method="dialog">
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                onClick={() => setSelectedCourse(null)}>✕
+                        </button>
+                    </form>
+                    {currentSelectedCourse && (
+                        <div className="flex flex-col gap-2">
+                            <div className="mb-2 border-b pb-4">
+                                <div className="text-[10px] font-mono opacity-50">
+                                    {currentSelectedCourse.courseCode} {formatUnits(currentSelectedCourse.units)}{t('timetable.units')}
+                                </div>
+                                <div className="font-bold text-lg">
+                                    {isJa ? currentSelectedCourse.titleJa : currentSelectedCourse.titleEn}
+                                </div>
+                                <div className="text-sm opacity-70">{currentSelectedCourse.instructor}</div>
+                            </div>
+                            <CourseDetailContent
+                                course={currentSelectedCourse}
+                                t={t}
+                                updateMemo={updateMemo}
+                                toggleVisibility={toggleVisibility}
+                                handleToggle={handleToggle}
+                                isSubmitting={isSubmitting}
+                            />
+                        </div>
+                    )}
+                </div>
+                <form method="dialog" className="modal-backdrop bg-black/60">
+                    <button onClick={() => setSelectedCourse(null)}>close</button>
                 </form>
             </dialog>
         </section>

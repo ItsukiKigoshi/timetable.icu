@@ -61,25 +61,32 @@ export const PATCH: APIRoute = async ({request, locals}) => {
     if (!user) return new Response(JSON.stringify({error: "Unauthorized"}), {status: 401});
 
     try {
-        const {courseId, isVisible} = (await request.json()) as { courseId: number; isVisible?: boolean };
-        if (courseId === undefined || isVisible === undefined) {
-            return new Response(JSON.stringify({error: "Missing fields"}), {status: 400});
+        const {courseId, isVisible, memo} = (await request.json()) as {
+            courseId: number;
+            isVisible?: boolean;
+            memo?: string
+        };
+
+        if (courseId === undefined) {
+            return new Response(JSON.stringify({error: "Missing courseId"}), {status: 400});
         }
 
         const db = drizzle(env.timetable_icu, {schema});
 
-        // 指定されたユーザーの特定のコースを更新
+        // 更新用オブジェクトを動的に構築
+        const updateData: any = {};
+        if (isVisible !== undefined) updateData.isVisible = isVisible;
+        if (memo !== undefined) updateData.memo = memo;
+
         const result = await db.update(schema.userCourses)
-            .set({
-                isVisible: isVisible ?? true // 他に memo などが増えたらここに追加
-            })
+            .set(updateData)
             .where(
                 and(
                     eq(schema.userCourses.userId, user.id),
                     eq(schema.userCourses.courseId, courseId)
                 )
             )
-            .returning(); // 更新されたレコードを確認したい場合
+            .returning();
 
         if (result.length === 0) {
             return new Response(JSON.stringify({error: "Course not found in user's list"}), {status: 404});

@@ -37,14 +37,15 @@ export default function SyncHandler({user}: { user: any }) {
             // 2. 成功したらゲストデータを削除
             localStorage.removeItem('guest_timetable');
 
-            // 3. 2秒後にトーストを閉じる（リロードはしない）
+            // 3. 2秒後にトーストを閉じる（リロード）
             // リロードしなくても、次のページ遷移やuseTimetableの初期化で最新DBが読み込まれます
             setTimeout(() => {
                 setShowToast(false);
                 setStatus('idle');
-                // もし今のページが時間割ページなら、ここだけ window.location.reload() しても良いですが、
-                // 基本はUI側でデータの再取得を促す方がスマートです。
+                window.location.reload();
             }, 2000);
+
+
 
         } catch (e) {
             console.error("Sync error:", e);
