@@ -11,13 +11,14 @@
 # 大切にしたいこと
 
 - [ ] とにかく時間割作成に使いやすいものである
-    - [x] long時間割対応 (しょうもないことだがアイデンティティ)
-    - [ ] 軽量
+    - [x] long時間割対応 (しょうもないことだがアイデンティティ) 
+    - [ ] 軽量 (めざせ 全ページPageSpeedInsights 100)
 - [ ] ICUらしくある
     - [ ] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
+    - [x] 隠し要素
 - [ ] プロジェクトとして持続可能なものである
     - [ ] 後輩に引き継ぐ前提で作る，その価値があるものにする
-    - [ ] オープンソース
+    - [x] オープンソース
     - [ ] ICUのいろいろな団体とコラボする
     - [ ] できればCTLなどでも使ってもらいたい
     - [ ] 木越が責任を持って取り組む
@@ -39,7 +40,7 @@
     - [x] 絵文字を多用するAI-Designに負けない!
 - [x] ちゃんとランディングページを作る: Astroのいいところ
 - [x] SEO
-    - [ ] リッチリザルト
+    - [ ] リッチリザルト?
 
 # できること
 
@@ -66,7 +67,8 @@
     - [x] リンク貼る
 - [ ] 授業評価（TES）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
-    - [ ] TES解析 (RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python)
+    - [ ] TODO - Over Year TES解析 (RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python)
+        - [ ] 経年評価や同一講師の授業評価を可視化
 - [ ] オフラインで確認すること
     - [ ] 代わりに: Apple/Google Calendarへのエクスポート
     - [ ] 代わりに: スクショしやすい画面配置
@@ -85,6 +87,8 @@
 
 - [ICUrriculum](https://icu-courses.com)
 - [Timetable4ICU](https://www.timetable4icu.com/)
+- すごい時間割
+- Penmark
 
 # 参考
 
@@ -122,11 +126,11 @@
         - [x] D1 Deploy
         - [x] 未ログインユーザはLocalStorageへ
             - [x] LocalStorageがSaveされたときに通知
-    - [ ] show/hide機能
-        - [ ] Listにだけ表示されるようにする
-        - [ ] もしくは時間割上に網線で表示される（+"非表示の授業は単位数にカウントされません"みたいなメッセージ）か
-        - [ ] user courses schemaに追加（boolean; 0/1）
-    - [ ] List形式で表示
+    - [x] show/hide機能
+        - [x] Listにだけ表示されるようにする
+        - [x] もしくは時間割上に網線で表示される（+"非表示の授業は単位数にカウントされません"みたいなメッセージ）か
+        - [x] user courses schemaに追加（boolean; 0/1）
+    - [x] List形式で表示
     - [ ] Google Calendar / .icsエクスポート？
         - [ ] 授業開始日と終了日
         - [ ] 休講日を除く
@@ -134,6 +138,7 @@
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!
     - [ ] **キャンセルされた授業をそのように明示: 追加できないように**
+        - [ ] 現状では非表示
     - [ ] **開講言語**
         - [ ] 絞り込み機能
     - [ ] Foundation, Area Majorの絞り込み
@@ -244,7 +249,7 @@
         - [ ] 卒業後のアカウント削除に関する規程
             - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
     - [x] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
-        - [ ] [Google Search Console](https://search.google.com/search-console)
+        - [x] [Google Search Console](https://search.google.com/search-console)
 - [ ] Known Issues: リリースまでに反映もしくは注意書き
     - [ ] 退会方法を設ける
     - [ ] スケジュールがない授業を追加できない
@@ -283,8 +288,10 @@
         - [ ] 相談方法
         - [ ] Social Media
     - [ ] Weekly Giants
+    - [ ] 選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？
+    - [ ] トップページのロード速度は落とさぬように．
 - [ ] performance
-    - [ ] 画像最適化: 必要なピクセル数以下に抑える
+    - [x] 画像最適化: 必要なピクセル数以下に抑える
 - [ ] 表示するコマが無いときに「Explore」へ促す
 - [ ] PR
     - [ ] Zenn記事
