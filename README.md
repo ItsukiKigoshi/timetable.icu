@@ -17,7 +17,6 @@ ICU生の時間割・履修登録ツールの決定版
 # 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
-
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
@@ -35,7 +34,7 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] オープンソース
     - [ ] ICUのいろいろな団体とコラボする
     - [ ] できればCTLなどでも使ってもらいたい
-    - [ ] 木越が責任を持って取り組む
+    - [x] 木越が責任を持って取り組む
 - [ ] Transparency
     - [ ] Share Issues, Feature Requests
     - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
