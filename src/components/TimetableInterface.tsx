@@ -72,7 +72,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
         return label; // 1, 2, 3... はそのまま
     };
 
-    const {schedules, displaySchedules, toggleCourse} = useTimetable({
+    const {schedules, displaySchedules, toggleCourse, toggleVisibility} = useTimetable({
         initialSchedules: initialRawSchedules,
         initialCourseIds: Array.from(new Set(initialRawSchedules.map(s => s.courseId))),
         user
@@ -177,7 +177,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                             // 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
                             const visualEndMin = nextP ? timeToMin(nextP.start) : timeToMin(p.end);
 
-                            const isOccupied = schedules.some(s => s.dayOfWeek === day && s.period === parseInt(p.label));
+                            const isOccupied = displaySchedules.some(s => s.dayOfWeek === day && s.period === parseInt(p.label));
 
                             return (
                                 <div
@@ -255,7 +255,8 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
 
                                         {/* 非表示/表示ボタン (削除ボタンの上) */}
                                         <button
-                                            onClick={() => {/* toggleVisibility(course) */
+                                            onClick={() => {
+                                                toggleVisibility(course)
                                             }}
                                             className="btn btn-sm btn-ghost border-base-300 gap-1.5"
                                         >

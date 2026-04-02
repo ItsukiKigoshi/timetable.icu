@@ -62,7 +62,9 @@ export const PATCH: APIRoute = async ({request, locals}) => {
 
     try {
         const {courseId, isVisible} = (await request.json()) as { courseId: number; isVisible?: boolean };
-        if (!courseId) return new Response(JSON.stringify({error: "Missing courseId"}), {status: 400});
+        if (courseId === undefined || isVisible === undefined) {
+            return new Response(JSON.stringify({error: "Missing fields"}), {status: 400});
+        }
 
         const db = drizzle(env.timetable_icu, {schema});
 

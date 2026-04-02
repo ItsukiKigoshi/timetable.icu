@@ -121,21 +121,40 @@ export function useTimetable({
 
     // 非表示/表示の切り替え関数
     const toggleVisibility = async (course: FlatSchedule) => {
-        const cId = course.courseId;
-        const nextVisibility = !course.isVisible;
+        const targetCourseId = Number(course.courseId || (course as any).id);
+        // 現在の状態を反転
+        const nextVisibility = course.isVisible === false; // falseならtrueへ、それ以外ならfalseへ
 
-        // 1. Local State 更新 (楽観的更新)
-        const nextRaw = rawSchedules.map(s =>
-            s.courseId === cId ? {...s, isVisible: nextVisibility} : s
-        );
+        // 1. ローカル状態の更新 (楽観的更新)
+        // 同じcourseIdを持つすべてのコマ（曜限違いなど）のisVisibleを同時に切り替える
+        const nextRaw = rawSchedules.map(s => {
+            const sId = Number(s.courseId || (s as any).id);
+            return sId === targetCourseId ? {...s, isVisible: nextVisibility} : s;
+        });
+
+        // localStorageへの保存も含めて更新
         updateAll(nextRaw);
 
-        // 2. Server 同期
+        // 2. サーバー同期
         if (user) {
-            await fetch('/api/user-courses', {
-                method: 'PATCH',
-                body: JSON.stringify({cId, isVisible: false})
-            });
+            try {
+                // PATCHリクエストを送信
+                const res = await fetch('/api/user-courses/', {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        courseId: targetCourseId,
+                        isVisible: nextVisibility
+                    })
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to sync visibility");
+                }
+            } catch (e) {
+                console.error("Visibility toggle sync failed", e);
+                // 失敗した場合、ユーザーに知らせるか状態をロールバックする処理をここに追加可能
+            }
         }
     };
 

@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 
-// APIにデータを送る共通関数
 const syncData = async (courseItems: any[]) => {
     const res = await fetch('/api/user-courses/sync', {
         method: 'POST',
@@ -15,17 +14,18 @@ export default function SyncHandler({user}: { user: any }) {
     const [showToast, setShowToast] = useState(false);
 
     const handleSync = async () => {
+        // 1. 同期が必要なのは「ゲストデータ」がある時だけにする
         const guestData = localStorage.getItem('guest_timetable');
-        const cacheKey = user ? `cache_timetable_${user.id}` : null;
-        const cachedData = cacheKey ? localStorage.getItem(cacheKey) : null;
 
-        // 同期すべきソースを決定（ゲスト優先）
-        const targetData = guestData || cachedData;
-        if (!user || !targetData) return;
+        // ユーザーがいない、またはゲストデータがないなら何もしない
+        if (!user || !guestData) return;
 
         try {
-            const items = JSON.parse(targetData);
-            if (!Array.isArray(items) || items.length === 0) return;
+            const items = JSON.parse(guestData);
+            if (!Array.isArray(items) || items.length === 0) {
+                localStorage.removeItem('guest_timetable'); // 空なら消して終了
+                return;
+            }
 
             setStatus('syncing');
             setShowToast(true);
@@ -34,31 +34,33 @@ export default function SyncHandler({user}: { user: any }) {
 
             setStatus('done');
 
-            // 重要：同期に成功したソースだけを削除
-            if (guestData) {
-                localStorage.removeItem('guest_timetable');
-            } else if (cacheKey) {
-                localStorage.removeItem(cacheKey); // キャッシュもクリアしてDBを正とする
-            }
+            // 2. 成功したらゲストデータを削除
+            localStorage.removeItem('guest_timetable');
 
-            setTimeout(() => window.location.reload(), 2000);
+            // 3. 2秒後にトーストを閉じる（リロードはしない）
+            // リロードしなくても、次のページ遷移やuseTimetableの初期化で最新DBが読み込まれます
+            setTimeout(() => {
+                setShowToast(false);
+                setStatus('idle');
+                // もし今のページが時間割ページなら、ここだけ window.location.reload() しても良いですが、
+                // 基本はUI側でデータの再取得を促す方がスマートです。
+            }, 2000);
+
         } catch (e) {
-            console.error(e);
+            console.error("Sync error:", e);
             setStatus('error');
             setTimeout(() => setShowToast(false), 5000);
         }
     };
 
-    // A. マウント時（ログイン直後）の同期
+    // マウント時
     useEffect(() => {
-        if (user) handleSync();
+        handleSync();
     }, [user?.id]);
 
-    // B. オンライン復帰時の検知
+    // オンライン復帰時
     useEffect(() => {
-        const handleOnline = () => {
-            if (user) handleSync();
-        };
+        const handleOnline = () => handleSync();
         window.addEventListener('online', handleOnline);
         return () => window.removeEventListener('online', handleOnline);
     }, [user]);
