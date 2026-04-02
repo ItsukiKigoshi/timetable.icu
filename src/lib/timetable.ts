@@ -34,7 +34,8 @@ export function computeProcessedSchedules(schedules: FlatSchedule[]): ProcessedS
             const currentStart = timeToMin(current.startTime);
             const target = merged.find(m => {
                 const mEnd = timeToMin(m.endTime);
-                return m.courseCode === current.courseCode && (currentStart - mEnd) <= 10;
+                // rgNoが一致，かつ時間帯が10分以内であれば結合
+                return m.rgNo === current.rgNo && (currentStart - mEnd) <= 10;
             });
             if (target) {
                 target.endTime = current.endTime;
