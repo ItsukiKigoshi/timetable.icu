@@ -3,10 +3,9 @@
 # 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
-
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
-    - [ ] iOSアプリ/Androidを作る (?)
+    - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
 
 # 大切にしたいこと
 
@@ -274,7 +273,8 @@
         - [x] og:url
         - [x] og:image
             - [ ] よいもの？
-    - [x] Google Search Console
+    - [x] [Google Search Console](https://search.google.com/search-console)
+    - [ ] [Bing Webmaster Tool](https://www.bing.com/webmasters): DuckDuckGo
     - [ ] Semantic HTML
         - [ ] div乱用をrefactor
 - [x] Deploy to Workers
@@ -322,6 +322,7 @@
 
 - [x] Roomはicu.ac.jpを持つユーザのみ
     - [ ] 未ログインユーザーにはAPIからも返さない!!
+    - [x] LocalStorageからroomは消した
 
 ---
 
