@@ -4,7 +4,7 @@
 ## Screenshots
 | Home | Explore | Timetable |
 | :---: | :---: | :---: |
-| ![Home](https://github.com/user-attachments/assets/14a988b4-b5da-420c-844b-140bca2a7ebd) | ![Explore](https://github.com/user-attachments/assets/de1d5cbf-c9e5-4a99-b648-75a3fc9b15fc) | ![Timetable](https://github.com/user-attachments/assets/7c4a7c08-58f2-43a3-aaf5-45e48637bacc) |
+| ![Home](https://github.com/user-attachments/assets/6a72522b-9cac-4cfd-b476-a549256d3047) |![Explore](https://github.com/user-attachments/assets/c0ea0f77-279b-453b-a05d-9ea478228678) | ![Timetable](https://github.com/user-attachments/assets/d5e83f98-1985-4e1e-8e8c-111ca760d31b) |
 
 # 目標
 
