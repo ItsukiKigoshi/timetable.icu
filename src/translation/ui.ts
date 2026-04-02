@@ -31,7 +31,7 @@ const ja = {
     'term.Winter': '冬学期',
 
     // フッター
-    'footer.privacy': 'プライバシーポリシー', //個人情報規約
+    'footer.privacy': '個人情報規約 (Privacy Policy)', //OAuth通すために英語併記
     'footer.terms': '利用規約',
     'footer.sourcecode': 'ソースコード',
 
