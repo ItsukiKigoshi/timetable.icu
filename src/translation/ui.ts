@@ -30,7 +30,7 @@ const ja = {
     'term.Winter': '冬学期',
 
     // フッター
-    'footer.privacy': '個人情報規約',
+    'footer.privacy': 'プライバシーポリシー',
     'footer.terms': '利用規約',
     'footer.sourcecode': 'ソースコード',
 
@@ -51,7 +51,7 @@ const ja = {
     'lp.features.can.schedule.title': '完璧な時間割を組む',
     'lp.features.can.schedule.desc': 'Long 4, 5, 6, 7など、ICUならではのコマ割りも表示',
     'lp.features.can.sync.title': 'マルチデバイス同期',
-    'lp.features.can.sync.desc': 'ログインしてすべてのデバイスで最新の時間割を共有',
+    'lp.features.can.sync.desc': 'Googleでログインしてすべてのデバイスで最新の時間割を共有',
 
     // 検討中
     'lp.features.todo.label': '検討中の機能',
