@@ -1,5 +1,11 @@
 # ICUのじかんわり | Timetable.icu
 
+
+## Screenshots
+| Home | Explore | Timetable |
+| :---: | :---: | :---: |
+| ![Home](https://github.com/user-attachments/assets/14a988b4-b5da-420c-844b-140bca2a7ebd) | ![Explore](https://github.com/user-attachments/assets/de1d5cbf-c9e5-4a99-b648-75a3fc9b15fc) | ![Timetable](https://github.com/user-attachments/assets/7c4a7c08-58f2-43a3-aaf5-45e48637bacc) |
+
 # 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
