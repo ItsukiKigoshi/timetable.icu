@@ -43,6 +43,7 @@ export const courses = sqliteTable(
         uniqueIndex("year_rgno_unique_idx").on(table.year, table.rgNo),
         index('course_no_idx').on(table.courseCode),
         index("year_term_idx").on(table.year, table.term),
+        index("year_term_code_idx").on(table.year, table.term, table.courseCode),
         index("year_term_status_idx").on(table.year, table.term, table.status),
         index("units_idx").on(table.units),
     ],
@@ -167,6 +168,7 @@ export const courseToCategories = sqliteTable(
     (table) => [
         primaryKey({columns: [table.courseId, table.categoryId]}),
         index("category_id_idx").on(table.categoryId),
+        index("category_search_idx").on(table.categoryId, table.courseId),
     ],
 );
 
