@@ -1,10 +1,18 @@
 # ICUのじかんわり | Timetable.icu
+ICU生の時間割・履修登録ツールの決定版
 
+## できること
+### 🔎あなたにピッタリのコースを見つける
+- 公式授業一覧から取得されたすべてのコースを検索
+### 📅完璧な時間割を組む
+-  Long 4, 5, 6, 7など、ICUならではのコマ割りも表示
+### 🔄マルチデバイス同期
+-  ログインしてすべてのデバイスで最新の時間割を共有
 
 ## Screenshots
 | Home | Explore | Timetable |
 | :---: | :---: | :---: |
-| ![Home](https://github.com/user-attachments/assets/14a988b4-b5da-420c-844b-140bca2a7ebd) | ![Explore](https://github.com/user-attachments/assets/de1d5cbf-c9e5-4a99-b648-75a3fc9b15fc) | ![Timetable](https://github.com/user-attachments/assets/7c4a7c08-58f2-43a3-aaf5-45e48637bacc) |
+| ![Home](https://github.com/user-attachments/assets/6a72522b-9cac-4cfd-b476-a549256d3047) |![Explore](https://github.com/user-attachments/assets/c0ea0f77-279b-453b-a05d-9ea478228678) | ![Timetable](https://github.com/user-attachments/assets/d5e83f98-1985-4e1e-8e8c-111ca760d31b) |
 
 # 目標
 
@@ -48,22 +56,14 @@
 - [x] SEO
     - [ ] リッチリザルト?
 
-# できること
+# まだできないこと
 
-- [x] 時間割作成・保存
-    - [x] Long4 (カレンダー化)
+- [ ] 時間割作成・保存
     - [ ] マニュアル登録
-    - [x] Google Oauth + Passkey
     - [ ] Google Calendar / .icsエクスポート？
-- [x] 授業検索 (ICU Google OAuthを噛ませることで学生だけが閲覧出来るように)
-    - [ ] 空きコマに入る授業検索: query paramを`&dayPeriod=["M-2"and"T-1"]`みたいに持たせる？
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
     - [ ] With Upvote
-- [x] 多言語対応
-
-# できないこと
-
 - [ ] 実際の履修登録 (リンク貼る)
     - [ ] Registration Website
 - [ ] 卒業要件との照らし合わせ (リンク貼る)
