@@ -1,5 +1,5 @@
 # ICUのじかんわり | Timetable.icu
-
+ICU生の時間割・履修登録ツールの決定版
 
 ## Screenshots
 | Home | Explore | Timetable |
