@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
-import {ArrowDown01, CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from "lucide-react";
+import {ArrowDown01, CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, Trash2, X} from "lucide-react";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
 import {useLanguage} from "@/translation/utils.ts";
@@ -307,7 +307,7 @@ export default function ExploreInterface({
                                     >
                                         {loading ?
                                             <span className="loading loading-spinner loading-xs"></span> : isAdded ? <>
-                                                <X size="14"/>{t('explore.remove')}</> : <><Plus
+                                                <Trash2 size="14"/>{t('explore.remove')}</> : <><Plus
                                                 size="14"/>{t('explore.add')}</>}
                                     </button>
                                 </div>

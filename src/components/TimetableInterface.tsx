@@ -4,7 +4,7 @@ import type {User} from "better-auth";
 import {timeToMin} from "@/lib/timetable.ts";
 import {useTimetable} from "@/lib/useTimetable.ts";
 import {useEffect, useMemo, useState} from "react";
-import {Eye, EyeOff, LayoutGrid, List, SquareArrowOutUpRight, StickyNote, X} from "lucide-react"; // アイコン追加
+import {Eye, EyeOff, LayoutGrid, List, SquareArrowOutUpRight, Trash2} from "lucide-react"; // アイコン追加
 import {ui} from "@/translation/ui.ts";
 import {useLanguage} from "@/translation/utils.ts";
 import {formatUnits} from "@/components/ExploreInterface.tsx";
@@ -140,104 +140,150 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
             .reduce((sum, c) => sum + (c.units || 0), 0);
     }, [uniqueCourses]);
 
-    // 共通のカードリストコンポーネント
-    const CourseList = ({items, padding = true}: { items: FlatSchedule[], padding?: boolean }) => {
-        // 各コースのメモ開閉状態を管理 (IDをキーにする)
-        const [openMemos, setOpenMemos] = useState<Record<number, boolean>>({});
+    // --- 補助コンポーネント: 授業の「中身」を詳しく表示する ---
+    const CourseDetailContent = ({
+                                     course, isJa, t, toggleVisibility, handleToggle, isSubmitting
+                                 }: {
+        course: FlatSchedule,
+        isJa: boolean,
+        t: any,
+        toggleVisibility: (c: any) => void,
+        handleToggle: (c: any) => void,
+        isSubmitting: number | null
+    }) => {
+        const syllabusUrl = `https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`;
+        const cId = Number(course.courseId);
 
-        const toggleMemo = (cId: number) => {
-            setOpenMemos(prev => ({...prev, [cId]: !prev[cId]}));
-        };
+        return (
+            <div className="flex flex-col gap-4 py-2">
+                {/* メインアクション */}
+                <div className="grid grid-cols-4 gap-2">
+                    {/* シラバス (2/4 を占有) */}
+                    <a href={syllabusUrl} target="_blank" rel="noreferrer"
+                       className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300"
+                       title={t('timetable.syllabus')}>
+                        <SquareArrowOutUpRight size="16"/>
+                        <span className="truncate">{t('timetable.syllabus')}</span>
+                    </a>
+
+                    {/* 表示/非表示 (1/4 を占有) */}
+                    <button onClick={() => toggleVisibility(course)}
+                            className={`btn btn-md gap-2 col-span-1 ${!course.isVisible ? 'btn-ghost border-base-300    ' : 'btn-neutral'}`}>
+                        {course.isVisible ? <Eye size="18"/> : <EyeOff size="18"/>}
+                    </button>
+
+                    {/* 削除 (1/4 を占有) */}
+                    <button onClick={() => handleToggle(course)}
+                            disabled={isSubmitting === cId}
+                            className="btn btn-md btn-error col-span-1 gap-2">
+                        {isSubmitting === cId ? (
+                            <span className="loading loading-spinner loading-xs"/>
+                        ) : (
+                            <Trash2 size="18"/>
+                        )}
+                    </button>
+                </div>
+
+                {/* TODO - メモ */}
+                {/*<div className="form-control w-full">
+                    <label className="label pt-0">
+                    <span className="label-text flex items-center gap-2 font-bold opacity-70">
+                        <StickyNote size="14"/> メモ
+                    </span>
+                    </label>
+                    <textarea
+                        className="textarea textarea-bordered w-full h-24 text-sm focus:textarea-primary"
+                        placeholder="課題や教室のメモ..."
+                    ></textarea>
+                </div>*/}
+            </div>
+        );
+    };
+
+    const CourseList = ({items, padding = true}: { items: FlatSchedule[], padding?: boolean }) => {
+        const [selectedCourse, setSelectedCourse] = useState<FlatSchedule | null>(null);
 
         return (
             <div className={`flex flex-col gap-2 w-full ${padding ? 'p-2' : ''}`}>
                 {items.map(course => {
                     const cId = Number(course.courseId);
-                    const isMemoOpen = openMemos[cId];
-
                     return (
-                        <div
-                            key={course.courseId}
-                            className={`p-3 bg-base-100 rounded-xl border border-base-300 transition-all ${!course.isVisible ? "opacity-60" : ""}`}
-                        >
-                            <div className="flex justify-between items-start">
-                                {/* 左側：科目情報 */}
-                                <div className="flex-1 min-w-0 mr-2">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                    <span className="text-[10px] font-mono bg-base-300 px-1 rounded">
-                                        {course.courseCode}
-                                    </span>
-                                    </div>
-                                    <div className="font-bold truncate text-sm">
-                                        {isJa ? course.titleJa : course.titleEn}
-                                    </div>
-                                    <div className="text-[11px] opacity-60 truncate">
-                                        {course.instructor} • {formatUnits(course.units)} Units
-                                    </div>
+                        <div key={course.courseId}
+                             className={`group p-3 bg-base-100 rounded-xl flex justify-between items-center border border-base-300 hover:border-primary/50 transition-all ${!course.isVisible ? "opacity-60" : ""}`}>
+
+                            {/* 左側：クリックで詳細モーダルへ */}
+                            <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
+                                setSelectedCourse(course);
+                                (document.getElementById('single_course_modal') as HTMLDialogElement)?.showModal();
+                            }}>
+                                <div
+                                    className="text-[10px] font-mono opacity-50">{course.courseCode} {formatUnits(course.units)}{t('timetable.units')}</div>
+                                <div className="font-bold truncate text-sm group-hover:text-primary transition-colors">
+                                    {isJa ? course.titleJa : course.titleEn}
                                 </div>
-
-                                {/* 右側：2段アイコンボタン */}
-                                <div className="flex flex-col gap-1 shrink-0">
-                                    {/* 上段：外部・表示系 */}
-                                    <div className="flex gap-1">
-                                        <a target='_blank' rel="noreferrer"
-                                           href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
-                                           className="btn btn-xs btn-square btn-ghost border-base-300"
-                                           title={t('timetable.syllabus')}>
-                                            <SquareArrowOutUpRight size="14"/>
-                                        </a>
-                                        <button
-                                            onClick={() => toggleVisibility(course)}
-                                            className="btn btn-xs btn-square btn-ghost border-base-300"
-                                        >
-                                            {course.isVisible ? <Eye size="14"/> :
-                                                <EyeOff size="14" className="text-error"/>}
-                                        </button>
-                                    </div>
-
-                                    {/* 下段：編集・削除系 */}
-                                    <div className="flex gap-1">
-                                        <button
-                                            onClick={() => toggleMemo(cId)}
-                                            className={`btn btn-xs btn-square border-base-300 ${isMemoOpen ? 'btn-primary' : 'btn-ghost'}`}
-                                        >
-                                            <StickyNote size="14"/>
-                                        </button>
-                                        <button
-                                            onClick={() => handleToggle(course)}
-                                            disabled={isSubmitting === cId}
-                                            className="btn btn-xs btn-square btn-error"
-                                        >
-                                            {isSubmitting === cId ? (
-                                                <span className="loading loading-spinner loading-xs"/>
-                                            ) : (
-                                                <X size="14"/>
-                                            )}
-                                        </button>
-                                    </div>
+                                <div className="text-[11px] opacity-60 truncate">
+                                    {course.instructor}
                                 </div>
                             </div>
 
-                            {/* メモ入力エリア：表示フラグが立っている時だけ展開 */}
-                            {isMemoOpen && (
-                                <div className="mt-3 pt-3 border-t border-dashed border-base-300">
-                                <textarea
-                                    className="textarea textarea-bordered textarea-xs w-full leading-tight focus:textarea-primary"
-                                    placeholder="Memo (Room, Task, etc...)"
-                                    rows={2}
-                                    autoFocus
-                                />
-                                </div>
-                            )}
+                            {/* 右側：最小限のクイック操作のみ残す */}
+                            <div className="flex gap-1 shrink-0 ml-2">
+                                <button onClick={() => toggleVisibility(course)}
+                                        className="btn btn-sm btn-square btn-ghost border-base-300">
+                                    {course.isVisible ? <Eye size="14"/> : <EyeOff size="14" className="text-error"/>}
+                                </button>
+                                <button onClick={() => handleToggle(course)}
+                                        disabled={isSubmitting === cId}
+                                        className="btn btn-sm btn-square btn-error">
+                                    {isSubmitting === cId ? <span className="loading loading-spinner loading-xs"/> :
+                                        <Trash2 size="14"/>}
+                                </button>
+                            </div>
                         </div>
                     );
                 })}
+
+                {/* --- 個別授業詳細モーダル --- */}
+                <dialog id="single_course_modal" className="modal modal-bottom sm:modal-middle">
+                    <div className="modal-box">
+                        <form method="dialog">
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        </form>
+                        {selectedCourse && (
+                            <div className="flex flex-col gap-2">
+                                {/* 基本情報セクションを追加 */}
+                                <div className="mb-2 border-b pb-4 ">
+                                    <div
+                                        className="text-[10px] font-mono opacity-50">{selectedCourse.courseCode} {formatUnits(selectedCourse.units)}{t('timetable.units')}</div>
+                                    <div
+                                        className="font-bold text-lg">{isJa ? selectedCourse.titleJa : selectedCourse.titleEn}</div>
+                                    <div className="text-sm opacity-70">{selectedCourse.instructor}</div>
+                                </div>
+
+                                {/* アクションとメモ */}
+                                <CourseDetailContent
+                                    course={selectedCourse}
+                                    isJa={isJa}
+                                    t={t}
+                                    toggleVisibility={toggleVisibility}
+                                    handleToggle={handleToggle}
+                                    isSubmitting={isSubmitting}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <form method="dialog" className="modal-backdrop bg-black/60">
+                        <button>close</button>
+                    </form>
+                </dialog>
+
                 {items.length === 0 && (
                     <div className="text-center py-10 opacity-50 text-sm">{t('timetable.no_courses')}</div>
                 )}
             </div>
         );
     };
+
     const TimetableGrid = () => (
         <div className="flex w-full bg-base-100 border-b border-base-content/20 h-full"
              style={{height: "100%"}}>
@@ -274,7 +320,6 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                         const nextP = PERIODS[index + 1];
                         // 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
                         const visualEndMin = nextP ? timeToMin(nextP.start) : timeToMin(p.end);
-                        
                         const isOccupied = displaySchedules.some(s =>
                             s.dayOfWeek === day &&
                             s.isVisible && // 表示されているもののみ
@@ -392,23 +437,61 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
 
             {/* 詳細モーダル */}
             <dialog id="course_detail_modal" className="modal modal-bottom sm:modal-middle">
-                <div className="modal-box p-0 pt-6 max-w-lg flex flex-col">
-                    <h3 className="font-bold text-lg px-6 mb-2">
-                        {isJa
-                            ? `${translateDay(selectedSlot?.day || "")}${selectedSlot?.period}${t('timetable.modal_title')}`
-                            : `${t('timetable.modal_title')} ${translateDay(selectedSlot?.day || "")} ${selectedSlot?.period}`
-                        }
+                <div className="modal-box p-6 max-w-lg">
+                    <h3 className="font-bold text-xl mb-4 border-b pb-2">
+                        {isJa ? `${translateDay(selectedSlot?.day || "")} ${selectedSlot?.period}限` : `${translateDay(selectedSlot?.day || "")} Period ${selectedSlot?.period}`}
                     </h3>
-                    <div className="overflow-y-auto flex-1 px-4">
-                        <CourseList items={coursesInSelectedSlot} padding={false}/>
+
+                    <div className="space-y-4">
+                        {coursesInSelectedSlot.length === 1 ? (
+                            // --- 1つの場合：即座に詳細を表示 ---
+                            <div>
+                                <div className="mb-2">
+                                    <div
+                                        className="text-[10px] font-mono opacity-50">{coursesInSelectedSlot[0].courseCode} {formatUnits(coursesInSelectedSlot[0].units)}{t('timetable.units')}</div>
+                                    <div
+                                        className="font-bold text-lg">{isJa ? coursesInSelectedSlot[0].titleJa : coursesInSelectedSlot[0].titleEn}</div>
+                                    <div className="text-sm opacity-70">{coursesInSelectedSlot[0].instructor}</div>
+                                </div>
+                                <CourseDetailContent
+                                    course={coursesInSelectedSlot[0]}
+                                    isJa={isJa} t={t}
+                                    toggleVisibility={toggleVisibility}
+                                    handleToggle={handleToggle}
+                                    isSubmitting={isSubmitting}
+                                />
+                            </div>
+                        ) : (
+                            // --- 複数の場合：アコーディオン ---
+                            <div className="flex flex-col gap-2">
+                                {coursesInSelectedSlot.map((c, idx) => (
+                                    <div key={c.courseId}
+                                         className="collapse collapse-arrow bg-base-200/50 border border-base-300">
+                                        <input type="radio" name="modal-accordion" defaultChecked={idx === 0}/>
+                                        <div className="collapse-title pr-10">
+                                            <div
+                                                className="text-[10px] font-mono opacity-50 font-normal">{c.courseCode} {formatUnits(c.units)}{t('timetable.units')}</div>
+                                            <div className="truncate text-sm">{isJa ? c.titleJa : c.titleEn}</div>
+                                            <div
+                                                className="text-sm opacity-70">{coursesInSelectedSlot[0].instructor}</div>
+                                        </div>
+                                        <div className="collapse-content border-t border-base-300 bg-base-100">
+                                            <CourseDetailContent
+                                                course={c}
+                                                isJa={isJa} t={t}
+                                                toggleVisibility={toggleVisibility}
+                                                handleToggle={handleToggle}
+                                                isSubmitting={isSubmitting}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    <div className="p-4 bg-base-100 border-t border-base-200">
-                        <form method="dialog">
-                            <button className="btn btn-block" onClick={() => setSelectedSlot(null)}>
-                                {t('timetable.close')}
-                            </button>
-                        </form>
-                    </div>
+                    <form method="dialog" className="mt-6">
+                        <button className="btn btn-block" onClick={() => setSelectedSlot(null)}>閉じる</button>
+                    </form>
                 </div>
                 <form method="dialog" className="modal-backdrop bg-black/60">
                     <button onClick={() => setSelectedSlot(null)}>close</button>
