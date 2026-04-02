@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
-import {CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from "lucide-react";
+import {ArrowDown01, CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, X} from "lucide-react";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
 import {useLanguage} from "@/translation/utils.ts";
@@ -16,6 +16,7 @@ export interface SearchFilters {
     categoryId: string | null;
     q: string | null;
     slots: string[] | null;
+    units: string | null;
     page: number;
 }
 
@@ -141,6 +142,20 @@ export default function ExploreInterface({
         update({slots: newSlots});
     };
 
+    const clearFilters = () => {
+        update({
+            day: null,
+            period: null,
+            isLong: null,
+            categoryId: null,
+            q: '',
+            slots: [],
+            units: null,
+            page: 1
+        });
+        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        if (searchInput) searchInput.value = '';
+    };
 
     const majorCategories = categories.filter(c => c.id?.startsWith('M') && c.id !== "MSTH");
     const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && c.id !== "MSTH"));
@@ -186,6 +201,7 @@ export default function ExploreInterface({
                         </optgroup>
                     </select>
                 </label>
+
                 <button
                     type="button"
                     className="btn btn-md flex items-center gap-2 w-fi max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm border-white/20 font-normal text-base-content"
@@ -199,6 +215,34 @@ export default function ExploreInterface({
                             ({filters.slots?.length ?? 0})
                         </span>
                     </span>
+                </button>
+
+
+                <label
+                    className="input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group">
+                    <ArrowDown01/>
+                    <select
+                        className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none font-medium"
+                        value={filters.units || ''}
+                        onChange={(e) => update({units: e.target.value || null})}
+                    >
+                        <option value="">{t('explore.units')}</option>
+                        <option value="0.333">1/3</option>
+                        {["1", "2", "3", "4", "5", "6"].map(v => (
+                            <option key={v} value={v}>{v}</option>
+                        ))}
+                    </select>
+                </label>
+
+
+                {/* --- 全条件クリアボタン (year, term以外) --- */}
+                <button
+                    type="button"
+                    className="btn btn-md btn-outline flex items-center gap-2 text-error"
+                    onClick={clearFilters}
+                >
+                    <X size={18}/>
+                    <span className="inline font-medium">{t('explore.clear_selection')}</span>
                 </button>
             </div>
 

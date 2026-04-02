@@ -1,4 +1,4 @@
-import {and, eq, exists, like, or} from 'drizzle-orm';
+import {and, eq, exists, gte, like, lte, or} from 'drizzle-orm';
 import * as schema from '@/db/schema.ts';
 import type {DrizzleD1Database} from 'drizzle-orm/d1';
 import type {SearchFilters} from "@/components/ExploreInterface.tsx";
@@ -12,11 +12,26 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
     const categoryId = url.searchParams.get('categoryId') || url.searchParams.get('category');
     const slots = url.searchParams.get('slots')?.split(',').filter(Boolean) || [];
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+    const units = url.searchParams.get('units');
 
     let conditions = [];
 
     if (year) conditions.push(eq(schema.courses.year, parseInt(year)));
     if (term) conditions.push(eq(schema.courses.term, term as any));
+
+    if (units) {
+        const u = parseFloat(units);
+        if (u < 1) {
+            // 小数の場合は誤差を考慮（0.333...対策）
+            conditions.push(and(
+                gte(schema.courses.units, u - 0.01),
+                lte(schema.courses.units, u + 0.01)
+            ));
+        } else {
+            // 整数の場合は完全一致
+            conditions.push(eq(schema.courses.units, u));
+        }
+    }
 
     if (q) {
         const searchVal = `%${q}%`;
@@ -66,6 +81,7 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
             day: url.searchParams.get('day') || null,
             period: url.searchParams.get('period') || null,
             isLong: url.searchParams.get('isLong') || null,
+            units: units || null,
         } satisfies SearchFilters
     };
 }

@@ -71,12 +71,13 @@ const ja = {
 
     // 探す
     'explore.title': 'コースを探す',
-    'explore.search_placeholder': 'タイトル、教員名...',
+    'explore.search_placeholder': 'タイトル，教員名，コース番号',
     'explore.category_all': 'カテゴリ / メジャー',
     'explore.category_major': 'メジャー',
     'explore.category_others': 'その他',
+    'explore.units': '単位',
     'explore.select_slots': '時限を選択',
-    'explore.clear_selection': '選択をクリア',
+    'explore.clear_selection': 'クリア',
     'explore.close': '閉じる',
     'explore.no_results': '該当する授業が見つかりませんでした。',
     'explore.syllabus': 'シラバス',
@@ -90,6 +91,7 @@ const ja = {
     'timetable.close': '閉じる',
     'timetable.remove': '削除',
     'timetable.syllabus': 'シラバス',
+    'timetable.units': '単位',
 
     'days.mon': '月',
     'days.tue': '火',
@@ -183,12 +185,13 @@ const en = {
 
     // Explore
     'explore.title': 'Explore Courses',
-    'explore.search_placeholder': 'Title, Instructor...',
+    'explore.search_placeholder': 'Title, Instructor, Course Number',
     'explore.category_all': 'Category / Major',
     'explore.category_major': 'Majors',
     'explore.category_others': 'Others',
     'explore.select_slots': 'Select Slots',
-    'explore.clear_selection': 'Clear Selection',
+    'explore.units': 'Unit',
+    'explore.clear_selection': 'Clear',
     'explore.close': 'Close',
     'explore.no_results': 'No courses found matching your criteria.',
     'explore.syllabus': 'Syllabus',
@@ -202,6 +205,7 @@ const en = {
     'timetable.close': 'Close',
     'timetable.remove': 'Remove',
     'timetable.syllabus': 'Syllabus',
+    'timetable.units': 'Units',
 
     'days.mon': 'Mon',
     'days.tue': 'Tue',
