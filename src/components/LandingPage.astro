@@ -241,8 +241,10 @@ const {t, l, currentLang} = useLanguage(lang);
         </section>
 
         <footer class="flex justify-center gap-8 text-sm opacity-60">
-            <a href={l('/privacy')} class="underline">{t('footer.privacy')}</a>
+            <a target="_blank" href="https://github.com/ItsukiKigoshi/timetable.icu"
+               class="underline">{t('footer.sourcecode')}</a>
             <a href={l('/terms')} class="underline">{t('footer.terms')}</a>
+            <a href={l('/privacy')} class="underline">{t('footer.privacy')}</a>
         </footer>
     </section>
 </Layout>
