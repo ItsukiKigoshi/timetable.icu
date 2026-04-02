@@ -1,7 +1,7 @@
 const ja = {
     'site.title': 'ICUのじかんわり',
     'site.tagline': 'ICU生の時間割・履修登録ツールの決定版',
-    'site.description': "'ICUのじかんわり'を使えば，複雑な時間割・履修登録もお手の物!",
+    'site.description': "ICU生のための時間割・履修登録ツールの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期など，ICUでの学生生活をより快適に．ICU '27が愛を込めて開発中！",
 
     'auth.login': 'ログイン',
     'auth.logout': 'ログアウト',
@@ -119,7 +119,7 @@ const ja = {
 const en = {
     'site.title': 'Timetable.icu',
     'site.tagline': 'The Ultimate Academic Planning Tool for ICU',
-    'site.description': 'Plan your academic life at ICU with ease!',
+    'site.description': "The ultimate academic planning tool for ICU students. Easily search all official courses, manage ICU-specific schedules like Long 4-7, and sync your timetable across all your devices. Plan your campus life with ease!",
 
     // Auth
     'auth.login': 'Login',

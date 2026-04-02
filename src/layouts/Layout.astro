@@ -37,16 +37,28 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="generator" content={Astro.generator}/>
+
     <title>{title}</title>
-    <meta property="og:title" content={title}/>
-    <meta property="og:description" content={description}/>
-    <meta property="og:type" content={ogType}/>
-    <meta property="og:url" content="https://timetable.icu"/>
-    <meta property="og:image" content={ogImage}/>
-    <meta property="og:site_name" content={t('site.title')}/>
+    <meta name="description" content={description}/>
+    <link rel="canonical" href={new URL(Astro.url.pathname, baseUrl).href}/>
+
     <link rel="alternate" hreflang="ja" href={jaUrl}/>
     <link rel="alternate" hreflang="en" href={enUrl}/>
     <link rel="alternate" hreflang="x-default" href={jaUrl}/>
+
+    <meta property="og:title" content={title}/>
+    <meta property="og:description" content={description}/>
+    <meta property="og:type" content={ogType}/>
+    <meta property="og:url" content={Astro.url.href}/>
+    <meta property="og:image" content={ogImage}/>
+    <meta property="og:site_name" content={t('site.title')}/>
+
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content={ogImage}/>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="manifest" href="/manifest.webmanifest"/>
 </head>
 <body class="min-h-screen flex flex-col">
 
