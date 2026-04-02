@@ -81,6 +81,9 @@ const isLoggedIn = !!user;
                             <h3 class="font-bold text-lg">
                                 {user ? t('header.hi').replace('{name}', user.name ?? '') : t('header.welcome_back')}
                             </h3>
+                            <p class="text-xs text-base-content/60">
+                                {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
+                            </p>
                             <div class="w-full join mt-2 border border-base-300">
                                 <button
                                         class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
