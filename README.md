@@ -35,10 +35,10 @@
     - [x] 3Dみ
     - [x] たぬき
 - [x] 開発者と顔を明示し，信頼を得る
-- [ ] かわいいデザイン
-    - [ ] 絵文字を多用するAI-Designに負けない!
+- [x] かわいいデザイン
+    - [x] 絵文字を多用するAI-Designに負けない!
 - [x] ちゃんとランディングページを作る: Astroのいいところ
-- [ ] SEO
+- [x] SEO
     - [ ] リッチリザルト
 
 # できること
@@ -131,8 +131,8 @@
         - [ ] 授業開始日と終了日
         - [ ] 休講日を除く
 - [x] 授業検索
-    - [ ] 全体の条件クリアボタン（year, term以外）
-    - [x] **キーワード検索にCourse ID, regidを含む!**
+    - [x] 全体の条件クリアボタン（year, term以外）
+    - [x] キーワード検索にCourse ID, regidを含む!
     - [ ] **キャンセルされた授業をそのように明示: 追加できないように**
     - [ ] **開講言語**
         - [ ] 絞り込み機能
@@ -156,24 +156,26 @@
       「選択していないすべてのコマが，scheduleに含まれない」=「選択したコマだけがscheduleに含まれる」)
     - [ ] もしくはdefaultではOR検索(使う場面あるか？)
     - [ ] 時間割ページから飛べるように
-- [ ] **体育にも対応した単位数表示**
-    - [ ] DB
-        - [ ] Schema追加
-        - [ ] HTMLからJSON (Python)
-        - [ ] JSONからSQL (Python; SQLでのデータ追加が必要なのはremoteだけ？)
-        - [ ] Localに追加
-        - [ ] Remoteに追加
-    - [ ] 検索
-        - [ ] 表示
-        - [ ] 絞り込み（上限・下限; スライダ?）
-    - [ ] 時間割
-        - [ ] 表示
-        - [ ] 合計単位数表示（体育どうする！）
+- [x] 体育にも対応した単位数表示
+    - [x] DB
+        - [x] Schema追加
+        - [x] HTMLからJSON (Python)
+        - [x] JSONからSQL (Python; SQLでのデータ追加が必要なのはremoteだけ？)
+        - [x] Localに追加
+        - [x] Remoteに追加
+    - [x] 検索
+        - [x] 表示
+        - [x] 絞り込み（上限・下限; スライダ?）
+    - [x] 時間割
+        - [x] 表示
+        - [x] 合計単位数表示（体育どうする！）
 - [ ] 独自スケジュール
     - [x] DB定義
     - [ ] 追加方法
     - [ ] 表示方法
-    - [ ] メモ, カスタム色追加
+    - [x] メモ
+    - [ ] カスタム色追加
+    - [ ] 検索: Scheduleがない授業の追加を許可（Listがあるので現在でも追加して良いっちゃ良い）
 - [ ] テスト
     - [ ] 時間割
         - [ ] 様々なデータで描画
@@ -228,15 +230,16 @@
             - [ ] Form?
 - [ ] ログイン時にユーザの操作でログインが中止された状態をフロントで拾う
 - [ ] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
-    - [ ] Snack通知
+    - [x] Snack通知
     - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
-- [x] **[多言語対応](https://docs.astro.build/en/guides/internationalization/)**
+- [x] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
     - [x] Default localeをjaとenどっちにするか？
     - [x] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
 - [x] Google OAuthをpublesh
     - [x] Privacy Policy
         - [ ] わかりやすく
-    - [ ] 利用規約
+    - [x] 利用規約
+        - [ ] わかりやすく
         - [ ] ポチポチして利用規約つくれるサイト？
         - [ ] 卒業後のアカウント削除に関する規程
             - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
@@ -246,17 +249,17 @@
     - [ ] 退会方法を設ける
     - [ ] スケジュールがない授業を追加できない
 - [ ] SEO
-    - [ ] meta description
+    - [x] meta description
     - [ ] リッチリザルト
         - [ ] パンくず
-    - [ ] タイトルつける
+    - [x] タイトルつける
     - [x] OGP
         - [x] og:title
         - [x] og:description
         - [x] og:url
         - [x] og:image
             - [ ] よいもの？
-    - [ ] Google Search Console
+    - [x] Google Search Console
     - [ ] Semantic HTML
         - [ ] div乱用をrefactor
 - [x] Deploy to Workers
