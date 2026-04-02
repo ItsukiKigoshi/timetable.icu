@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {authClient, signInWithGoogle} from "@/lib/auth-client.ts";
 import {defaultLang, ui} from "@/translation/ui";
 

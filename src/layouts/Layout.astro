@@ -2,6 +2,7 @@
 import "@/styles/global.css";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import ToastHandler from "@/components/ToastHandler.tsx";
 import {TriangleAlert} from "lucide-astro";
 import {useLanguage} from "@/translation/utils.ts";
 
@@ -9,7 +10,7 @@ const locals = Astro.locals ?? {};
 const user = locals.user ?? null;
 const dbError = locals.dbError || false;
 
-const {t, l, currentLang} = useLanguage(locals.lang);
+const {t, currentLang} = useLanguage(locals.lang);
 
 const {
     title = t('site.title'),
@@ -77,7 +78,7 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
                 </div>
     )
 }
-
+<ToastHandler user={user} client:load />
 {!isLanding &&
         <Header user={user}/>}
 <main class="grow min-h-0">

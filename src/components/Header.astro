@@ -1,7 +1,6 @@
 ---
 import LoginButton from "./LoginButton";
 import PasskeyButton from "./PasskeyButton";
-import SyncHandler from "./SyncHandler";
 import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 import Logo from '@/assets/Logo.svg';
 import {useLanguage} from "@/translation/utils";
@@ -49,9 +48,6 @@ const isLoggedIn = !!user;
         </div>
     </div>
     <nav class="navbar-end">
-        {isLoggedIn && (
-                <SyncHandler client:load user={user}/>
-        )}
         {!dbError && (
                 <div class="relative inline-block ml-auto">
                     <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
