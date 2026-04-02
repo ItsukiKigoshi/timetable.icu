@@ -2,16 +2,20 @@ import {createAuthClient} from "better-auth/react";
 import {passkeyClient} from "@better-auth/passkey/client"
 
 export const authClient = createAuthClient({
-    baseURL: import.meta.env.PUBLIC_BASE_URL || window.location.origin,
+    baseURL: import.meta.env.PUBLIC_BASE_URL,
     plugins: [
         passkeyClient()
     ]
 });
 
 export const signInWithGoogle = async () => {
+    const callbackURL = typeof window !== "undefined"
+        ? window.location.href
+        : import.meta.env.PUBLIC_BASE_URL;
+
     const {data, error} = await authClient.signIn.social({
         provider: "google",
-        callbackURL: window.location.href,
+        callbackURL: callbackURL,
     });
 
     if (error) {
