@@ -101,7 +101,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
         }
     };
 
-    // 1. useEffectでステートを監視してモーダルを開閉する
+    // useEffectでステートを監視してモーダルを開閉する
     useEffect(() => {
         const modal = document.getElementById('course_detail_modal') as HTMLDialogElement;
         if (!modal) return;
@@ -114,7 +114,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
         }
     }, [selectedSlot]);
 
-    // 2. クリックハンドラーはステートの更新だけにする
+    // クリックハンドラーはステートの更新だけにする
     const handleSlotClick = (day: string, p: any) => {
         const sMin = timeToMin(p.start);
         const nextP = PERIODS[PERIODS.indexOf(p) + 1];

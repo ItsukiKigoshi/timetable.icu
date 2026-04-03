@@ -12,7 +12,7 @@ export const timeToMin = (timeStr: string) => {
 };
 
 // サーバー・クライアント共通で使う型
-export interface ProcessedSchedule extends FlatSchedule {
+interface ProcessedSchedule extends FlatSchedule {
     startMin: number;
     endMin: number;
     col: number;
