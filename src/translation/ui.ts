@@ -182,7 +182,7 @@ const en = {
     'lp.features.todo.offline.desc': 'An internet connection is currently required to view courses.',
     'lp.features.todo.custom.title': 'Custom Course Entry',
     'lp.features.todo.custom.desc': 'Currently official courses only. Custom entry is being planned.',
-    'lp.features.todo.calendar.title': 'Calendar Integration',
+    'lp.features.todo.calendar.title': 'Calendar Export',
     'lp.features.todo.calendar.desc': 'Exporting to external calendars (Google, etc.) is under consideration.',
 
     // Profile
