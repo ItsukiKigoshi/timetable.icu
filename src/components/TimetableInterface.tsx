@@ -1,13 +1,12 @@
 import type {FlatSchedule} from "@/db/schema.ts";
 import {END_TIME, PERIODS, SELECTABLE_DAYS, START_TIME} from "@/constants/time.ts";
 import type {User} from "better-auth";
-import {timeToMin} from "@/lib/timetable.ts";
+import {timeToMin, useTimetable} from "@/lib/useTimetable.ts";
 import {useEffect, useMemo, useState} from "react";
 import {Eye, EyeOff, LayoutGrid, List, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
 import {ui} from "@/translation/ui.ts";
 import {useLanguage} from "@/translation/utils.ts";
 import {formatUnits} from "@/components/ExploreInterface.tsx";
-import {useTimetable} from "@/lib/useTimetable.ts";
 
 const HEADER_HEIGHT = 20;
 
