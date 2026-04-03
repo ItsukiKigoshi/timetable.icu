@@ -10,9 +10,11 @@ ICU生の時間割・履修登録ツールの決定版
 -  ログインしてすべてのデバイスで最新の時間割を共有
 
 ## Screenshots
-| Home | Explore | Timetable |
-| :---: | :---: | :---: |
-| ![Home](https://github.com/user-attachments/assets/6a72522b-9cac-4cfd-b476-a549256d3047) |![Explore](https://github.com/user-attachments/assets/c0ea0f77-279b-453b-a05d-9ea478228678) | ![Timetable](https://github.com/user-attachments/assets/d5e83f98-1985-4e1e-8e8c-111ca760d31b) |
+| Page | Screenshots |
+| :---: | :---: |
+| Home | ![Home](https://github.com/user-attachments/assets/6a72522b-9cac-4cfd-b476-a549256d3047) |
+| Explore |![Explore](https://github.com/user-attachments/assets/c0ea0f77-279b-453b-a05d-9ea478228678) |
+| Timetable |    ![Timetable](https://github.com/user-attachments/assets/d5e83f98-1985-4e1e-8e8c-111ca760d31b) |
 
 # 目標
 
