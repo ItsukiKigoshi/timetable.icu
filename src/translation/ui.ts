@@ -33,7 +33,7 @@ const ja = {
     // フッター
     'footer.privacy': '個人情報規約',
     'footer.terms': '利用規約',
-    'footer.sourcecode': 'ソースコード',
+    'footer.support': 'サポート / 要望',
 
     // ナビゲーション
     'nav.explore': '探す',
@@ -160,7 +160,7 @@ const en = {
     // Footer
     'footer.privacy': 'Privacy Policy',
     'footer.terms': 'Terms of Service',
-    'footer.sourcecode': 'SourceCode',
+    'footer.support': 'Support / Feature Request',
 
     // --- Landing Page ---
     'lp.hero.description': 'Your Academic Planning starts here.',
