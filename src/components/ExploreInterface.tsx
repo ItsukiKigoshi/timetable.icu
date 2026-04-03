@@ -295,63 +295,81 @@ export default function ExploreInterface({
                     const loading = isSubmitting === course.id || !isInitialized;
 
                     return (
-                        <div key={course.id}
-                             className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+                        <section key={course.id} className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
                             <div className="card-body p-4 gap-3">
-                                <div
-                                    className="flex justify-between items-center text-[10px] sm:text-xs text-base-content/50">
-                                    <span className="text-xs text-base-content/50">
-                                        {course.courseCode}
-                                        {course.units > 0 && (
-                                            <span>
-                                                ・{formatUnits(course.units)}
-                                            </span>
+                                {/* ヘッダーセクション: コード，言語，単位数，年度 */}
+                                <div className="flex justify-between items-start text-[10px] sm:text-xs">
+                                    <div className="flex flex-wrap gap-1.5 items-center">
+                                        {/* コースコード */}
+                                        <span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter">
+                                          {course.courseCode}
+                                        </span>
+                                        {/* 言語 */}
+                                        {course.language && (
+                                            <span className="badge badge-xs font-bold badge-outline text-base-content/50">
+                                                {course.language}
+                                              </span>
                                         )}
-                                    </span>
-                                    <span className="whitespace-nowrap">{course.year} {course.term}</span>
+                                    </div>
+
+                                    {/* 右側: 年度・学期，単位数 */}
+                                    <div className="flex justify-between items-start text-[10px] sm:text-xs">
+                                        {/* 単位数 */}
+                                        {course.units > 0 && (
+                                            <span className="badge badge-outline badge-xs text-base-content/50">
+                                                    {formatUnits(course.units)} {t('explore.units')}
+                                                  </span>
+                                        )}
+                                        <span className="text-base-content/50 whitespace-nowrap ml-2">
+                                            {course.year} {course.term}
+                                        </span>
+                                    </div>
                                 </div>
 
+                                {/* タイトル・教員セクション */}
                                 <div>
-                                    <h2 className="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-1">{isJa ? course.titleJa : course.titleEn}</h2>
-                                    <p className="text-xs sm:text-sm text-base-content/60 truncate">{course.instructor}</p>
+                                    <h2 className="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-1">
+                                        {isJa ? course.titleJa : course.titleEn}
+                                    </h2>
+                                    <p className="text-xs sm:text-sm text-base-content/60 truncate">
+                                        {course.instructor}
+                                    </p>
                                 </div>
 
+                                {/* スケジュールセクション */}
                                 <div className="flex flex-wrap gap-1">
                                     {course.schedules?.length > 0 ? (
                                         course.schedules.map((s, i) => (
-                                            <span key={i}
-                                                  className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold uppercase">
+                                            <span key={i} className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold uppercase">
                                                 {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
-                                            </span>
+                                              </span>
                                         ))
                                     ) : (
-                                        <span
-                                            className="text-[10px] opacity-40 italic">{t('explore.no_schedule')}</span>
+                                        <span className="text-[10px] opacity-40 italic">{t('explore.no_schedule')}</span>
                                     )}
                                 </div>
 
-                                <div
-                                    className="card-actions flex justify-between items-center mt-2 pt-3">
+                                {/* アクションセクション */}
+                                <nav className="card-actions flex justify-between items-center mt-2 pt-3 border-t border-base-100">
                                     <a target='_blank' rel="noopener noreferrer"
                                        href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
-                                       className="btn gap-1.5 px-2 font-normal">
+                                       className="btn btn-ghost btn-md gap-1.5 px-2 font-normal">
                                         <span className="text-[10px] sm:text-xs">{t('explore.syllabus')}</span>
-                                        <SquareArrowOutUpRight size="14"/>
+                                        <SquareArrowOutUpRight size="12"/>
                                     </a>
 
                                     <button
                                         onClick={() => handleToggle(course)}
                                         disabled={loading}
-                                        className={`btn min-w-20 ${isAdded ? 'btn-error border-none bg-error text-error-content' : 'btn-primary'}`}
+                                        className={`btn btn-md min-w-20 ${isAdded ? 'btn-error' : 'btn-primary'}`}
                                     >
-                                        {loading ?
-                                            <span className="loading loading-spinner loading-xs"></span> : isAdded ? <>
-                                                <Trash2 size="14"/>{t('explore.remove')}</> : <><Plus
-                                                size="14"/>{t('explore.add')}</>}
+                                        {loading ? <span className="loading loading-spinner loading-xs"></span> :
+                                            isAdded ? <><Trash2 size="12"/>{t('explore.remove')}</> :
+                                                <><Plus size="12"/>{t('explore.add')}</>}
                                     </button>
-                                </div>
+                                </nav>
                             </div>
-                        </div>
+                        </section>
                     );
                 })}
             </div>
