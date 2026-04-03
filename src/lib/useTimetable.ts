@@ -1,4 +1,5 @@
 // TODO - Refactor
+// 現状，時間割画面ではFlatScheduleをもとに管理していて拡張性が低いので，userCourses自体をfetchしてこれるようにしなきゃやな
 
 import {useEffect, useMemo, useState} from 'react';
 import type {FlatSchedule} from "@/db/schema";

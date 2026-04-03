@@ -227,8 +227,6 @@ export const courseSchedulesRelations = relations(
 );
 
 // --- Types ---
-
-
 // --- Base Types (DBから直接抽出) ---
 export type Course = InferSelectModel<typeof courses>;
 export type Schedule = InferSelectModel<typeof courseSchedules>;
