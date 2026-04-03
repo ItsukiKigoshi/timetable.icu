@@ -1,4 +1,4 @@
-import {and, eq, exists, gte, like, lte, or} from 'drizzle-orm';
+import {and, eq, exists, gte, isNull, like, lte, or} from 'drizzle-orm';
 import * as schema from '@/db/schema.ts';
 import type {DrizzleD1Database} from 'drizzle-orm/d1';
 import type {SearchFilters} from "@/components/ExploreInterface.tsx";
@@ -11,6 +11,7 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
     const categoryId = url.searchParams.get('categoryId') || null;
     const slots = url.searchParams.get('slots')?.split(',').filter(Boolean) || [];
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+    const language = url.searchParams.get('language');
     const units = url.searchParams.get('units');
 
     let conditions = [];
@@ -20,20 +21,6 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
 
     // cancelされていないコースのみ検索可能
     conditions.push(eq(schema.courses.status, "active"));
-
-    if (units) {
-        const u = parseFloat(units);
-        if (u < 1) {
-            // 小数の場合は誤差を考慮（0.333...対策）
-            conditions.push(and(
-                gte(schema.courses.units, u - 0.01),
-                lte(schema.courses.units, u + 0.01)
-            ));
-        } else {
-            // 整数の場合は完全一致
-            conditions.push(eq(schema.courses.units, u));
-        }
-    }
 
     if (q) {
         const searchVal = `%${q}%`;
@@ -70,6 +57,32 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
         });
     }
 
+    if (units) {
+        const u = parseFloat(units);
+        if (u < 1) {
+            // 小数の場合は誤差を考慮（0.333...対策）
+            conditions.push(and(
+                gte(schema.courses.units, u - 0.01),
+                lte(schema.courses.units, u + 0.01)
+            ));
+        } else {
+            // 整数の場合は完全一致
+            conditions.push(eq(schema.courses.units, u));
+        }
+    }
+    if (language) {
+        if (language === 'null') {
+            // "指定なし" が選択された場合、IS NULL または 空文字 を探す
+            conditions.push(or(
+                isNull(schema.courses.language),
+                eq(schema.courses.language, "")
+            ));
+        } else {
+            // E, J, O などが選択された場合
+            conditions.push(eq(schema.courses.language, language));
+        }
+    }
+
     return {
         where: and(...conditions),
         page,
@@ -84,6 +97,7 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
             period: url.searchParams.get('period') || null,
             isLong: url.searchParams.get('isLong') || null,
             units: units || null,
+            language: language || null,
         } satisfies SearchFilters
     };
 }

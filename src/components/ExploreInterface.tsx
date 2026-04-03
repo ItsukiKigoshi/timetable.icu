@@ -1,7 +1,17 @@
 import {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
 import {useTimetable} from "@/lib/useTimetable";
-import {ArrowDown01, CalendarCheck, ListFilter, Plus, Search, SquareArrowOutUpRight, Trash2, X} from "lucide-react";
+import {
+    ArrowDown01,
+    CalendarCheck,
+    Languages,
+    ListFilter,
+    Plus,
+    Search,
+    SquareArrowOutUpRight,
+    Trash2,
+    X
+} from "lucide-react";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {seasonToNumber} from "@/components/TimetableInterface.tsx";
 import {useLanguage} from "@/translation/utils.ts";
@@ -18,6 +28,7 @@ export interface SearchFilters {
     q: string | null;
     slots: string[] | null;
     units: string | null;
+    language: string | null;
     page: number;
 }
 
@@ -152,6 +163,7 @@ export default function ExploreInterface({
             q: '',
             slots: [],
             units: null,
+            language: null,
             page: 1
         });
         const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
@@ -244,6 +256,23 @@ export default function ExploreInterface({
                     </select>
                 </label>
 
+                {/*言語選択*/}
+                <label className="input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group">
+                    <Languages />
+                    <select
+                        className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none font-medium"
+                        value={filters.language || ''}
+                        onChange={(e) => update({language: e.target.value || null})}
+                    >
+                        <option value="">{isJa ? "言語" : "Language"}</option>
+                        <option value="J">{isJa ? "日本語" : "Japanese"}</option>
+                        <option value="E">{isJa ? "英語" : "English"}</option>
+                        <option value="O">{isJa ? "その他" : "Other"}</option>
+                        {/* 明示的に language が設定されていないものを探すための選択肢 */}
+                        <option value="null">{isJa ? "指定なし" : "Not Specified"}</option>
+                    </select>
+                </label>
+
 
                 {/* --- 全条件クリアボタン (year, term以外) --- */}
                 <button
@@ -333,7 +362,7 @@ export default function ExploreInterface({
                         <div className="space-y-3">
                             <h3 className="font-bold text-lg">該当する授業が見つかりません．</h3>
                             <p className="text-sm">
-                                最新の授業情報は <a className="link font-semibold" href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx">公式シラバス</a> をご確認ください．
+                                最新の授業情報は <a target="_blank" className="link font-semibold" href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx">公式シラバス</a> をご確認ください．
                             </p>
                             <div className="text-xs opacity-60 pt-2 border-t border-base-content/10">
                                 <p>※休講（Cancelled）および Co-Listing 科目は表示されません．</p>
@@ -346,7 +375,7 @@ export default function ExploreInterface({
                         <div className="space-y-3">
                             <h3 className="font-bold text-lg">No course found.</h3>
                             <p className="text-sm">
-                                Please refer to the <a className="link font-semibold" href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx">Official Course Offerings</a> for latest information.
+                                Please refer to the <a target="_blank" className="link font-semibold" href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx">Official Course Offerings</a> for latest information.
                             </p>
                             <div className="text-xs opacity-60 pt-2 border-t border-base-content/10">
                                 <p>*Cancelled and Co-Listing courses are not shown here.</p>
