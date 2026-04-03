@@ -465,7 +465,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                                                 className="text-[10px] font-mono opacity-50 font-normal">{c.courseCode} {formatUnits(c.units)}{t('timetable.units')}</div>
                                             <div className="truncate text-sm">{isJa ? c.titleJa : c.titleEn}</div>
                                             <div
-                                                className="text-sm opacity-70">{coursesInSelectedSlot[0].instructor}</div>
+                                                className="text-sm opacity-70">{c.instructor}</div>
                                         </div>
                                         <div className="collapse-content border-t border-base-300 bg-base-100">
                                             <CourseDetailContent
