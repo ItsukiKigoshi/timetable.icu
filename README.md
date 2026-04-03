@@ -59,9 +59,8 @@ ICU生の時間割・履修登録ツールの決定版
 
 # まだできないこと
 
-- [ ] 時間割作成・保存
-    - [ ] マニュアル登録
-    - [ ] Google Calendar / .icsエクスポート？
+- [ ] マニュアル登録
+- [ ] Google Calendar / .icsエクスポート？
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
     - [ ] With Upvote
