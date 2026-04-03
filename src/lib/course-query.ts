@@ -18,6 +18,9 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
     if (year) conditions.push(eq(schema.courses.year, parseInt(year)));
     if (term) conditions.push(eq(schema.courses.term, term as any));
 
+    // cancelされていないコースのみ検索可能
+    conditions.push(eq(schema.courses.status, "active"));
+
     if (units) {
         const u = parseFloat(units);
         if (u < 1) {
@@ -66,9 +69,6 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
             ));
         });
     }
-
-    // cancelされていないコースのみ検索可能
-    conditions.push(eq(schema.courses.status, "active"));
 
     return {
         where: and(...conditions),

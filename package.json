@@ -14,7 +14,7 @@
     "db:scrape": "python3 scripts/main.py",
     "db:seed:local": "find .wrangler/state/v3/d1 -name '*.sqlite' ! -name '*shm' ! -name '*wal' -exec bun src/db/seed.ts {} \\;",
     "db:sync": "bun run db:scrape && bun run db:seed:local",
-    "db:push:remote": "python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./sync_remote.sql --remote",
+    "db:push:remote": "python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./scripts/out/sync_remote.sql --remote",
     "db:deploy": "bun run db:scrape && bun run db:push:remote"
   },
   "dependencies": {

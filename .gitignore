@@ -25,8 +25,8 @@ pnpm-debug.log*
 
 .wrangler/
 
-dist_courses.json
-sync_remote.sql
+scripts/out/dist_courses.json
+scripts/out/sync_remote.sql
 
 *.html
 !public/*.html

@@ -15,7 +15,7 @@ def escape_sql(val):
 
 def generate_sql():
     try:
-        with open('dist_courses.json', 'r', encoding='utf-8') as f:
+        with open('./scripts/out/dist_courses.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
     except FileNotFoundError:
         print("❌ dist_courses.json が見つかりません。")
@@ -78,7 +78,7 @@ def generate_sql():
             """
             output.append(sch_sql.strip())
 
-    with open('sync_remote.sql', 'w', encoding='utf-8') as f:
+    with open('scripts/out/sync_remote.sql', 'w', encoding='utf-8') as f:
         f.write("\n".join(output))
     print(f"✅ Generated sync_remote.sql ({len(data)} courses)")
 

@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from datetime import datetime, timezone
 
 from bs4 import BeautifulSoup
 
@@ -251,6 +252,53 @@ def get_course_data_json(html_content):
 
     return res_list
 
+# --- メタデータ（更新日時）保存用 ---
+COURSE_UPDATE_INFO_PATH = './src/db/course-last-update.json'
+
+def save_course_update_metadata():
+    """
+    コースデータの更新メタデータ（最新日時と全履歴）をUTCで保存する。
+    """
+    # 1. 現在時刻をUTCで取得 (ISO 8601形式)
+    now_utc = datetime.now(timezone.utc).isoformat()
+
+    # 2. 既存の履歴を読み込み
+    history = []
+    if os.path.exists(COURSE_UPDATE_INFO_PATH):
+        try:
+            with open(COURSE_UPDATE_INFO_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                # 過去のデータ形式との互換性を確保
+                current_history = data.get("history", [])
+                if isinstance(current_history, list):
+                    history = current_history
+                elif isinstance(current_history, str):
+                    history = [current_history]
+        except Exception as e:
+            print(f"Warning: 履歴の読み込みに失敗しました (新規作成します): {e}")
+
+    # 3. 重複していなければ先頭に追加
+    if now_utc not in history:
+        history.insert(0, now_utc)
+
+    # 4. 保存用データ構造
+    update_data = {
+        "courseLastUpdatedAt": now_utc,
+        "history": history
+    }
+
+    # 5. ディレクトリ作成と保存
+    try:
+        os.makedirs(os.path.dirname(COURSE_UPDATE_INFO_PATH), exist_ok=True)
+        with open(COURSE_UPDATE_INFO_PATH, 'w', encoding='utf-8') as f:
+            json.dump(update_data, f, ensure_ascii=False, indent=2)
+
+        print(f"--- Metadata Updated ---")
+        print(f"Latest (UTC): {now_utc}")
+        print(f"History count: {len(history)}")
+    except Exception as e:
+        print(f"Error: メタデータの保存に失敗しました: {e}")
+
 
 # --- メイン実行部分 ---
 if __name__ == "__main__":
@@ -273,10 +321,11 @@ if __name__ == "__main__":
     results = get_course_data_json(html_data)
 
     # 結果をJSONとして保存
-    output_file = 'dist_courses.json'
+    output_file = 'scripts/out/dist_courses.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
-
+    save_course_update_metadata()
     print(f"--- 解析完了 ---")
     print(f"総科目数: {len(results)}")
     print(f"出力先: {os.path.abspath(output_file)}")
+
