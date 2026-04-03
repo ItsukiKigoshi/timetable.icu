@@ -3,13 +3,12 @@ import * as schema from '@/db/schema.ts';
 import type {DrizzleD1Database} from 'drizzle-orm/d1';
 import type {SearchFilters} from "@/components/ExploreInterface.tsx";
 
-// Create DB filters from query parameters
+// Create DB filters from URL query parameters
 export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof schema>) {
     const year = url.searchParams.get('year') || url.searchParams.get('year');
     const term = url.searchParams.get('term');
     const q = url.searchParams.get('q') || '';
-    // Explore.astro(category) と API(categoryId) の両方のパラメータ名に対応
-    const categoryId = url.searchParams.get('categoryId') || url.searchParams.get('category');
+    const categoryId = url.searchParams.get('categoryId') || null;
     const slots = url.searchParams.get('slots')?.split(',').filter(Boolean) || [];
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
     const units = url.searchParams.get('units');
@@ -67,6 +66,9 @@ export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof sch
             ));
         });
     }
+
+    // cancelされていないコースのみ検索可能
+    conditions.push(eq(schema.courses.status, "active"));
 
     return {
         where: and(...conditions),
