@@ -31,7 +31,7 @@ const ja = {
     'term.Winter': '冬学期',
 
     // フッター
-    'footer.privacy': '個人情報規約 (Privacy Policy)', //OAuth通すために英語併記
+    'footer.privacy': '個人情報規約',
     'footer.terms': '利用規約',
     'footer.sourcecode': 'ソースコード',
 
@@ -52,7 +52,7 @@ const ja = {
     'lp.features.can.schedule.title': '完璧な時間割を組む',
     'lp.features.can.schedule.desc': 'Long 4, 5, 6, 7など、ICUならではのコマ割りも表示',
     'lp.features.can.sync.title': 'マルチデバイス同期',
-    'lp.features.can.sync.desc': 'Googleでログインしてすべてのデバイスで最新の時間割を共有',
+    'lp.features.can.sync.desc': 'ログインしてすべてのデバイスで最新の時間割を共有',
 
     // 検討中
     'lp.features.todo.label': '検討中の機能',
@@ -174,7 +174,7 @@ const en = {
     'lp.features.can.schedule.title': 'Create your ideal timetable',
     'lp.features.can.schedule.desc': 'Support for ICU-unique periods like Long 4, 5, 6, and 7.',
     'lp.features.can.sync.title': 'Multi-Device Sync',
-    'lp.features.can.sync.desc': 'Login with Google to sync your latest timetable across all your devices.',
+    'lp.features.can.sync.desc': 'Login to sync your latest timetable across all your devices.',
 
     // Features - Todo
     'lp.features.todo.label': 'Planned Features',
