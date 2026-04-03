@@ -29,14 +29,14 @@ const isActive = (path: string) => {
 
     {isActive('/timetable') ? (
             <nav class="lg:hidden fixed bottom-6 right-6 z-50">
-                <a href={l('/explore')} class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
-                    <Telescope size="32" class="text-accent-content"/>
+                <a href={l('/explore')} class="btn btn-xl btn-circle btn-primary shadow-xl border-2 ">
+                    <Telescope size="32" class="text-primary-content"/>
                 </a>
             </nav>
     ) : (
             <nav class="lg:hidden fixed bottom-6 left-6 z-50">
-                <a href={l('/timetable')} class="btn btn-xl btn-circle btn-accent shadow-xl border-2 ">
-                    <Calendar size="32" class="text-accent-content"/>
+                <a href={l('/timetable')} class="btn btn-xl btn-circle btn-primary shadow-xl border-2 ">
+                    <Calendar size="32" class="text-primary-content"/>
                 </a>
             </nav>
     )}
