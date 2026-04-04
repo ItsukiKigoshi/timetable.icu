@@ -1,7 +1,7 @@
 import type {UserCourseWithDetails} from "@/db/schema";
 import {PERIODS} from "@/constants/time.ts";
 import type {User} from "better-auth";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {LayoutGrid, List} from "lucide-react";
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {useTimetable} from "@/lib/timetable/hooks.ts";
@@ -39,20 +39,45 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
     const [selectedCourse, setSelectedCourse] = useState<UserCourseWithDetails | null>(null);
     const [expandedCourseId, setExpandedCourseId] = useState<number | null>(null);
 
-    // --- 監視 ---
+    // --- Effect ---
     // その時間枠（Day/Period）に該当する UserCourseWithDetails
     const coursesInSelectedSlot = useMemo(() => {
         if (!selectedSlot) return [];
 
         // 1. まずその時間枠にあるコマの ID を取得
         const slotCourseIds = schedules
-            .filter(s => s.dayOfWeek === selectedSlot.day && s.period === parseInt(selectedSlot.period))
+            .filter(s =>
+                s.dayOfWeek === selectedSlot.day &&
+                s.period === parseInt(selectedSlot.period) &&
+                s.isVisible !== false // 非表示のものは除外
+            )
             .map(s => s.id); // UserCourse の ID
 
+
         // 2. その ID に一致する「コース本体」を courses から抽出
-        return courses.filter(c => slotCourseIds.includes(c.id));
+        return courses.filter(c => slotCourseIds.includes(c.id) && c.isVisible !== false);
     }, [selectedSlot, schedules, courses]);
 
+    // モーダル内のコースが 0 になったら閉じる
+    useEffect(() => {
+        // モーダルが開いている（selectedSlotがある）かつ、中身が空になった場合
+        if (selectedSlot && coursesInSelectedSlot.length === 0) {
+            setSelectedSlot(null);
+        }
+    }, [coursesInSelectedSlot.length, selectedSlot]);
+
+    // 個別授業詳細モーダルを表示中、その授業が courses から消えたら閉じる
+    useEffect(() => {
+        if (selectedCourse) {
+            const isStillExists = courses.some(c => c.id === selectedCourse.id);
+            if (!isStillExists) {
+                setSelectedCourse(null);
+            }
+        }
+    }, [courses, selectedCourse]);
+
+
+    // Memo
     // isVisible が true の授業のみの単位合計を計算
     const visibleTotalUnits = useMemo(() => {
         return courses

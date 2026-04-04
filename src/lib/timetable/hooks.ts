@@ -1,142 +1,125 @@
 import {useEffect, useMemo, useState} from 'react';
 import type {FlatSchedule, UserCourseWithDetails} from "@/db/schema";
 import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
-import type {UserCoursePostResponse} from "@/pages/api/user-courses";
 
 export function useTimetable({
                                  initialCourses = [], // Astroから渡された UserCourseWithDetails[]
-                                 initialCourseIds = [], // CourseのIDのみの初期値も受け取れるようにする（explore用）
                                  user
                              }: {
     initialCourses?: UserCourseWithDetails[],
-    initialCourseIds?: number[],
     user: any
 }) {
-    // コース単位で管理する (Source of Truth)
+    // 1. Source of Truth (詳細データを含むコース配列)
     const [courses, setCourses] = useState<UserCourseWithDetails[]>(initialCourses);
-    // 初期化状態を管理するステート
-    const [isInitialized, setIsInitialized] = useState(false);
 
-    // 初回マウント: LocalStorage or ServerProps から復元
+    // 初回マウント: LocalStorage(ゲスト) or Props(ログイン) から復元
     useEffect(() => {
-        const loadInitialData = () => {
-            if (!user) {
-                // ゲスト：LocalStorage最優先
-                const cached = localStorage.getItem('guest_timetable');
-                if (cached) {
+        if (!user) {
+            const cached = localStorage.getItem('guest_timetable');
+            if (cached) {
+                try {
                     setCourses(JSON.parse(cached));
-                } else {
+                } catch (e) {
+                    console.error("Failed to parse local timetable", e);
                     setCourses(initialCourses);
                 }
-            } else {
-                // ログイン
-                setCourses(initialCourses);
             }
-            setIsInitialized(true);
-        };
-
-        loadInitialData();
+        } else {
+            setCourses(initialCourses);
+        }
     }, [user, initialCourses]);
 
-    // 登録済みIDのSet
-    // initialCourseIds（検索画面用）と courses（時間割画面用）の両方を合算する
+    // 2. 登録済みIDのSet（ボタンの表示判定用）
     const registeredIds = useMemo(() => {
-        const idsFromCourses = courses.map(c => c.id);
-        return new Set([...initialCourseIds, ...idsFromCourses]);
-    }, [courses, initialCourseIds]);
+        return new Set(courses.map(c => c.id));
+    }, [courses]);
 
-    // 4. 全てのスケジュールを平坦化 (isVisibleに関わらず全てのコマ)
+    // 3. 全スケジュールを平坦化 (全コマ)
     const allSchedules = useMemo(() => {
         return courses.flatMap(course =>
             course.schedules.map(s => ({
                 ...course,
                 ...s,
                 scheduleId: s.id,
-                id: course.id // コースIDを保持
+                id: course.id
             } as FlatSchedule))
         );
     }, [courses]);
 
-    // 描画用のデータ (isVisible=true のみ、かつ位置計算済み)
+    // 4. 描画用のデータ (isVisible=true のみ、かつ位置計算済み)
     const displaySchedules = useMemo(() => {
         const visibleOnly = allSchedules.filter(s => s.isVisible !== false);
         return computeDisplaySchedules(visibleOnly);
     }, [allSchedules]);
 
-    // ローカルストレージ保存用ヘルパー
+    // ヘルパー: ローカルストレージ同期
     const syncLocalStorage = (nextCourses: UserCourseWithDetails[]) => {
         if (user) return;
         localStorage.setItem('guest_timetable', JSON.stringify(nextCourses));
     };
 
     // --- ハンドラー ---
-    // TODO - Exploreでも使用するので別の場所にあった方が良い？
-    const toggleCourse = async (course: any) => {
-        // 引数の course が「IDだけ」の場合と「オブジェクト」の場合の両方に対応させる
-        const targetCourseId = Number(course.id || course.courseId);
+
+    // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
+    const toggleCourse = async (course: UserCourseWithDetails) => {
+        const targetCourseId = course.id;
         const isRegistered = registeredIds.has(targetCourseId);
 
+        // 状態更新 (削除なら消す、追加なら入れる)
+        const nextCourses = isRegistered
+            ? courses.filter(c => c.id !== targetCourseId)
+            : [...courses, { ...course, isVisible: true }];
+
+        setCourses(nextCourses);
+        syncLocalStorage(nextCourses);
+
         if (user) {
-            // ログイン済み - サーバーと同期
             try {
-                const res = await fetch('/api/user-courses', {
+                await fetch('/api/user-courses', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ courseId: targetCourseId }),
                 });
-                const data = (await res.json()) as UserCoursePostResponse;
-
-                if ("error" in data) return;
-
-                if (data.action === "added") {
-                    // Explore画面で使う場合、course に詳細が入っていればそれを追加し、
-                    // なければ最低限のIDを持つオブジェクトを入れる（または再取得を検討する）
-                    setCourses(prev => [...prev, { ...course, isVisible: true }]);
-                } else {
-                    setCourses(prev => prev.filter(c => c.id !== targetCourseId));
-                }
+                // 失敗時のロールバック処理を入れる場合はここに追加
             } catch (e) {
-                console.error(e);
-            }
-        } else {
-            // --- ゲストモード: ローカルのみ ---
-            if (isRegistered) {
-                const next = courses.filter(c => c.id !== targetCourseId);
-                setCourses(next);
-                syncLocalStorage(next);
-            } else {
-                const next = [...courses, { ...course, isVisible: true }];
-                setCourses(next);
-                syncLocalStorage(next);
+                console.error("Sync failed", e);
             }
         }
     };
 
+    // 表示/非表示の切り替え
     const toggleVisibility = async (courseId: number) => {
+        const target = courses.find(c => c.id === courseId);
+        if (!target) return;
+
+        const nextVisible = !target.isVisible;
         const nextCourses = courses.map(c =>
-            c.id === courseId ? { ...c, isVisible: !c.isVisible } : c
+            c.id === courseId ? { ...c, isVisible: nextVisible } : c
         );
+
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses/', {
+            await fetch('/api/user-courses', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, isVisible: nextCourses.find(c => c.id === courseId)?.isVisible })
+                body: JSON.stringify({ courseId, isVisible: nextVisible })
             });
         }
     };
 
+    // メモの更新
     const updateMemo = async (courseId: number, nextMemo: string) => {
         const nextCourses = courses.map(c =>
             c.id === courseId ? { ...c, memo: nextMemo } : c
         );
+
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses/', {
+            await fetch('/api/user-courses', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ courseId, memo: nextMemo })
@@ -144,13 +127,10 @@ export function useTimetable({
         }
     };
 
-
     return {
-        courses,             // コース一覧
-        schedules: allSchedules, // 平坦化リスト
-        displaySchedules,    // 描画用リスト
-        isInitialized, // 描画の初期化が終わったかどうか
-        registeredIds,
+        courses,
+        schedules: allSchedules,
+        displaySchedules,
         toggleCourse,
         toggleVisibility,
         updateMemo,
