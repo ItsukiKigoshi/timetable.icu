@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
-import {useTimetable} from "@/lib/useTimetable";
+import {useTimetable} from "@/lib/useTimetable.ts";
 import {
     ArrowDown01,
     CalendarCheck,
@@ -13,10 +13,10 @@ import {
     X
 } from "lucide-react";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
-import {seasonToNumber} from "@/components/TimetableInterface.tsx";
+import {seasonToNumber} from "@/components/features/TimetableInterface.tsx";
 import {useLanguage} from "@/translation/utils.ts";
 import {defaultLang} from "@/translation/ui.ts";
-import courseUpdateInfo from '@/db/course-last-update.json';
+import courseUpdateInfo from '@/db/data/course-last-update.json';
 
 export interface SearchFilters {
     year: string | null;

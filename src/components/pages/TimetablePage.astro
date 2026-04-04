@@ -1,10 +1,10 @@
 ---
 import {drizzle} from "drizzle-orm/d1";
-import * as schema from "@/db/schema.ts";
-import Layout from "@/layouts/Layout.astro";
+import * as schema from "@/db/schema";
+import Layout from "@/components/layout/Layout.astro";
 import {env} from "cloudflare:workers";
-import TimetableInterface from "@/components/TimetableInterface.tsx";
-import type {FlatSchedule} from "@/db/schema.ts";
+import TimetableInterface from "@/components/features/TimetableInterface.tsx";
+import type {FlatSchedule} from "@/db/schema";
 import {type Language} from "@/translation/ui.ts"
 import {useTranslations} from "@/translation/utils.ts";
 

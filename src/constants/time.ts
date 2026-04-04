@@ -1,5 +1,5 @@
 // src/constants/time.ts
-import type {Course} from "@/db/schema.ts";
+import type {Course} from "@/db/schema";
 
 export const SELECTABLE_YEARS = [2026] as const;
 export const SELECTABLE_TERMS = ['Spring', 'Autumn', 'Winter'] as const;

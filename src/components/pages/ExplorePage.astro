@@ -1,10 +1,10 @@
 ---
 import {drizzle} from 'drizzle-orm/d1';
 import {eq} from 'drizzle-orm';
-import * as schema from '@/db/schema.ts';
-import ExploreInterface from '@/components/ExploreInterface.tsx';
-import Layout from "@/layouts/Layout.astro";
-import type {CourseWithSchedules} from "@/db/schema.ts";
+import * as schema from '@/db/schema';
+import ExploreInterface from '@/components/features/ExploreInterface.tsx';
+import Layout from "@/components/layout/Layout.astro";
+import type {CourseWithSchedules} from "@/db/schema";
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
 import {getCourseSearchConfig} from "@/lib/course-query.ts";

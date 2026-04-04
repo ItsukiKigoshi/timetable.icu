@@ -1,6 +1,6 @@
 ---
 import {Image} from "astro:assets";
-import Layout from "@/layouts/Layout.astro";
+import Layout from "@/components/layout/Layout.astro";
 import Logo from "@/assets/Logo.svg";
 import ProfileImg from "@/assets/profile.webp";
 import Cover1 from "@/assets/cover1.webp";
@@ -17,7 +17,7 @@ import {
     CalendarArrowUp
 } from "lucide-astro";
 import {WifiOff} from "lucide-react";
-import {useLanguage} from "@/translation/utils";
+import {useLanguage} from "@/translation/utils.ts";
 
 const lang = Astro.locals.lang;
 const {t, l, currentLang} = useLanguage(lang);
@@ -53,7 +53,7 @@ const {t, l, currentLang} = useLanguage(lang);
             {currentLang === 'ja' ? (
                     <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">JA</span>
             ) : (
-                    <a href="/"
+                    <a href="/public"
                        class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors">JA</a>
             )}
 

@@ -1,10 +1,10 @@
-import * as authSchema from "./auth-schema.ts";
-import {user} from "./auth-schema.ts";
+import * as authSchema from "@/db/schema/auth.ts";
+import {user} from "@/db/schema/auth.ts";
 
 import {type InferSelectModel, relations, sql} from "drizzle-orm";
 import {index, integer, primaryKey, real, sqliteTable, text, uniqueIndex,} from "drizzle-orm/sqlite-core";
 
-export * from "./auth-schema.ts";
+export * from "./auth.ts";
 
 export const daysEnum = [
     "Mon",

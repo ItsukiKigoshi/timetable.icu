@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+// TODO - 見た目とロジックを分離
+
+import {useEffect, useState} from 'react';
 
 // 同期用関数
 const syncData = async (courseItems: any[]) => {
@@ -10,7 +12,7 @@ const syncData = async (courseItems: any[]) => {
     if (!res.ok) throw new Error("Sync failed");
 };
 
-export default function ToastHandler({ user }: { user?: any }) {
+export default function Toast({ user }: { user?: any }) {
     const [status, setStatus] = useState<'idle' | 'syncing' | 'done' | 'error' | 'domain_error'>('idle');
     const [show, setShow] = useState(false);
 

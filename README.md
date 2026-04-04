@@ -427,7 +427,7 @@ bunx wrangler types
 Create schema for BetterAuth
 
 ```bash
-bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/db/auth-schema.ts
+bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/db/auth.ts
 ```
 
 Create schema by Drizzle Kit
@@ -467,16 +467,16 @@ Create JSON from HTML
 bun db:scrape
 ```
 
-Local DBにJSONからcourses/categoriesを入れる(seed.ts)
+Local DBにJSONからcourses/categoriesを入れる
 
 ```bash
-bun db:seed:local
+bun db:push:local
 ```
 
 HTML->JSON->Local DBを一括で実行
 
 ```bash
-bun db:sync
+bun db:sync:local
 ```
 
 Remote DBにJSONからcourses/categoriesを入れる(seed.ts)
@@ -488,7 +488,7 @@ bun db:push:remote
 HTML->JSON->Remote DBを一括で実行
 
 ```bash
-bun db:deploy
+bun db:sync:remote
 ```
 
 ライセンス出力

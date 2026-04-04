@@ -1,9 +1,9 @@
 ---
-import LoginButton from "./LoginButton";
-import PasskeyButton from "./PasskeyButton";
+import LoginButton from "../ui/LoginButton.tsx";
+import PasskeyButton from "../ui/PasskeyButton.tsx";
 import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 import Logo from '@/assets/Logo.svg';
-import {useLanguage} from "@/translation/utils";
+import {useLanguage} from "@/translation/utils.ts";
 import {defaultLang} from "@/translation/ui.ts";
 
 const lang = Astro.locals.lang || defaultLang;
@@ -22,7 +22,7 @@ const isLoggedIn = !!user;
     </div>
 
     <div class="navbar-center flex gap-2">
-        <div class="flex gap-1 items-center">
+        <label class="flex gap-1 items-center">
             <select
                     id="year-select"
                     class="select select-bordered select-sm md:select-md w-fit font-bold"
@@ -45,7 +45,7 @@ const isLoggedIn = !!user;
                         </option>
                 ))}
             </select>
-        </div>
+        </label>
     </div>
     <nav class="navbar-end">
         {!dbError && (

@@ -1,4 +1,4 @@
-import type {FlatSchedule} from "@/db/schema.ts";
+import type {FlatSchedule} from "@/db/schema";
 import {END_TIME, PERIODS, SELECTABLE_DAYS, START_TIME} from "@/constants/time.ts";
 import type {User} from "better-auth";
 import {timeToMin, useTimetable} from "@/lib/useTimetable.ts";
@@ -6,7 +6,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Eye, EyeOff, LayoutGrid, List, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
 import {ui} from "@/translation/ui.ts";
 import {useLanguage} from "@/translation/utils.ts";
-import {formatUnits} from "@/components/ExploreInterface.tsx";
+import {formatUnits} from "@/components/features/ExploreInterface.tsx";
 
 const HEADER_HEIGHT = 20;
 
@@ -361,7 +361,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                              }}>
                             <div className="text-primary-content pointer-events-none">
                                 <p className="lg:text-xs text-[10px] font-normal">{sched.courseCode}</p>
-                                <h1 className="lg:text-md text-xs font-bold line-clamp-1 leading-tight">
+                                <h1 className="lg:text-md text-[12px] font-bold line-clamp-1 leading-tight">
                                    {isJa ? sched.titleJa : sched.titleEn}
                                 </h1>
                                 <h2 className="lg:text-xs text-[10px]">{user && sched.room}</h2>

@@ -1,6 +1,6 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {authClient, signInWithGoogle} from "@/lib/auth-client.ts";
-import {defaultLang, ui} from "@/translation/ui";
+import {defaultLang, ui} from "@/translation/ui.ts";
 
 type Lang = keyof typeof ui;
 

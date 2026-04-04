@@ -1,10 +1,10 @@
-import { betterAuth } from "better-auth";
-import { createAuthMiddleware } from "better-auth/api";
-import { eq } from 'drizzle-orm';
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/d1";
-import { passkey } from "@better-auth/passkey";
-import * as schema from "@/db/schema.ts";
+import {betterAuth} from "better-auth";
+import {createAuthMiddleware} from "better-auth/api";
+import {eq} from 'drizzle-orm';
+import {drizzleAdapter} from "better-auth/adapters/drizzle";
+import {drizzle} from "drizzle-orm/d1";
+import {passkey} from "@better-auth/passkey";
+import * as schema from "@/db/schema";
 
 export const getAuth = (env: Env) => {
   return betterAuth({
