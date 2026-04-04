@@ -81,7 +81,7 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
                 </div>
     )
 }
-<Toast user={user} client:load />
+<Toast user={user} lang={currentLang} client:load />
 {!isLanding && <Header user={user}/>}
 <main class="grow min-h-0">
     <slot/>
