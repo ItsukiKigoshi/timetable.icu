@@ -70,16 +70,11 @@ export function useTimetable({
     };
 
     // --- ハンドラー ---
+    // TODO - Exploreでも使用するので別の場所にあった方が良い？
     const toggleCourse = async (course: any) => {
         // 引数の course が「IDだけ」の場合と「オブジェクト」の場合の両方に対応させる
         const targetCourseId = Number(course.id || course.courseId);
         const isRegistered = registeredIds.has(targetCourseId);
-
-        // スケジュールチェック（新規追加時のみ）
-        if (!isRegistered && (!course.schedules || course.schedules.length === 0)) {
-            alert("スケジュール情報がないため追加できません。");
-            return;
-        }
 
         if (user) {
             // ログイン済み - サーバーと同期

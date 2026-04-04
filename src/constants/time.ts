@@ -8,9 +8,6 @@ export const SELECTABLE_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as con
 export const DEFAULT_YEAR = 2026; // new Date().getFullYear() didnt work on Workers
 export const DEFAULT_TERM: Course['term'] = 'Spring';
 
-export const START_TIME = 8 * 60 + 45; // 08:45
-export const END_TIME = 20 * 60 + 15; // 20:15
-
 export const PERIODS = [
     {label: '1', start: '08:45', end: '10:00'},
     {label: '2', start: '10:10', end: '11:25'},
