@@ -1,4 +1,4 @@
-# ICUのじかんわり | Timetable.icu
+# [ICUのじかんわり | Timetable.icu](https://timetable.icu/)
 ICU生の時間割・履修登録ツールの決定版
 
 ## できること
