@@ -30,12 +30,16 @@ PERIOD_TIMES = {
 def parse_full_schedule(schedule_raw):
     if not schedule_raw or schedule_raw.strip() == "":
         return []
+        
+    # --- 括弧をカンマに置換、または除去して正規化する ---
+    # (5/TH, 6/TH) のような形式を 5/TH, 6/TH に変換
+    normalized_raw = schedule_raw.replace('(', '').replace(')', '')
 
-    alt_match = re.search(r'<(.*)>', schedule_raw)
-    core_str = schedule_raw
+    alt_match = re.search(r'<(.*)>', normalized_raw)
+    core_str = normalized_raw
     alt_groups_str = []
     if alt_match:
-        core_str = schedule_raw.replace(alt_match.group(0), "").strip(', ')
+        core_str = normalized_raw.replace(alt_match.group(0), "").strip(', ')
         alt_groups_str = [g.strip() for g in alt_match.group(1).split('or')]
 
     raw_segments = []
