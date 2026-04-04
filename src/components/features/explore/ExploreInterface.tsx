@@ -16,7 +16,9 @@ import {SELECTABLE_DAYS} from "@/constants/time.ts";
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {defaultLang} from "@/lib/translation/ui.ts";
 import courseUpdateInfo from '@/db/data/course-last-update.json';
-import {formatUnits, getSyllabusUrl} from "@/lib/course/utils.ts";
+import {getSyllabusUrl} from "@/lib/course/utils.ts";
+import CourseHeader from "@/components/features/course/CourseHeader.tsx";
+import {LanguageProvider} from "@/lib/translation/context.tsx";
 
 export interface SearchFilters {
     year: string | null;
@@ -63,7 +65,6 @@ export default function ExploreInterface({
     const [isFetching, setIsFetching] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
 
-    // 処理を軽くするためにreginteredIdsだけをAstroから受けとるようにした方がいいよな
     const {registeredIds, toggleCourse, isInitialized} = useTimetable({
         initialCourseIds: initialUserCourseIds,
         user
@@ -174,6 +175,7 @@ export default function ExploreInterface({
     const otherCategories = categories.filter(c => !(c.id?.startsWith('M') && c.id !== "MSTH"));
 
     return (
+        <LanguageProvider lang={lang}>
         <div className="space-y-6">
             {/* フィルターセクション */}
             <div className="flex flex-wrap gap-3 items-center">
@@ -289,56 +291,7 @@ export default function ExploreInterface({
                         <section key={course.id} className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
                             <div className="card-body p-4 gap-3">
                                 {/* ヘッダーセクション: コード，言語，単位数，年度 */}
-                                <div className="flex justify-between items-start text-[10px] sm:text-xs">
-                                    <div className="flex flex-wrap gap-1.5 items-center">
-                                        {/* コースコード */}
-                                        <span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter">
-                                          {course.courseCode}
-                                        </span>
-                                        {/* 言語 */}
-                                        {course.language && (
-                                            <span className="badge badge-xs font-bold badge-outline text-base-content/50">
-                                                {course.language}
-                                              </span>
-                                        )}
-                                    </div>
-
-                                    {/* 右側: 年度・学期，単位数 */}
-                                    <div className="flex justify-between items-start text-[10px] sm:text-xs">
-                                        {/* 単位数 */}
-                                        {course.units > 0 && (
-                                            <span className="badge badge-outline badge-xs text-base-content/50">
-                                                    {formatUnits(course.units)} {t('explore.units')}
-                                                  </span>
-                                        )}
-                                        <span className="text-base-content/50 whitespace-nowrap ml-2">
-                                            {course.year} {course.term}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* タイトル・教員セクション */}
-                                <div>
-                                    <h2 className="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-1">
-                                        {isJa ? course.titleJa : course.titleEn}
-                                    </h2>
-                                    <p className="text-xs sm:text-sm text-base-content/60 truncate">
-                                        {course.instructor}
-                                    </p>
-                                </div>
-
-                                {/* スケジュールセクション */}
-                                <div className="flex flex-wrap gap-1">
-                                    {course.schedules?.length > 0 ? (
-                                        course.schedules.map((s, i) => (
-                                            <span key={i} className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold uppercase">
-                                                {s.dayOfWeek.slice(0, 2)}{s.period}{s.isLong ? "*" : ""}
-                                              </span>
-                                        ))
-                                    ) : (
-                                        <span className="text-[10px] opacity-40 italic">{t('explore.no_schedule')}</span>
-                                    )}
-                                </div>
+                                <CourseHeader course={course}/>
 
                                 {/* アクションセクション */}
                                 <nav className="card-actions flex justify-between items-center mt-2 pt-3 border-t border-base-100">
@@ -465,5 +418,6 @@ export default function ExploreInterface({
                 </form>
             </dialog>
         </div>
+        </LanguageProvider>
     );
 }

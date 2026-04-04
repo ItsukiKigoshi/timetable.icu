@@ -1,7 +1,7 @@
 import type {UserCourseWithDetails} from "@/db/schema";
 import {Eye, EyeOff, Trash2} from "lucide-react";
 import {useTranslation} from "@/lib/translation/context.tsx";
-import CourseHeader from "@/components/ui/CourseHeader.tsx";
+import CourseHeader from "@/components/features/course/CourseHeader.tsx";
 
 interface CourseListProps {
     items: UserCourseWithDetails[];

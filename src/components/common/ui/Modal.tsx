@@ -12,26 +12,26 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     return (
         <div className="modal modal-open modal-bottom sm:modal-middle z-100">
             {/* モーダル本体 */}
-            <div className="modal-box relative">
+            <div className="modal-box p-0 flex flex-col max-h-[90vh] sm:max-h-[85vh] relative overflow-hidden">
                 {/* 右上の閉じるボタン */}
-                <button
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                    onClick={onClose}
-                >✕</button>
-
-                {title && (
-                    <h3 className="font-bold text-xl mb-4 border-b pb-2">
+                <div className="px-6 py-4 flex justify-between items-center bg-base-100 shrink-0">
+                    <h3 className="font-bold text-lg truncate pr-8">
                         {title}
                     </h3>
-                )}
+                    <button
+                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-3"
+                        onClick={onClose}
+                    >✕</button>
+                </div>
 
-                <div className="py-2">
+                {/*コンテンツ*/}
+                <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
                     {children}
                 </div>
 
-                {/* 下部の閉じるボタン（任意） */}
-                <div className="modal-action">
-                    <button className="btn btn-block" onClick={onClose}>
+                {/* 閉じるボタン */}
+                <div className="p-4 bg-base-100 shrink-0">
+                    <button className="btn btn-block btn-neutral" onClick={onClose}>
                         閉じる
                     </button>
                 </div>

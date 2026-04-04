@@ -2,8 +2,8 @@
 import {env} from "cloudflare:workers";
 import {drizzle} from "drizzle-orm/d1";
 import * as schema from "@/db/schema/index.ts";
-import Layout from "@/components/layout/Layout.astro";
-import TimetableInterface from "@/components/features/TimetableInterface.tsx";
+import Layout from "@/components/common/layout/Layout.astro";
+import TimetableInterface from "@/components/features/timetable/TimetableInterface.tsx";
 import {type Language} from "@/lib/translation/ui.ts"
 import type {UserCourseWithDetails} from "@/db/schema/index.ts";
 import {getTranslations} from "@/lib/translation/utils";

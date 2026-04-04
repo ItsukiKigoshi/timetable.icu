@@ -1,7 +1,7 @@
 import {and, eq, exists, gte, isNull, like, lte, or} from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import type {DrizzleD1Database} from 'drizzle-orm/d1';
-import type {SearchFilters} from "@/components/features/ExploreInterface.tsx";
+import type {SearchFilters} from "@/components/features/explore/ExploreInterface.tsx";
 
 // Create DB filters from URL query parameters
 export function getCourseSearchConfig(url: URL, db: DrizzleD1Database<typeof schema>) {

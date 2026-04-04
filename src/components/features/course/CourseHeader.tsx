@@ -1,12 +1,14 @@
-import type {UserCourseWithDetails} from "@/db/schema";
+import type {CourseWithSchedules} from "@/db/schema";
 import {formatUnits} from "@/lib/course/utils.ts";
 import {useTranslation} from "@/lib/translation/context.tsx";
 
 //  --- 授業の概要 コースコード，言語，単位，タイトル，教員 ---
 const CourseHeader = ({
                           course,
+                          showYearTerm = false,
                       }: {
-    course: UserCourseWithDetails,
+    course: CourseWithSchedules,
+    showYearTerm?: boolean;
 }) => {
     const {t, isJa} = useTranslation();
     return (
@@ -33,9 +35,9 @@ const CourseHeader = ({
                 )}
 
                 {/* 年度・学期*/}
-                <span className="text-[10px] sm:text-xs text-base-content/40 whitespace-nowrap ml-1">
-            {course.year} {course.term}
-        </span>
+                {showYearTerm && <span className="text-[10px] sm:text-xs text-base-content/40 whitespace-nowrap ml-1">
+                    {course.year} {course.term}
+                </span>}
             </div>
 
             {/* 2. 中段: タイトル (太字) */}

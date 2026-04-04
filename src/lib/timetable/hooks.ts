@@ -1,6 +1,3 @@
-// TODO - Refactor
-// 現状，時間割画面ではFlatScheduleをもとに管理していて拡張性が低いので，userCourses自体をfetchしてこれるようにしなきゃやな
-
 import {useEffect, useMemo, useState} from 'react';
 import type {FlatSchedule, UserCourseWithDetails} from "@/db/schema";
 import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
@@ -20,16 +17,26 @@ export function useTimetable({
     // 初期化状態を管理するステート
     const [isInitialized, setIsInitialized] = useState(false);
 
-    // 初期マウント時に初期化を完了させる
-    // (AstroからのPropsがStateに反映されたタイミング)
+    // 初回マウント: LocalStorage or ServerProps から復元
     useEffect(() => {
-        if (initialCourses.length > 0 || initialCourseIds.length > 0) {
+        const loadInitialData = () => {
+            if (!user) {
+                // ゲスト：LocalStorage最優先
+                const cached = localStorage.getItem('guest_timetable');
+                if (cached) {
+                    setCourses(JSON.parse(cached));
+                } else {
+                    setCourses(initialCourses);
+                }
+            } else {
+                // ログイン
+                setCourses(initialCourses);
+            }
             setIsInitialized(true);
-        } else {
-            // データが空の場合でも、ロードが終わったことを示すために true にする
-            setIsInitialized(true);
-        }
-    }, []);
+        };
+
+        loadInitialData();
+    }, [user, initialCourses]);
 
     // 登録済みIDのSet
     // initialCourseIds（検索画面用）と courses（時間割画面用）の両方を合算する
@@ -58,11 +65,11 @@ export function useTimetable({
 
     // ローカルストレージ保存用ヘルパー
     const syncLocalStorage = (nextCourses: UserCourseWithDetails[]) => {
-        const key = user ? `cache_timetable_${user.id}` : 'guest_timetable';
-        localStorage.setItem(key, JSON.stringify(nextCourses));
+        if (user) return;
+        localStorage.setItem('guest_timetable', JSON.stringify(nextCourses));
     };
 
-    // --- ハンドラー系 ---
+    // --- ハンドラー ---
     const toggleCourse = async (course: any) => {
         // 引数の course が「IDだけ」の場合と「オブジェクト」の場合の両方に対応させる
         const targetCourseId = Number(course.id || course.courseId);

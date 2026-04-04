@@ -6,12 +6,12 @@ import {LayoutGrid, List} from "lucide-react";
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {useTimetable} from "@/lib/timetable/hooks.ts";
 import {timeToMin} from "@/lib/timetable/utils.ts";
-import CourseDetailContent from "@/components/ui/CourseDetailContent";
+import CourseDetailContent from "@/components/features/timetable/CourseDetailContent.tsx";
 import {formatUnits} from "@/lib/course/utils.ts";
-import TimetableGrid from "@/components/ui/TimetableGrid.tsx";
-import CourseList from "@/components/ui/CourseList.tsx";
-import CourseHeader from "@/components/ui/CourseHeader.tsx";
-import Modal from "@/components/ui/Modal.tsx";
+import TimetableGrid from "@/components/features/timetable/TimetableGrid.tsx";
+import CourseList from "@/components/features/timetable/CourseList.tsx";
+import CourseHeader from "@/components/features/course/CourseHeader.tsx";
+import Modal from "@/components/common/ui/Modal.tsx";
 import {LanguageProvider} from "@/lib/translation/context.tsx";
 
 const HEADER_HEIGHT = 20;
