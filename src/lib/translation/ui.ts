@@ -80,8 +80,8 @@ const ja = {
   "lp.profile.description.bottom":
     "デザイン，広報，コーディング，貢献などに興味がある方はぜひ",
   "lp.profile.contact": "ご連絡",
-  "lp.profile.and": "を．",
-   "lp.profile.support": "ご寄付にもご協力ください!",
+  "lp.profile.dot": "を．",
+  "lp.profile.support": "ご寄付にもご協力ください!",
 
   // 探す
   "explore.title": "コースを探す",
@@ -217,8 +217,8 @@ const en = {
   "lp.profile.description.bottom":
     "If you are interested in design, PR, coding, or funding, please ",
   "lp.profile.contact": "contact us",
-  "lp.profile.and": "and/or",
-  "lp.profile.support": "support us!",
+  "lp.profile.dot": ".",
+  "lp.profile.support": "Also, support us!",
 
   // Explore
   "explore.title": "Explore Courses",
