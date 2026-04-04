@@ -149,6 +149,7 @@ export const customCourses = sqliteTable("custom_courses", {
     year: integer("year").notNull(),
     term: text("term").notNull(),
 
+    isVisible: integer("is_visible", {mode: "boolean"}).notNull().default(true),
     colorCustom: text("color_custom"),
     memo: text("memo"),
 

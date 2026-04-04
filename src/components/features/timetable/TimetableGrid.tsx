@@ -105,11 +105,11 @@ const TimetableGrid = ({
                                  width: `calc(${(100 / sched.groupMaxCols)}% - 1px)`,
                              }}>
                             <div className="text-primary-content pointer-events-none">
-                                <p className="lg:text-xs text-[10px] font-normal">{sched.courseCode}</p>
-                                <h1 className="lg:text-md text-xs font-bold line-clamp-1 leading-tight">
+                                <p className="lg:text-xs md:text-[8px] hidden md:block font-normal">{sched.courseCode}</p>
+                                <h1 className="lg:text-md md:text-xs text-[8px] line-clamp-3 font-bold leading-tight">
                                     {isJa ? sched.titleJa : sched.titleEn}
                                 </h1>
-                                <h2 className="lg:text-xs text-[10px]">{user && sched.room}</h2>
+                                <h2 className="lg:text-xs text-[8px]">{user && sched.room}</h2>
                             </div>
                         </div>
                     ))}
