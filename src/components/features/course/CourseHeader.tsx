@@ -13,7 +13,7 @@ const CourseHeader = ({
     const {t, isJa} = useTranslation();
     return (
         <section className="flex flex-col gap-2 w-full">
-            {/* 1. 上段: コースコード / 言語 / 単位 / 年度 (左詰め・ひとかたまり) */}
+            {/* 1. 上段: コースコード / 言語 / 単位 / 年度 */}
             <div className="flex flex-wrap gap-1.5 items-center">
                 {/* コースコード */}
                 <span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter shrink-0">
@@ -35,7 +35,7 @@ const CourseHeader = ({
                 )}
 
                 {/* 年度・学期*/}
-                {showYearTerm && <span className="text-[10px] sm:text-xs text-base-content/40 whitespace-nowrap ml-1">
+                {showYearTerm && <span className="text-[10px] sm:text-xs text-base-content/40 whitespace-nowrap ml-auto">
                     {course.year} {course.term}
                 </span>}
             </div>

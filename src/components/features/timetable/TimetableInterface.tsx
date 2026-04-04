@@ -14,8 +14,6 @@ import CourseHeader from "@/components/features/course/CourseHeader.tsx";
 import Modal from "@/components/common/ui/Modal.tsx";
 import {LanguageProvider} from "@/lib/translation/context.tsx";
 
-const HEADER_HEIGHT = 20;
-
 export default function TimetableInterface({initialCourses, user, lang = 'ja'}: {
     initialCourses: UserCourseWithDetails[],
     user?: User | null,
@@ -152,7 +150,6 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                                 translateDay={translateDay}
                                 translatePeriod={translatePeriod}
                                 handleSlotClick={handleSlotClick}
-                                headerHeight={HEADER_HEIGHT}
                             />
                         </div>
                     ) : (
@@ -193,7 +190,6 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                             translateDay={translateDay}
                             translatePeriod={translatePeriod}
                             handleSlotClick={handleSlotClick}
-                            headerHeight={HEADER_HEIGHT}
                         />
                     </main>
                 </div>
@@ -209,7 +205,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                         {coursesInSelectedSlot.length === 1 ? (
                             // --- 1つの場合：即座に詳細を表示 ---
                             <section className="flex flex-col gap-2">
-                                <div className="mb-2 border-b pb-4">
+                                <div className="pb-4">
                                     <CourseHeader course={coursesInSelectedSlot[0]} />
                                 </div>
                                 <CourseDetailContent

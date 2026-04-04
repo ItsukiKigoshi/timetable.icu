@@ -10,31 +10,16 @@ export const timeToMin = (timeStr: string) => {
     return h * 60 + m;
 };
 
-// 描画の基準となる定数
-export const TIMETABLE_CONFIG = {
-    START_TIME: "08:45",
-    MINUTE_HEIGHT: 1.2, // 1分あたり何pxか (調整可能)
-    HEADER_HEIGHT: 40,
-} as const;
-
 export interface DisplaySchedule extends FlatSchedule {
     startMin: number;
     endMin: number;
     col: number;
     groupMaxCols: number;
-    // 描画用のスタイルを事前計算して保持
-    style: {
-        top: number;
-        height: number;
-        left: string;
-        width: string;
-    };
 }
 
 // Flat Schedule（平坦化されたSchedule+Course）に, 時間割描画に必要な情報（startMin, endMin, col, groupMaxCols, styles）を付加
 export const computeDisplaySchedules = (schedules: FlatSchedule[]): DisplaySchedule[] => {
     const allProcessed: DisplaySchedule[] = [];
-    const baseMin = timeToMin(TIMETABLE_CONFIG.START_TIME);
 
     SELECTABLE_DAYS.forEach(day => {
         // 1. 抽出・ソート
@@ -88,16 +73,9 @@ export const computeDisplaySchedules = (schedules: FlatSchedule[]): DisplaySched
             );
             const groupMaxCols = Math.max(...group.map(c => c.col)) + 1;
 
-            // --- ここで座標を事前計算 ---
-            const top = (sched.startMin - baseMin) * TIMETABLE_CONFIG.MINUTE_HEIGHT + TIMETABLE_CONFIG.HEADER_HEIGHT;
-            const height = (sched.endMin - sched.startMin) * TIMETABLE_CONFIG.MINUTE_HEIGHT;
-            const left = `${(sched.col * 100) / groupMaxCols}%`;
-            const width = `calc(${(100 / groupMaxCols)}% - 1px)`;
-
             allProcessed.push({
                 ...sched,
-                groupMaxCols,
-                style: { top, height, left, width }
+                groupMaxCols
             });
         });
     });

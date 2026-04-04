@@ -21,32 +21,32 @@ const isLoggedIn = !!user;
         </a>
     </div>
 
-    <div class="navbar-center flex gap-2">
-        <label class="flex gap-1 items-center">
-            <select
-                    id="year-select"
-                    class="select select-bordered select-sm md:select-md w-fit font-bold"
-                    autocomplete="off"
-            >
-                {SELECTABLE_YEARS.map(y => (
-                        <option value={y} selected={Number(selectedYear) === y}>
-                            {y}
-                        </option>
-                ))}
-            </select>
-            <select
-                    id="term-select"
-                    class="select select-bordered select-sm md:select-md w-fit font-bold"
-                    autocomplete="off"
-            >
-                {SELECTABLE_TERMS.map(termObj => (
-                        <option value={termObj} selected={selectedTerm === termObj}>
-                            {t(`term.${termObj}` as any) || termObj}
-                        </option>
-                ))}
-            </select>
-        </label>
-    </div>
+        <div class="navbar-center flex gap-2">
+            <label class="flex gap-1 items-center">
+                <select
+                        id="year-select"
+                        class="select select-bordered select-sm md:select-md w-fit font-bold"
+                        autocomplete="off"
+                >
+                    {SELECTABLE_YEARS.map(y => (
+                            <option value={y} selected={Number(selectedYear) === y}>
+                                {y}
+                            </option>
+                    ))}
+                </select>
+                <select
+                        id="term-select"
+                        class="select select-bordered select-sm md:select-md w-fit font-bold"
+                        autocomplete="off"
+                >
+                    {SELECTABLE_TERMS.map(termObj => (
+                            <option value={termObj} selected={selectedTerm === termObj}>
+                                {t(`term.${termObj}` as any) || termObj}
+                            </option>
+                    ))}
+                </select>
+            </label>
+        </div>
     <nav class="navbar-end">
         {!dbError && (
                 <div class="relative inline-block ml-auto">

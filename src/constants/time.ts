@@ -19,3 +19,9 @@ export const PERIODS = [
     {label: '7', start: '18:15', end: '19:30'},
     {label: '夜', start: '19:30', end: '20:10'},
 ];
+
+export const TIMETABLE_CONFIG = {
+    START_TIME: 8 * 60 + 45,// 08:45
+    END_TIME: 20 * 60,// 20:00
+    HEADER_HEIGHT: 40,
+} as const;

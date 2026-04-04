@@ -291,7 +291,7 @@ export default function ExploreInterface({
                         <section key={course.id} className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
                             <div className="card-body p-4 gap-3">
                                 {/* ヘッダーセクション: コード，言語，単位数，年度 */}
-                                <CourseHeader course={course}/>
+                                <CourseHeader course={course} showYearTerm={true} />
 
                                 {/* アクションセクション */}
                                 <nav className="card-actions flex justify-between items-center mt-2 pt-3 border-t border-base-100">
@@ -355,6 +355,7 @@ export default function ExploreInterface({
             <Pagination/>
 
             {/* 時限モーダル */}
+            {/*TODO-Modal Componentにまとめる？*/}
             <dialog id="slot_modal" className="modal modal-bottom">
                 <div
                     className="modal-box p-0 overflow-hidden bg-base-100/95 border border-white/10 shadow-2xl sm:max-w-2xl md:max-w-3xl mx-auto">
