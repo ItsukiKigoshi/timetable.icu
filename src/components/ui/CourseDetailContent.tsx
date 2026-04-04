@@ -1,11 +1,11 @@
 import type {UserCourseWithDetails} from "@/db/schema";
 import {getSyllabusUrl} from "@/lib/course/utils.ts";
 import {Eye, EyeOff, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
+import {useTranslation} from "@/lib/translation/context.tsx";
 
 // --- 授業の詳細: メモ, シラバス，表示非表示，削除 ---
-export const CourseDetailContent = ({
+const CourseDetailContent = ({
                                         course,
-                                        t,
                                         toggleVisibility,
                                         handleToggle,
                                         isSubmitting,
@@ -15,9 +15,9 @@ export const CourseDetailContent = ({
     updateMemo: (courseId: number, memo: string) => void,
     toggleVisibility: (courseId: number) => void;
     handleToggle: (c: UserCourseWithDetails) => void,
-    t: any,
     isSubmitting: number | null
 }) => {
+    const {t} = useTranslation();
     const cId = course.id;
 
     return (
@@ -67,3 +67,4 @@ export const CourseDetailContent = ({
         </div>
     );
 };
+export default CourseDetailContent

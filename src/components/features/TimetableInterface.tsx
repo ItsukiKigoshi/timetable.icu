@@ -3,15 +3,16 @@ import {PERIODS} from "@/constants/time.ts";
 import type {User} from "better-auth";
 import {useMemo, useState} from "react";
 import {LayoutGrid, List} from "lucide-react";
-import {useLanguage} from "@/lib/translation/utils.ts";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {useTimetable} from "@/lib/timetable/hooks.ts";
 import {timeToMin} from "@/lib/timetable/utils.ts";
-import {CourseDetailContent} from "../ui/CourseDetailContent";
+import CourseDetailContent from "@/components/ui/CourseDetailContent";
 import {formatUnits} from "@/lib/course/utils.ts";
-import {TimetableGrid} from "@/components/ui/TimetableGrid.tsx";
-import {CourseList} from "@/components/ui/CourseList.tsx";
-import {CourseHeader} from "@/components/ui/CourseHeader.tsx";
-import {Modal} from "@/components/ui/Modal.tsx";
+import TimetableGrid from "@/components/ui/TimetableGrid.tsx";
+import CourseList from "@/components/ui/CourseList.tsx";
+import CourseHeader from "@/components/ui/CourseHeader.tsx";
+import Modal from "@/components/ui/Modal.tsx";
+import {LanguageProvider} from "@/lib/translation/context.tsx";
 
 const HEADER_HEIGHT = 20;
 
@@ -32,7 +33,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
         user
     });
     // 翻訳
-    const {t, isJa, translateDay, translatePeriod} = useLanguage(lang);
+    const {t, isJa, translateDay, translatePeriod} = createTranslationHelper(lang);
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string } | null>(null);
@@ -100,6 +101,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
     };
 
     return (
+        <LanguageProvider lang={lang}>
         <section className="flex flex-col w-full select-none h-full relative overflow-hidden">
             {/* 1. 左側：表示モード切り替え (Grid/List) */}
             <nav
@@ -208,11 +210,10 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                             // --- 1つの場合：即座に詳細を表示 ---
                             <section className="flex flex-col gap-2">
                                 <div className="mb-2 border-b pb-4">
-                                    <CourseHeader course={coursesInSelectedSlot[0]} isJa={isJa} t={t} />
+                                    <CourseHeader course={coursesInSelectedSlot[0]} />
                                 </div>
                                 <CourseDetailContent
                                     course={coursesInSelectedSlot[0]}
-                                    t={t}
                                     updateMemo={updateMemo}
                                     toggleVisibility={() => toggleVisibility(coursesInSelectedSlot[0].id)}
                                     handleToggle={handleToggle}
@@ -235,7 +236,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                                                 role="button"
                                                 tabIndex={0}
                                             >
-                                                <CourseHeader course={c} isJa={isJa} t={t} />
+                                                <CourseHeader course={c} />
                                             </div>
 
                                             {/* 内容部分 */}
@@ -243,7 +244,6 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                                                 <div className="p-4">
                                                     <CourseDetailContent
                                                         course={c}
-                                                        t={t}
                                                         updateMemo={updateMemo}
                                                         toggleVisibility={() => toggleVisibility(c.id)}
                                                         handleToggle={handleToggle}
@@ -265,11 +265,10 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                     {currentSelectedCourse && (
                         <section className="flex flex-col gap-2">
                             <div className="mb-2 border-b pb-4">
-                                <CourseHeader course={currentSelectedCourse} isJa={isJa} t={t} />
+                                <CourseHeader course={currentSelectedCourse} />
                             </div>
                             <CourseDetailContent
                                 course={currentSelectedCourse}
-                                t={t}
                                 updateMemo={updateMemo}
                                 toggleVisibility={() => toggleVisibility(currentSelectedCourse.id)}
                                 handleToggle={handleToggle}
@@ -279,5 +278,6 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                     )}
             </Modal>
         </section>
+        </LanguageProvider>
     );
 }

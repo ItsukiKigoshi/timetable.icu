@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {client} from "@/lib/auth/client.ts";
-import {useLanguage} from "@/lib/translation/utils.ts";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {defaultLang} from "@/lib/translation/ui.ts";
 
 const getDeviceDisplayName = () => {
@@ -31,7 +31,7 @@ export default function PasskeyButton({
     lang?: string
 }) {
     const [isLoading, setIsLoading] = useState(false);
-    const {t} = useLanguage(lang);
+    const {t} = createTranslationHelper(lang);
 
     // ログイン処理
     const handlePasskeySignIn = async (e: React.MouseEvent) => {

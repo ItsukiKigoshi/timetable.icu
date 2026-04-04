@@ -19,7 +19,7 @@ interface TimetableGridProps {
     headerHeight: number;
 }
 
-export const TimetableGrid = ({
+const TimetableGrid = ({
                                   displaySchedules,
                                   user,
                                   isJa,
@@ -117,3 +117,4 @@ export const TimetableGrid = ({
         </div>
     );
 };
+export default TimetableGrid

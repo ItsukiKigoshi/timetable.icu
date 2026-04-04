@@ -3,11 +3,11 @@ import LoginButton from "../ui/LoginButton.tsx";
 import PasskeyButton from "../ui/PasskeyButton.tsx";
 import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
 import Logo from '@/assets/Logo.svg';
-import {useLanguage} from "@/lib/translation/utils.ts";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {defaultLang} from "@/lib/translation/ui.ts";
 
 const lang = Astro.locals.lang || defaultLang;
-const {t, l} = useLanguage(lang);
+const {t, l} = createTranslationHelper(lang);
 
 const {user, selectedYear, selectedTerm, dbError} = Astro.locals;
 const isLoggedIn = !!user;

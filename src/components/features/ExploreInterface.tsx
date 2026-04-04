@@ -13,7 +13,7 @@ import {
     X
 } from "lucide-react";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
-import {useLanguage} from "@/lib/translation/utils.ts";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {defaultLang} from "@/lib/translation/ui.ts";
 import courseUpdateInfo from '@/db/data/course-last-update.json';
 import {formatUnits, getSyllabusUrl} from "@/lib/course/utils.ts";
@@ -56,7 +56,7 @@ export default function ExploreInterface({
                                              hasNextPage: initialHasNext,
                                              lang = defaultLang
                                          }: Props) {
-    const {t, isJa} = useLanguage(lang);
+    const {t, isJa} = createTranslationHelper(lang);
     const [courses, setCourses] = useState<CourseWithSchedules[]>(initialResults);
     const [hasNextPage, setHasNextPage] = useState(initialHasNext);
     const [filters, setFilters] = useState<SearchFilters>(initialFilters);

@@ -1,6 +1,7 @@
 import type {UserCourseWithDetails} from "@/db/schema";
 import {Eye, EyeOff, Trash2} from "lucide-react";
-import {CourseHeader} from "./CourseHeader"; // 別ファイルに分けている場合
+import {useTranslation} from "@/lib/translation/context.tsx";
+import CourseHeader from "@/components/ui/CourseHeader.tsx";
 
 interface CourseListProps {
     items: UserCourseWithDetails[];
@@ -13,16 +14,15 @@ interface CourseListProps {
     isSubmitting: number | null;
 }
 
-export const CourseList = ({
+const CourseList = ({
                                items,
                                padding = true,
-                               isJa,
-                               t,
                                setSelectedCourse,
                                toggleVisibility,
                                handleToggle,
                                isSubmitting,
                            }: CourseListProps) => {
+    const {t} = useTranslation();
     return (
         <div className={`flex flex-col gap-2 w-full ${padding ? 'p-2' : ''}`}>
             {items.map(course => {
@@ -35,7 +35,7 @@ export const CourseList = ({
                             setSelectedCourse(course);
                             (document.getElementById('single_course_modal') as HTMLDialogElement)?.showModal();
                         }}>
-                            <CourseHeader course={course} isJa={isJa} t={t} />
+                            <CourseHeader course={course} />
                         </div>
 
                         {/* 右側：最小限のクイック操作のみ残す */}
@@ -61,3 +61,4 @@ export const CourseList = ({
         </div>
     );
 };
+export default CourseList

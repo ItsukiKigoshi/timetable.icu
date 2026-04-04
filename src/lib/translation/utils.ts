@@ -9,7 +9,7 @@ const getCurrentLang = (lang?: string | null): keyof typeof ui => {
  * 翻訳関数 t('key') を提供する関数
  * @param lang - 現在の言語 (Astro.locals.lang などから渡す)
  */
-export const useTranslations = (lang: string | undefined) => {
+export const getTranslations = (lang: string | undefined) => {
     const currentLang = getCurrentLang(lang);
     return (key: keyof typeof ui[typeof defaultLang]) => {
         return (ui[currentLang] as any)[key] || (ui[defaultLang] as any)[key];
@@ -20,7 +20,7 @@ export const useTranslations = (lang: string | undefined) => {
  * 現在の言語に応じたURLパスを生成する関数
  * 例: l('/home') -> 日本語なら '/home', 英語なら '/en/home'
  */
-export const useTranslatedPath = (lang: string | undefined) => {
+const getTranslatedPath = (lang: string | undefined) => {
     const currentLang = getCurrentLang(lang);
     return (path: string) => {
         const base = currentLang === defaultLang ? "" : `/${currentLang}`;
@@ -34,10 +34,10 @@ export const useTranslatedPath = (lang: string | undefined) => {
 /**
  * Reactコンポーネントでよく使う翻訳関連機能をひとまとめに
  */
-export const useLanguage = (lang: string | undefined) => {
+export const createTranslationHelper = (lang: string | undefined) => {
     const currentLang = getCurrentLang(lang);
-    const t = useTranslations(lang);
-    const l = useTranslatedPath(lang);
+    const t = getTranslations(lang);
+    const l = getTranslatedPath(lang);
     const isJa = currentLang === 'ja';
 
     // --- ここで定義することで currentLang や t にアクセス可能にする ---

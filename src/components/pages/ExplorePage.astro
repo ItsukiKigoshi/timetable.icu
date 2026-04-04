@@ -8,7 +8,7 @@ import type {CourseWithSchedules} from "@/db/schema";
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
 import {getCourseSearchConfig} from "@/lib/course/query.ts";
-import {useLanguage} from "@/lib/translation/utils.ts";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {type Language} from "@/lib/translation/ui.ts";
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 const {user, selectedYear, selectedTerm, lang} = Astro.locals;
 const db = drizzle(env.timetable_icu, {schema});
-const {t, currentLang} = useLanguage(lang)
+const {t, currentLang} = createTranslationHelper(lang)
 
 const url = new URL(Astro.request.url);
 if (!url.searchParams.has('year')) url.searchParams.set('year', selectedYear.toString());

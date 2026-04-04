@@ -5,7 +5,7 @@ interface ModalProps {
     children: React.ReactNode;
 }
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
     // 表示中ではない場合は何もレンダリングしない（DOMをクリーンに保つ）
     if (!isOpen) return null;
 
