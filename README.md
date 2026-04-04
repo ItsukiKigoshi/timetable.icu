@@ -22,8 +22,8 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
-      - [ ] [Capacitor](https://capacitorjs.com/) [Preferences API](https://capacitorjs.com/docs/apis/preferences)をつかえばWeb API+Local Storageとアプリを作れる
-      - [ ] 懸念は個人開発者に対するGoogle Playのテスト厳格化とApple Developer Programへの/yr録料 100$/yrが高すぎること (絶対に収支がプラスにならない)
+      - [ ] [Capacitor](https://capacitorjs.com/) [Preferences API](https://capacitorjs.com/docs/apis/preferences)をつかえばWeb APIでアプリを作れる
+      - [ ] 懸念は個人開発者に対するGoogle Playのテスト厳格化とApple Developer Programへの登録100$/yrが高すぎること (絶対に収支がプラスにならない)
         - [ ] どちらも，Non-Profitの学生団体を作れば免除の可能性があるので組織するのはアリ: Appleの[Waiver](https://developer.apple.com/jp/help/account/membership/fee-waivers/)
         - [ ] ICUからAppleに[教育機関向けDeveloper Program](https://education-static.apple.com/geo/jp/AppleDeveloperProgram_FeeWaiverforEducation_OnboardingKit_JP.pdf)に登録してもらう
           - [ ] これも, ITオフィスに掛け合う前にWebアプリとしての継続的な運用実績があった方がいいな．
