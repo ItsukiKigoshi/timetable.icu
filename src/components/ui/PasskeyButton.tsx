@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {authClient} from "@/lib/auth-client.ts";
-import {useLanguage} from "@/translation/utils.ts";
-import {defaultLang} from "@/translation/ui.ts";
+import {client} from "@/lib/auth/client.ts";
+import {useLanguage} from "@/lib/translation/utils.ts";
+import {defaultLang} from "@/lib/translation/ui.ts";
 
 const getDeviceDisplayName = () => {
     const ua = navigator.userAgent;
@@ -39,7 +39,7 @@ export default function PasskeyButton({
         if (isLoading) return;
 
         setIsLoading(true);
-        await authClient.signIn.passkey({
+        await client.signIn.passkey({
             fetchOptions: {
                 onSuccess() {
                     window.location.reload();
@@ -60,7 +60,7 @@ export default function PasskeyButton({
         if (!name) return;
 
         setIsLoading(true);
-        await authClient.passkey.addPasskey({
+        await client.passkey.addPasskey({
             name,
             fetchOptions: {
                 onSuccess: () => {

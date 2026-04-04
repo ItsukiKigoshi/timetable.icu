@@ -1,4 +1,4 @@
-import {getAuth} from "@/lib/auth.ts";
+import {getAuth} from "@/lib/auth/server.ts";
 import {defineMiddleware} from "astro:middleware";
 import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
 import {env} from "cloudflare:workers";

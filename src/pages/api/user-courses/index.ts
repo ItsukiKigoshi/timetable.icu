@@ -4,6 +4,10 @@ import * as schema from "@/db/schema";
 import {and, eq} from "drizzle-orm";
 import {env} from "cloudflare:workers";
 
+export type UserCoursePostResponse =
+    | { success: true; action: "added" | "removed" }
+    | { error: string };
+
 //--- POST (Toggle Enrollment) ---
 export const POST: APIRoute = async ({request, locals}) => {
     const user = locals.user;
@@ -41,17 +45,20 @@ export const POST: APIRoute = async ({request, locals}) => {
                         eq(schema.userCourses.courseId, courseId)
                     )
                 );
-            return new Response(JSON.stringify({success: true, action: "removed"}), {status: 200});
+            const res: UserCoursePostResponse = { success: true, action: "removed" };
+            return new Response(JSON.stringify(res), { status: 200 });
         } else {
             // 存在しない場合は追加 (Toggle ON)
             await db.insert(schema.userCourses).values({
                 userId: user.id,
                 courseId: courseId,
             });
-            return new Response(JSON.stringify({success: true, action: "added"}), {status: 201});
+            const res: UserCoursePostResponse = { success: true, action: "added" };
+            return new Response(JSON.stringify(res), { status: 201 });
         }
     } catch (e) {
-        return new Response(JSON.stringify({error: "Internal Server Error"}), {status: 500});
+        const res: UserCoursePostResponse = { error: "Internal Server Error" };
+        return new Response(JSON.stringify(res), { status: 500 });
     }
 };
 

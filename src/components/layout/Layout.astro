@@ -5,7 +5,7 @@ import Header from "@/components/layout/Header.astro";
 import Footer from "@/components/layout/Footer.astro";
 import Toast from "@/components/ui/Toast.tsx";
 import {TriangleAlert} from "lucide-astro";
-import {useLanguage} from "@/translation/utils.ts";
+import {useLanguage} from "@/lib/translation/utils.ts";
 
 const locals = Astro.locals ?? {};
 const user = locals.user ?? null;

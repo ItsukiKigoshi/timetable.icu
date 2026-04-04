@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import type {Categories, CourseWithSchedules} from "@/db/schema";
-import {useTimetable} from "@/lib/useTimetable.ts";
+import {useTimetable} from "@/lib/timetable/hooks.ts";
 import {
     ArrowDown01,
     CalendarCheck,
@@ -13,10 +13,10 @@ import {
     X
 } from "lucide-react";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
-import {seasonToNumber} from "@/components/features/TimetableInterface.tsx";
-import {useLanguage} from "@/translation/utils.ts";
-import {defaultLang} from "@/translation/ui.ts";
+import {useLanguage} from "@/lib/translation/utils.ts";
+import {defaultLang} from "@/lib/translation/ui.ts";
 import courseUpdateInfo from '@/db/data/course-last-update.json';
+import {formatUnits, getSyllabusUrl} from "@/lib/course/utils.ts";
 
 export interface SearchFilters {
     year: string | null;
@@ -47,16 +47,6 @@ interface Props {
     hasNextPage: boolean;
     lang?: string;
 }
-
-export const formatUnits = (units: number): string => {
-    // 0.333... の対策（浮動小数点の誤差を考慮して 0.33 より大きく 0.34 未満なら 1/3）
-    if (units > 0.33 && units < 0.34) return "1/3";
-    if (units > 0.66 && units < 0.67) return "2/3";
-
-    // それ以外は通常の数値を文字列にして返す（整数ならそのまま、小数なら適宜丸める）
-    return units.toString();
-};
-
 export default function ExploreInterface({
                                              initialResults,
                                              initialFilters,
@@ -73,6 +63,7 @@ export default function ExploreInterface({
     const [isFetching, setIsFetching] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
 
+    // 処理を軽くするためにreginteredIdsだけをAstroから受けとるようにした方がいいよな
     const {registeredIds, toggleCourse, isInitialized} = useTimetable({
         initialCourseIds: initialUserCourseIds,
         user
@@ -352,7 +343,7 @@ export default function ExploreInterface({
                                 {/* アクションセクション */}
                                 <nav className="card-actions flex justify-between items-center mt-2 pt-3 border-t border-base-100">
                                     <a target='_blank' rel="noopener noreferrer"
-                                       href={`https://campus.icu.ac.jp/public/ehandbook/PreviewSyllabus.aspx?regno=${course.rgNo}&year=${course.year}&term=${seasonToNumber(course.term)}`}
+                                       href={getSyllabusUrl(course.rgNo, course.year, course.term)}
                                        className="btn btn-ghost btn-md gap-1.5 px-2 font-normal">
                                         <span className="text-[10px] sm:text-xs">{t('explore.syllabus')}</span>
                                         <SquareArrowOutUpRight size="12"/>

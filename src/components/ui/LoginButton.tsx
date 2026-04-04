@@ -1,6 +1,6 @@
 import {useState} from 'react';
-import {authClient, signInWithGoogle} from "@/lib/auth-client.ts";
-import {defaultLang, ui} from "@/translation/ui.ts";
+import {client, signInWithGoogle} from "@/lib/auth/client.ts";
+import {defaultLang, ui} from "@/lib/translation/ui.ts";
 
 type Lang = keyof typeof ui;
 
@@ -20,7 +20,7 @@ export default function LoginButton({
         if (isLoading) return;
         setIsLoading(true);
         try {
-            await authClient.signOut({
+            await client.signOut({
                 fetchOptions: {
                     onSuccess: () => {
                         window.location.reload();

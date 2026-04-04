@@ -1,4 +1,4 @@
-import {getAuth} from "@/lib/auth.ts";
+import {getAuth} from "@/lib/auth/server.ts";
 import type {APIRoute} from "astro";
 import {env} from "cloudflare:workers";
 

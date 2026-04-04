@@ -7,9 +7,9 @@ import Layout from "@/components/layout/Layout.astro";
 import type {CourseWithSchedules} from "@/db/schema";
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
-import {getCourseSearchConfig} from "@/lib/course-query.ts";
-import {useLanguage} from "@/translation/utils.ts";
-import {type Language} from "@/translation/ui.ts";
+import {getCourseSearchConfig} from "@/lib/course/query.ts";
+import {useLanguage} from "@/lib/translation/utils.ts";
+import {type Language} from "@/lib/translation/ui.ts";
 
 interface Props {
     lang: Language;

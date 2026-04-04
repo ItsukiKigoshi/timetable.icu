@@ -230,12 +230,14 @@ export const courseSchedulesRelations = relations(
 // --- Base Types (DBから直接抽出) ---
 export type Course = InferSelectModel<typeof courses>;
 export type Schedule = InferSelectModel<typeof courseSchedules>;
-export type UserCourseEntry = InferSelectModel<typeof userCourses>;
+export type UserCourse = InferSelectModel<typeof userCourses>;
+
+
 
 // --- Helper: メタデータ部分だけを抽出 ---
 // userId や createdAt などの不要なカラムを除いた「ユーザー設定」のみの型
 export type UserCourseMetadata = Pick<
-    UserCourseEntry,
+    UserCourse,
     "isVisible" | "selectedAltGroupId" | "colorCustom" | "memo"
 >;
 
@@ -244,7 +246,11 @@ export type UserCourseMetadata = Pick<
 export type CourseWithSchedules = Course & {
     schedules: Schedule[];
 };
-
+// 詳細情報付きのユーザー履修科目
+export type UserCourseWithDetails = Course &
+    UserCourseMetadata & {
+    schedules: Schedule[]
+};
 export type Categories = InferSelectModel<typeof categories>;
 
 // Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
