@@ -22,6 +22,16 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
+      - [ ] [Capacitor](https://capacitorjs.com/) [Preferences API](https://capacitorjs.com/docs/apis/preferences)をつかえばWeb API+Local Storageとアプリを作れる
+      - [ ] 懸念は個人開発者に対するGoogle Playのテスト厳格化とApple Developer Programへの/yr録料 100$/yrが高すぎること (絶対に収支がプラスにならない)
+        - [ ] どちらも，Non-Profitの学生団体を作れば免除の可能性があるので組織するのはアリ: Appleの[Waiver](https://developer.apple.com/jp/help/account/membership/fee-waivers/)
+        - [ ] ICUからAppleに[教育機関向けDeveloper Program](https://education-static.apple.com/geo/jp/AppleDeveloperProgram_FeeWaiverforEducation_OnboardingKit_JP.pdf)に登録してもらう
+          - [ ] これも, ITオフィスに掛け合う前にWebアプリとしての継続的な運用実績があった方がいいな．
+          - [ ] 奪K体への登録にはDUNS Numberが必要．法人登記 (一般社団とか？)？
+          - [ ] とりあえずはWebアプリで続けて，将来的にiOS化したいね: Twinte, Hupassとかみたいな．
+        - [ ] 本当に，問題は開発ではなくAppleとGoogleの壁だな
+          - [ ] 個人で100$払っちゃってもいいけど継続性がない
+          - [ ] 敷居が高いAppleは無視してとりあえずAndoidだけだしちゃうのはあり．
 
 # 大切にしたいこと
 
@@ -30,7 +40,7 @@ ICU生の時間割・履修登録ツールの決定版
     - [ ] 軽量 (めざせ 全ページPageSpeedInsights 100)
 - [ ] ICUらしくある
     - [ ] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
-    - [x] 隠し要素
+    <!-- - [x] 隠し要素 --> 
 - [ ] プロジェクトとして持続可能なものである
     - [ ] 後輩に引き継ぐ前提で作る，その価値があるものにする
     - [ ] 後進育成
@@ -211,9 +221,12 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] Catalogue.icuで移行を促すMessage
     - [ ] 移行機能 (直接新アプリのAPIを叩く?)
 - [ ] Refactor
+    - [ ] Componentの役割の明確化
+      - [ ] Astro: APIを叩く，データを撮ってくるなどの操作
+      - [ ] React: 描画
     - [ ] Componentがごちゃごちゃしている．絶対必要!
     - [ ] Long4まわりの表示をSophisticate, refactor
-    - [ ] useTimetableの挙動: そもそもHooks必要?
+    - [x] useTimetableの挙動: そもそもHooks必要?
     - [ ] WorkersならPreactの方が良い？
 - [ ] Design
     - [x] カラーテーマ当てる
@@ -262,8 +275,11 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] Default localeをjaとenどっちにするか？
     - [x] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
 - [x] Google OAuthをpublesh
+    - 組織内アカウントなら審査なしでいける
     - [x] Privacy Policy
         - [ ] わかりやすく
+        - [ ] 松籟の引き継ぎに備え，データの持ち出しが起きないようなチェック体制，コンプライアンス
+        - [ ] 時間割情報のE2E暗号化?: ユーザに秘密鍵を持たせて暗号化した情報をサーバに保存
     - [x] 利用規約
         - [ ] わかりやすく
         - [ ] ポチポチして利用規約つくれるサイト？
@@ -294,27 +310,27 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] リンク
     - [ ] 学年暦
     - [ ] 4年間の全体像を考える
-    - [ ] ログインが必要なサイトはその旨を明示
-    - [ ] 公式リンク
-        - [ ] ICU Portal
-        - [ ] ICU Map
-            - [ ] Course Offerings
-    - [ ] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
-        - [ ] CTL
+    - [x] ~~ログインが必要なサイトはその旨を明示~~
+    - [x] 公式リンク
+        - [x] ICU Portal
+        - [x] ICU Map
+            - [x] Course Offerings
+    - [x] 「どうやって履修計画を立てたらいいか分からない？でも大丈夫！ICUにはあなたの履修をサポートする窓口がたくさんあります！」
+        - [x] CTL
             - [ ] 履修計画テンプレート
             - [ ] 履修計画ワークショップ
             - [ ] イベントなどでコラボレーション？
-        - [ ] Major一覧
-            - [ ] ehandbook
-            - [ ] メジャーインフォメーションサイト
-            - [ ] メジャー選択要件
-        - [ ] ICU IBS
-            - [ ] 相談方法
-            - [ ] Social Media
+        - [x] Major一覧
+            - [x] ehandbook
+            - [x] メジャーインフォメーションサイト
+            - [x]  メジャー選択要件
+        - [x] ICU IBS
+            - [x] 相談方法
+            - [x] Social Media
     - [ ] 学生による活動
         - [ ] Weekly Giants
-        - [ ] 選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？
-    - [ ] トップページのロード速度は落とさぬように．
+        - [x] ~~選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？~~
+    - [x] トップページのロード速度は落とさぬように．
 - [ ] performance
     - [x] 画像最適化: 必要なピクセル数以下に抑える
 - [ ] 表示するコマが無いときに「Explore」へ促す

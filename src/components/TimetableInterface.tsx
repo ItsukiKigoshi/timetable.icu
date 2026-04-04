@@ -255,7 +255,7 @@ export default function TimetableInterface({initialRawSchedules, user, lang = 'j
                     const cId = Number(course.courseId);
                     return (
                         <div key={course.courseId}
-                             className={`group p-3 bg-base-100 rounded-xl flex justify-between items-center border border-base-300 hover:border-primary/50 transition-all ${!course.isVisible ? "opacity-60" : ""}`}>
+                             className={`group p-3 bg-base-100 rounded-xl flex justify-between items-center border border-base-300 ${!course.isVisible ? "opacity-60" : ""}`}>
 
                             {/* 左側：クリックで詳細モーダルへ */}
                             <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
