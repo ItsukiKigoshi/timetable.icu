@@ -1,0 +1,225 @@
+---
+import {Image} from "astro:assets";
+import Layout from "@/components/common/layout/Layout.astro";
+import Logo from "@/assets/Logo.svg";
+import ProfileImg from "@/assets/profile.webp";
+import Cover1 from "@/assets/cover1.webp";
+import Cover2 from "@/assets/cover2.webp";
+import {
+    Bug,
+    CalendarCheck2,
+    CalendarPlus,
+    Search,
+    Telescope,
+    RefreshCcw,
+    ThumbsUp,
+    CalendarDays,
+    CalendarArrowUp
+} from "lucide-astro";
+import {WifiOff} from "lucide-react";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
+
+const lang = Astro.locals.lang;
+const {t, l, currentLang} = createTranslationHelper(lang);
+---
+
+<Layout title=`${t('site.title')} | ${t('site.tagline')}` isLanding={true}>
+    <!--背景画像-->
+    <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
+        <Image
+                src={Cover1}
+                alt="Cover Page Photo 1 (ICU garden)"
+                width={800}
+                sizes="(max-width: 768px) 400px, 800px"
+                quality={50}
+                format="webp"
+                class="absolute -top-10 -right-10 w-185 md:w-200 rotate-12"
+        />
+        <Image
+                src={Cover2}
+                alt="Cover Page Photo 1 (ICU Chappel)"
+                height={800}
+                sizes="(max-width: 768px) 400px, 800px"
+                quality={50}
+                format="webp"
+                class="absolute -bottom-40 -left-20 w-150 md:w-225 -rotate-12"
+        />
+    </aside>
+
+    <!--Main Content-->
+    <section class="flex flex-col items-center gap-16 p-6 max-w-5xl mx-auto min-h-screen relative">
+        <!-- Toggle Language-->
+        <div class="flex justify-center items-center gap-1 p-1 rounded-xl bg-base-200/30 backdrop-blur-sm border border-base-content/5">
+            {currentLang === 'ja' ? (
+                    <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">JA</span>
+            ) : (
+                    <a href="/public"
+                       class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors">JA</a>
+            )}
+
+            {currentLang === 'en' ? (
+                    <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">EN</span>
+            ) : (
+                    <a href="/en/"
+                       class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors">EN</a>
+            )}
+        </div>
+        <!--Hero-->
+        <section
+                class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-6 shadow-2xl w-full max-w-7xl mx-auto border border-white/20"
+        >
+            <header class="hero-content lg:flex-row flex-col lg:gap-16 gap-12">
+                <Logo
+                        width={200}
+                        height={200}
+                        class="drop-shadow-2xl"
+                />
+                <div class="lg:text-left text-center">
+                    <h1 class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content">
+                        {t('site.title')}
+                    </h1>
+                    <p class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl">
+                        {t('lp.hero.description')}
+                    </p>
+                    <nav class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4">
+                        <a
+                                href={l('/explore')}
+                                class="btn btn-primary md:btn-lg btn-sm  rounded-full px-16"
+                        >
+                            <Telescope size="24"/>
+                            <span>{t('lp.nav.explore')}</span>
+                        </a>
+
+                        <a
+                                href={l('/timetable')}
+                                class="btn btn-neutral md:btn-lg btn-sm rounded-full px-16"
+                        >
+                            <CalendarDays size="24"/>
+                            <span>{t('lp.nav.timetable')}</span>
+                        </a>
+                    </nav>
+                </div>
+            </header>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+            <section class="flex flex-col bg-base-100 border border-base-200 rounded-4xl overflow-hidden shadow-sm">
+                <div class="p-6 border-b border-base-200 bg-base-200/20">
+                    <h2 class="flex items-center gap-3 text-2xl font-black text-base-content">
+                        <div class="text-primary">
+                            <ThumbsUp size="32"/>
+                        </div>
+                        {t('lp.features.can.label')}
+                    </h2>
+                </div>
+
+                <ul class="divide-y divide-base-200 grow">
+                    <li class="p-6 flex gap-5">
+                        <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+                            <Search size="24"/>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">{t('lp.features.can.search.title')}</h3>
+                            <p class="text-sm text-base-content/70 leading-relaxed">{t('lp.features.can.search.desc')}</p>
+                        </div>
+                    </li>
+                    <li class="p-6 flex gap-5">
+                        <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+                            <CalendarCheck2 size="24"/>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">{t('lp.features.can.schedule.title')}</h3>
+                            <p class="text-sm text-base-content/70 leading-relaxed">{t('lp.features.can.schedule.desc')}</p>
+                        </div>
+                    </li>
+                    <li class="p-6 flex gap-5">
+                        <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+                            <RefreshCcw size="24"/>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">{t('lp.features.can.sync.title')}</h3>
+                            <p class="text-sm text-base-content/70 leading-relaxed">{t('lp.features.can.sync.desc')}</p>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="flex flex-col bg-base-100 border border-base-200 rounded-4xl overflow-hidden shadow-sm">
+                <div class="p-6 border-b border-base-200 bg-base-200/20">
+                    <h2 class="flex items-center gap-3 text-2xl font-black text-base-content/60">
+                        <Bug size="32"/>
+                        {t('lp.features.todo.label')}
+                    </h2>
+                </div>
+
+                <ul class="divide-y divide-base-200 grow">
+                    <li class="p-6 flex gap-5">
+                        <div class="bg-base-content/10 p-3 rounded-2xl h-fit opacity-50 text-base-content">
+                            <WifiOff size="24"/>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-base-content/80">{t('lp.features.todo.offline.title')}</h3>
+                            <p class="text-sm text-base-content/60 leading-relaxed">{t('lp.features.todo.offline.desc')}</p>
+                        </div>
+                    </li>
+                    <li class="p-6 flex gap-5">
+                        <div class="bg-base-content/10 p-3 rounded-2xl h-fit opacity-50 text-base-content">
+                            <CalendarPlus size="24"/>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-base-content/80">{t('lp.features.todo.custom.title')}</h3>
+                            <p class="text-sm text-base-content/60 leading-relaxed">{t('lp.features.todo.custom.desc')}</p>
+                        </div>
+                    </li>
+                    <li class="p-6 flex gap-5">
+                        <div class="bg-base-content/10 p-3 rounded-2xl h-fit opacity-50 text-base-content">
+                            <CalendarArrowUp size="24"/>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-base-content/80">{t('lp.features.todo.calendar.title')}</h3>
+                            <p class="text-sm text-base-content/60 leading-relaxed">{t('lp.features.todo.calendar.desc')}</p>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </section>
+
+        <section
+                class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-10"
+        >
+            <Image
+                    src={ProfileImg}
+                    alt="Itsuki Kigoshi"
+                    width={256}
+                    height={256}
+                    format="webp"
+                    quality={80}
+                    class="w-32 h-32 rounded-3xl ring overflow-hidden shadow-2xl"
+            />
+            <address class="text-center md:text-left flex-1 not-italic">
+                <h2 class="text-2xl font-black mb-4 items-center gap-2">
+                    <span>{t('lp.profile.made_with')}</span>
+                    <a
+                            href="https://itsukikigoshi.github.io/"
+                            target="_blank"
+                            class="underline"
+                    >
+                        Itsuki Kigoshi
+                    </a>
+                </h2>
+                <p class="text-sm md:text-base leading-relaxed opacity-80 mb-6">
+                    {t('lp.profile.description.top')} <br/>
+                    {t('lp.profile.description.middle')}<br/>
+                    {t('lp.profile.description.bottom')}
+                    <a
+                            class="inline-flex items-center gap-1 underline transition-colors"
+                            href="mailto:itsukikigoshi+timetableicu@gmail.com"
+                    >
+                        {t('lp.profile.contact')}
+                    </a>
+                    {t('lp.profile.dot')}
+                </p>
+            </address>
+        </section>
+    </section>
+</Layout>

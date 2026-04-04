@@ -3,7 +3,7 @@ import {drizzle} from 'drizzle-orm/d1';
 import * as schema from '@/db/schema';
 import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
-import {getCourseSearchConfig} from "@/lib/course-query.ts";
+import {getCourseSearchConfig} from "@/lib/course/query.ts";
 
 export const GET: APIRoute = async ({request}) => {
     const db = drizzle(env.timetable_icu, {schema});

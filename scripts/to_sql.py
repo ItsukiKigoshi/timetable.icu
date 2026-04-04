@@ -78,9 +78,9 @@ def generate_sql():
             """
             output.append(sch_sql.strip())
 
-    with open('scripts/out/sync_remote.sql', 'w', encoding='utf-8') as f:
+    with open('scripts/out/sync_courses.sql', 'w', encoding='utf-8') as f:
         f.write("\n".join(output))
-    print(f"✅ Generated sync_remote.sql ({len(data)} courses)")
+    print(f"✅ Generated sync_courses.sql ({len(data)} courses)")
 
 
 if __name__ == "__main__":

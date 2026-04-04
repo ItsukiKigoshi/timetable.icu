@@ -32,6 +32,9 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] 本当に，問題は開発ではなくAppleとGoogleの壁だな
           - [ ] 個人で100$払っちゃってもいいけど継続性がない
           - [ ] 敷居が高いAppleは無視してとりあえずAndoidだけだしちゃうのはあり．
+    - [ ] Share機能
+      - [ ] 画像: 画面とロゴ，URL; アプリを知ってもらう機会にする
+      - [ ] リンク: 「あなたもつくる」の導線
 
 # 大切にしたいこと
 
@@ -256,7 +259,9 @@ ICU生の時間割・履修登録ツールの決定版
             - [ ] 誰が運営？
             - [ ] 他Twinte参照
     - [ ] 会計開示
+        - [ ] InteractiveなBalance Sheetのような
         - [ ] Cloudflare Registrar
+          - [ ] InvoiceのPDF
         - [ ]  寄付受付
             - [ ] OpenCollective, Stripe
     - [ ] Members
@@ -393,7 +398,7 @@ ICU生の時間割・履修登録ツールの決定版
 │   ├── layouts
 │   │   └── Layout.astro
 │   ├── lib
-│   │   └── auth.ts // schema definitions, auth-related files
+│   │   └── server.ts // schema definitions, auth-related files
 │   ├── pages
 │   │   └── index.astro
 │   ├── styles
@@ -427,7 +432,7 @@ bunx wrangler types
 Create schema for BetterAuth
 
 ```bash
-bun x auth@latest generate --config=./src/lib/auth-cli.ts --output=./src/db/auth-schema.ts
+bun x auth@latest generate --config=./src/lib/auth/server.ts --output=./src/db/schema/auth.ts
 ```
 
 Create schema by Drizzle Kit
@@ -467,16 +472,16 @@ Create JSON from HTML
 bun db:scrape
 ```
 
-Local DBにJSONからcourses/categoriesを入れる(seed.ts)
+Local DBにJSONからcourses/categoriesを入れる
 
 ```bash
-bun db:seed:local
+bun db:push:local
 ```
 
 HTML->JSON->Local DBを一括で実行
 
 ```bash
-bun db:sync
+bun db:sync:local
 ```
 
 Remote DBにJSONからcourses/categoriesを入れる(seed.ts)
@@ -488,7 +493,7 @@ bun db:push:remote
 HTML->JSON->Remote DBを一括で実行
 
 ```bash
-bun db:deploy
+bun db:sync:remote
 ```
 
 ライセンス出力

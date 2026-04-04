@@ -4,7 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-import {defaultLang, languages} from "./src/translation/ui.ts"; // @エイリアスは使えない
+import {defaultLang, languages} from "./src/lib/translation/ui"; // @エイリアスは使えない
 
 // https://astro.build/config
 export default defineConfig({

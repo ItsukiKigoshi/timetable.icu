@@ -1,5 +1,5 @@
 // src/constants/time.ts
-import type {Course} from "@/db/schema.ts";
+import type {Course} from "@/db/schema";
 
 export const SELECTABLE_YEARS = [2026] as const;
 export const SELECTABLE_TERMS = ['Spring', 'Autumn', 'Winter'] as const;
@@ -7,9 +7,6 @@ export const SELECTABLE_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as con
 
 export const DEFAULT_YEAR = 2026; // new Date().getFullYear() didnt work on Workers
 export const DEFAULT_TERM: Course['term'] = 'Spring';
-
-export const START_TIME = 8 * 60 + 45; // 08:45
-export const END_TIME = 20 * 60 + 15; // 20:15
 
 export const PERIODS = [
     {label: '1', start: '08:45', end: '10:00'},
@@ -22,3 +19,9 @@ export const PERIODS = [
     {label: '7', start: '18:15', end: '19:30'},
     {label: '夜', start: '19:30', end: '20:10'},
 ];
+
+export const TIMETABLE_CONFIG = {
+    START_TIME: 8 * 60 + 45,// 08:45
+    END_TIME: 20 * 60,// 20:00
+    HEADER_HEIGHT: 40,
+} as const;

@@ -1,13 +1,13 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import {useLanguage} from "@/translation/utils.ts";
-import {defaultLang} from "@/translation/ui.ts";
+import Layout from "@/components/common/layout/Layout.astro";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
+import {defaultLang} from "@/lib/translation/ui.ts";
 import {Image} from "astro:assets";
 import Secret1 from "@/assets/secret1.webp";
 import Secret2 from "@/assets/secret2.webp";
 
 const lang = Astro.locals.lang || defaultLang;
-const {t, l} = useLanguage(lang);
+const {t, l} = createTranslationHelper(lang);
 ---
 <Layout title={`404 - ${t('404.title')}`}>
     <main class="hero min-h-[85vh] relative overflow-hidden">

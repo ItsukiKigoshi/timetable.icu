@@ -1,0 +1,59 @@
+---
+import {env} from "cloudflare:workers";
+import {drizzle} from "drizzle-orm/d1";
+import * as schema from "@/db/schema/index.ts";
+import Layout from "@/components/common/layout/Layout.astro";
+import TimetableInterface from "@/components/features/timetable/TimetableInterface.tsx";
+import {type Language} from "@/lib/translation/ui.ts"
+import type {UserCourseWithDetails} from "@/db/schema/index.ts";
+import {getTranslations} from "@/lib/translation/utils";
+
+interface Props {
+    lang: Language;
+}
+
+const {user} = Astro.locals;
+const { lang } = Astro.props;
+
+const t = getTranslations(lang);
+
+// スコープの外側で空配列として初期化しておく
+let initialCourses = [] as UserCourseWithDetails[];
+
+if (user) {
+    const db = drizzle(env.timetable_icu, { schema });
+
+    const results = await db.query.userCourses.findMany({
+        where: (uc, { eq }) => eq(uc.userId, user.id),
+        with: {
+            course: {
+                with: {
+                    schedules: true
+                }
+            }
+        }
+    });
+
+    // ユーザー設定をCourseの第一階層にマージする
+    initialCourses = results.map((uc) => ({
+        ...uc.course,              // 公式のコース情報
+        // UserCourseMetadata を展開
+        isVisible: uc.isVisible,
+        selectedAltGroupId: uc.selectedAltGroupId,
+        colorCustom: uc.colorCustom,
+        memo: uc.memo,
+        // schedules はそのまま保持
+        schedules: uc.course.schedules,
+    }));
+}
+---
+<Layout title={`${t('timetable.title')} | ${t('site.title')}`}>
+    <div class="p-2 md:px-6 mx-auto h-[calc(100vh-128px)] overflow-hidden">
+            <TimetableInterface
+                    initialCourses={initialCourses}
+                    user={user}
+                    lang={lang}
+                    client:load
+            />
+    </div>
+</Layout>
