@@ -26,25 +26,32 @@ export const getSyllabusUrl = (
  * 単位数を "整数+分数" 形式でフォーマットする
  * 例: 2.333 -> "2+1/3", 0.666 -> "2/3" (または "0+2/3")
  */
-export const formatUnits = (units: number): string => {
-    const integerPart = Math.floor(units);
-    const decimalPart = units - integerPart;
-
-    let fraction = "";
-    // 許容誤差範囲を 0.02 程度に設定
-    if (decimalPart > 0.31 && decimalPart < 0.35) {
-        fraction = "1/3";
-    } else if (decimalPart > 0.64 && decimalPart < 0.68) {
-        fraction = "2/3";
-    }
-
-    if (fraction) {
-        return integerPart > 0 ? `${integerPart}+${fraction}` : fraction;
-
-        // 常に "整数+分数" 形式にする場合
-        // return `${integerPart}+${fraction}`;
-    }
-
-    // 小数点以下がない、または特殊な分数でない場合は通常の数値を文字列で返す
-    return units.toString();
-};
+ export const formatUnits = (units: number): string => {
+     // 限りなく整数に近い場合は、まずその整数に丸める
+     // 例: 0.9999999998 -> 1.0
+     const roundedUnits = Math.abs(Math.round(units) - units) < 0.000001 
+                          ? Math.round(units) 
+                          : units;
+ 
+     const integerPart = Math.floor(roundedUnits);
+     const decimalPart = roundedUnits - integerPart;
+ 
+     // 整数になった場合は，そのまま文字列を返して終了
+     if (decimalPart < 0.000001) {
+         return integerPart.toString();
+     }
+ 
+     let fraction = "";
+     // 分数の判定（許容誤差を考慮）
+     if (Math.abs(decimalPart - 1/3) < 0.01) {
+         fraction = "1/3";
+     } else if (Math.abs(decimalPart - 2/3) < 0.01) {
+         fraction = "2/3";
+     }
+ 
+     if (fraction) {
+         return integerPart > 0 ? `${integerPart}+${fraction}` : fraction;
+     }
+ 
+     return roundedUnits.toString();
+ };
