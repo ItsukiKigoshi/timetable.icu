@@ -140,6 +140,11 @@ ICU生の時間割・履修登録ツールの決定版
 ---
 
 # TODO
+- [ ] Urgent: 表示するコースをyear termによって限定，を徹底する
+  - [ ] その上でlocalStorageにはすべてのコースを．
+  - [ ]  .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)を3箇所でかける実装は危ない
+  - [ ] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧も持つ必要がある
+  - [ ] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
 - [ ] ELAを追加したい: 独自の開始/終了時間は認めずコマに収まる予定の追加機能？
 - [ ] 理系の演習選択UI
     - [ ] DBは設計済み
