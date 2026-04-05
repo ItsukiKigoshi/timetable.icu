@@ -149,6 +149,9 @@ ICU生の時間割・履修登録ツールの決定版
         - [x] Drizzle ORM
         - [x] Schema定義
         - [x] D1 Deploy
+          - [ ] 帰国したらD1のlocationを日本に移す？（せっかくEdge DBなのに毎回海を越えてたら意味ない）
+          - [ ] データが消えないように細心の注意を払う必要がある
+          - [ ] よほどlatencyが目立たないかぎり，公式移行機能がつくまで待つという手もある
         - [x] 未ログインユーザはLocalStorageへ
             - [x] LocalStorageがSaveされたときに通知
     - [x] ログインしてるなら時間割にRoomを出す！
