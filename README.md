@@ -116,6 +116,8 @@ ICU生の時間割・履修登録ツールの決定版
 - [現在の時間割](https://www.icu.ac.jp/news/2406181000.html)
 - Twinte
 - [Webサービス公開前のチェックリスト](https://zenn.dev/catnose99/articles/547cbf57e5ad28)
+- 過去のTimetable for icu
+  - http://weeklygiants.co/?p=8872
 
 ---
 
@@ -131,6 +133,8 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 退会方法を提供
 - [ ] Refactor
   - [ ] 関数やComponentにコメント（JS Docs）をつける
+- [ ] Test
+  - [ ] 最低限，500番台と白紙のHTMLになっていないことを確認
 
 # 工程表
 

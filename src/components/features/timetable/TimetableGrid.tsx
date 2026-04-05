@@ -72,10 +72,7 @@ const TimetableGrid = ({
                             s.isVisible && // 表示されているもののみ
                             // 授業の開始がスロット終了より前、かつ授業の終了がスロット開始より後
                             s.startMin < visualEndMin &&
-                            s.endMin > pStartMin &&
-                            // ロング授業のはみ出した部分はクリック対象から除外
-                            s.startMin != pStartMin + 30 && // Long 4（授業開始時刻がそのコマ（昼休み）の開始時刻のちょうど30分後）
-                            s.endMin != pStartMin + 30 // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
+                            s.endMin > pStartMin
                         );
                         return (
                             <div

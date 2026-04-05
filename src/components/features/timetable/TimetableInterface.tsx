@@ -34,7 +34,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
     const {t, isJa, translateDay, translatePeriod} = createTranslationHelper(lang);
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string } | null>(null);
+    const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string, start: string, end: string } | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<UserCourseWithDetails | null>(null);
     const [expandedCourseId, setExpandedCourseId] = useState<number | null>(null);
@@ -43,13 +43,20 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
     // その時間枠（Day/Period）に該当する UserCourseWithDetails
     const coursesInSelectedSlot = useMemo(() => {
         if (!selectedSlot) return [];
-
         // 1. まずその時間枠にあるコマの ID を取得
         const slotCourseIds = schedules
             .filter(s =>
+                s.isVisible !== false && // 非表示のものは除外
                 s.dayOfWeek === selectedSlot.day &&
-                s.period === parseInt(selectedSlot.period) &&
-                s.isVisible !== false // 非表示のものは除外
+                // periodのlabelが一致する　もしくは　Long授業の条件に合致するコースをそのコマの授業としてカウント
+                (
+                    s.period === parseInt(selectedSlot.period) ||
+                    // ロング授業のはみ出した部分もクリック可能に
+                    (
+                        timeToMin(s.startTime) ===  timeToMin(selectedSlot.start) + 30 ||   // Long 4（授業開始時刻がそのコマ（昼休み）の開始時刻のちょうど30分後）
+                        timeToMin(s.endTime) === timeToMin(selectedSlot.start) + 30         // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
+                    )
+                )
             )
             .map(s => s.id); // UserCourse の ID
 
@@ -119,7 +126,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
 
         if (isOccupied) {
             // ステートをセットするだけ。開く処理は useEffect に任せる
-            setSelectedSlot({day, period: p.label});
+            setSelectedSlot({day, period: p.label, start: p.start, end: p.end});
         }
     };
 
@@ -225,7 +232,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                 isOpen={!!selectedSlot}
                 onClose={() => setSelectedSlot(null)}
                 title={selectedSlot
-                    ? (isJa ? `${translateDay(selectedSlot.day)} ${selectedSlot.period}限` : `${translateDay(selectedSlot.day)} Period ${selectedSlot.period}`)
+                    ? (`${translateDay(selectedSlot.day)} ${t('timetable.period').replace('{period}', translatePeriod(selectedSlot.period) ?? '')}`)
                     : ""}>
                         {coursesInSelectedSlot.length === 1 ? (
                             // --- 1つの場合：即座に詳細を表示 ---
@@ -251,7 +258,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                                             key={c.id}
                                             className={`collapse collapse-arrow bg-base-200/50 border border-base-300
                                              ${isExpanded ? 'collapse-open' : 'collapse-close'}`}>
-                                            {/*コース概要*/}
+                                            {/* コース概要 */}
                                             <div
                                                 className="gap-2 collapse-title pr-10 cursor-pointer active:bg-base-300/50"
                                                 onClick={() => setExpandedCourseId(isExpanded ? null : c.id)}
