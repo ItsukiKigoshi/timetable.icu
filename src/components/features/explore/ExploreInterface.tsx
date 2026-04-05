@@ -324,7 +324,7 @@ export interface SearchFilters {
                         >
                             <option value="">{t('explore.units')}</option>
                             <option value="0.333">1/3</option>
-                            {["1", "2", "3", "4", "5", "6"].map(v => (
+                            {["1", "2", "3", "4", "5"].map(v => (
                                 <option key={v} value={v}>{v}</option>
                             ))}
                         </select>
