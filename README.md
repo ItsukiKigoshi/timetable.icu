@@ -27,14 +27,14 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] どちらも，Non-Profitの学生団体を作れば免除の可能性があるので組織するのはアリ: Appleの[Waiver](https://developer.apple.com/jp/help/account/membership/fee-waivers/)
         - [ ] ICUからAppleに[教育機関向けDeveloper Program](https://education-static.apple.com/geo/jp/AppleDeveloperProgram_FeeWaiverforEducation_OnboardingKit_JP.pdf)に登録してもらう
           - [ ] これも, ITオフィスに掛け合う前にWebアプリとしての継続的な運用実績があった方がいいな．
-          - [ ] 奪K体への登録にはDUNS Numberが必要．法人登記 (一般社団とか？)？
-          - [ ] とりあえずはWebアプリで続けて，将来的にiOS化したいね: Twinte, Hupassとかみたいな．
+          - [ ] 団体としての登録にはDUNS Numberが必要．法人登記 (一般社団とか？)？
+          - [ ] とりあえずはWebアプリで続けて，将来的にiOS/Android化したいね: Twinte, Hupassとかみたいな．
         - [ ] 本当に，問題は開発ではなくAppleとGoogleの壁だな
           - [ ] 個人で100$払っちゃってもいいけど継続性がない
-          - [ ] 敷居が高いAppleは無視してとりあえずAndoidだけだしちゃうのはあり．
+          - [ ] 敷居が高いAppleは無視してとりあえずAndoidだけだしちゃうのはあり（依然としてテスター数確保は問題）
     - [ ] Share機能
       - [ ] 画像: 画面とロゴ，URL; アプリを知ってもらう機会にする
-      - [ ] リンク: 「あなたもつくる」の導線
+      - [ ] リンク: 「あなたもつくる？」の導線
 
 # 大切にしたいこと
 
