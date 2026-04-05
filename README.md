@@ -129,6 +129,8 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] Calendar Export
 - [ ] 色選択
 - [ ] 退会方法を提供
+- [ ] Refactor
+  - [ ] 関数やComponentにコメント（JS Docs）をつける
 
 # 工程表
 
@@ -472,7 +474,7 @@ bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mo
 ```
 
 などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
-sqlファイルの中身を一旦空にしてapplyする方法がある．推奨されてはいなさそう．
+sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
 
 Debug with Cloudflare Environment
 
@@ -500,7 +502,7 @@ HTML->JSON->Local DBを一括で実行
 bun db:sync:local
 ```
 
-Remote DBにJSONからcourses/categoriesを入れる(seed.ts)
+Remote DBにJSONからcourses/categoriesを入れる
 
 ```bash
 bun db:push:remote

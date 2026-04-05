@@ -10,8 +10,8 @@ import CourseDetailContent from "@/components/features/timetable/CourseDetailCon
 import {formatUnits} from "@/lib/course/utils.ts";
 import TimetableGrid from "@/components/features/timetable/TimetableGrid.tsx";
 import CourseList from "@/components/features/timetable/CourseList.tsx";
-import CourseHeader from "@/components/features/course/CourseHeader.tsx";
-import Modal from "@/components/common/ui/Modal.tsx";
+import CourseHeader from "@/components/common/CourseHeader.tsx";
+import Modal from "@/components/common/Modal.tsx";
 import {LanguageProvider} from "@/lib/translation/context.tsx";
 
 export default function TimetableInterface({initialCourses, user, lang = 'ja'}: {
@@ -230,7 +230,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                         {coursesInSelectedSlot.length === 1 ? (
                             // --- 1つの場合：即座に詳細を表示 ---
                             <section className="flex flex-col gap-2">
-                                <div className="pb-4">
+                                <div className="mb-2 border-b pb-4">
                                     <CourseHeader course={coursesInSelectedSlot[0]} />
                                 </div>
                                 <CourseDetailContent
@@ -251,6 +251,7 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                                             key={c.id}
                                             className={`collapse collapse-arrow bg-base-200/50 border border-base-300
                                              ${isExpanded ? 'collapse-open' : 'collapse-close'}`}>
+                                            {/*コース概要*/}
                                             <div
                                                 className="gap-2 collapse-title pr-10 cursor-pointer active:bg-base-300/50"
                                                 onClick={() => setExpandedCourseId(isExpanded ? null : c.id)}

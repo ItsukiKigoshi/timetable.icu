@@ -16,7 +16,7 @@ import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {defaultLang} from "@/lib/translation/ui.ts";
 import courseUpdateInfo from '@/db/data/course-last-update.json';
 import {getSyllabusUrl} from "@/lib/course/utils.ts";
-import CourseHeader from "@/components/features/course/CourseHeader.tsx";
+import CourseHeader from "@/components/common/CourseHeader.tsx";
 import {LanguageProvider} from "@/lib/translation/context.tsx";
 import type {UserCoursePostResponse} from "@/pages/api/user-courses";
 
