@@ -119,6 +119,17 @@ ICU生の時間割・履修登録ツールの決定版
 
 ---
 
+# TODO
+- [ ] 理系の演習選択UI
+    - [ ] DBは設計済み
+    - [ ] フロントエンドの開発だけでいける
+      - [ ] 演習選択Dialog
+      - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
+- [ ] C-Week対応（？）
+- [ ] Calendar Export
+- [ ] 色選択
+- [ ] 退会方法を提供
+
 # 工程表
 
 - [x] Astro App Initialise
