@@ -4,10 +4,14 @@ import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
 
 export function useTimetable({
                                  initialCourses = [], // Astroから渡された UserCourseWithDetails[]
-                                 user
+                                 user,
+                                 selectedYear,
+                                 selectedTerm
                              }: {
     initialCourses?: UserCourseWithDetails[],
     user: any
+    selectedYear: number,
+    selectedTerm: string,
 }) {
     // 1. Source of Truth (詳細データを含むコース配列)
     const [courses, setCourses] = useState<UserCourseWithDetails[]>(initialCourses);
@@ -36,12 +40,14 @@ export function useTimetable({
 
     // 3. 全スケジュールを平坦化 (全コマ)
     const allSchedules = useMemo(() => {
-        return courses.flatMap(course =>
-            course.schedules.map(s => ({
-                ...course,
-                ...s,
-                scheduleId: s.id,
-                id: course.id
+        return courses
+            .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
+            .flatMap(course =>
+                course.schedules.map(s => ({
+                    ...course,
+                    ...s,
+                    scheduleId: s.id,
+                    id: course.id
             } as FlatSchedule))
         );
     }, [courses]);

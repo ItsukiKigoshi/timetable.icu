@@ -1,5 +1,5 @@
 import type {UserCourseWithDetails} from "@/db/schema";
-import {PERIODS} from "@/constants/time.ts";
+import {DEFAULT_TERM, DEFAULT_YEAR, PERIODS} from "@/constants/time.ts";
 import type {User} from "better-auth";
 import {useEffect, useMemo, useState} from "react";
 import {LayoutGrid, List} from "lucide-react";
@@ -14,10 +14,18 @@ import CourseHeader from "@/components/common/CourseHeader.tsx";
 import Modal from "@/components/common/Modal.tsx";
 import {LanguageProvider} from "@/lib/translation/context.tsx";
 
-export default function TimetableInterface({initialCourses, user, lang = 'ja'}: {
+export default function TimetableInterface({
+                                               initialCourses,
+                                               user,
+                                               lang = 'ja',
+                                               selectedYear = DEFAULT_YEAR,
+                                               selectedTerm = DEFAULT_TERM
+}: {
     initialCourses: UserCourseWithDetails[],
     user?: User | null,
-    lang?: string
+    lang?: string,
+    selectedYear: number,
+    selectedTerm: string
 }) {
     const {
         courses,       // コース単位のリスト
@@ -28,7 +36,9 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
         updateMemo
     } = useTimetable({
         initialCourses: initialCourses, // Astroから渡されたもの
-        user
+        user,
+        selectedYear,
+        selectedTerm
     });
     // 翻訳
     const {t, isJa, translateDay, translatePeriod} = createTranslationHelper(lang);
@@ -188,6 +198,8 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                         <div className="h-full w-full overflow-y-auto">
                             <CourseList
                                 items={courses}
+                                selectedYear={selectedYear}
+                                selectedTerm={selectedTerm}
                                 isJa={isJa}
                                 t={t}
                                 setSelectedCourse={setSelectedCourse}
@@ -205,6 +217,8 @@ export default function TimetableInterface({initialCourses, user, lang = 'ja'}: 
                         <div className="flex-1 overflow-y-auto">
                             <CourseList
                                 items={courses}
+                                selectedYear={selectedYear}
+                                selectedTerm={selectedTerm}
                                 isJa={isJa}
                                 t={t}
                                 setSelectedCourse={setSelectedCourse}
