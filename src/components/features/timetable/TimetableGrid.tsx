@@ -62,20 +62,20 @@ const TimetableGrid = ({
 
                     {/* 背景スロット: 次のコマの開始時間まで広げて描画 */}
                     {PERIODS.map((p, index) => {
-                        const sMin = timeToMin(p.start);
-                        const eMin = timeToMin(p.end);
+                        const pStartMin = timeToMin(p.start);
+                        const pEndMin = timeToMin(p.end);
                         const nextP = PERIODS[index + 1];
                         // 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
-                        const visualEndMin = nextP ? timeToMin(nextP.start) : timeToMin(p.end);
+                        const visualEndMin = nextP ? timeToMin(nextP.start) : pEndMin;
                         const isOccupied = displaySchedules.some(s =>
                             s.dayOfWeek === day &&
                             s.isVisible && // 表示されているもののみ
                             // 授業の開始がスロット終了より前、かつ授業の終了がスロット開始より後
                             s.startMin < visualEndMin &&
-                            s.endMin > sMin &&
-                            // ロング授業のはみ出した部分は除外
-                            s.startMin　+ 40 != eMin &&
-                            s.endMin != sMin + 40
+                            s.endMin > pStartMin &&
+                            // ロング授業のはみ出した部分はクリック対象から除外
+                            s.startMin != pStartMin + 30 && // Long 4（授業開始時刻がそのコマ（昼休み）の開始時刻のちょうど30分後）
+                            s.endMin != pStartMin + 30 // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
                         );
                         return (
                             <div
@@ -86,8 +86,8 @@ const TimetableGrid = ({
                                         : "z-0 pointer-events-none opacity-20"
                                 }`}
                                 style={{
-                                    top: getTop(sMin),
-                                    height: getHeight(visualEndMin - sMin),
+                                    top: getTop(pStartMin),
+                                    height: getHeight(visualEndMin - pStartMin),
                                 }}
                                 onClick={() => isOccupied && handleSlotClick(day, p)}
                             />
