@@ -22,7 +22,8 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
     - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
-      - [ ] [Capacitor](https://capacitorjs.com/) [Preferences API](https://capacitorjs.com/docs/apis/preferences)をつかえばWeb APIでアプリを作れる
+      - [ ] 過去のアプリが後輩に引き継がれなかったのも，アプリストアの維持費が一因？
+      - [ ] [Capacitor](https://capacitorjs.com/)+[Preferences API](https://capacitorjs.com/docs/apis/preferences)をつかえばWeb APIでアプリを作れる
       - [ ] 懸念は個人開発者に対するGoogle Playのテスト厳格化とApple Developer Programへの登録100$/yrが高すぎること (絶対に収支がプラスにならない)
         - [ ] どちらも，Non-Profitの学生団体を作れば免除の可能性があるので組織するのはアリ: Appleの[Waiver](https://developer.apple.com/jp/help/account/membership/fee-waivers/)
         - [ ] ICUからAppleに[教育機関向けDeveloper Program](https://education-static.apple.com/geo/jp/AppleDeveloperProgram_FeeWaiverforEducation_OnboardingKit_JP.pdf)に登録してもらう
@@ -106,7 +107,7 @@ ICU生の時間割・履修登録ツールの決定版
 # ライバル
 
 - [ICUrriculum](https://icu-courses.com)
-- [Timetable4ICU](https://www.timetable4icu.com/)
+- [Timetable4ICU](https://www.timetable4icu.com/): 2025のスケジュールは更新されていない
 - すごい時間割
 - Penmark
 
@@ -117,7 +118,24 @@ ICU生の時間割・履修登録ツールの決定版
 - Twinte
 - [Webサービス公開前のチェックリスト](https://zenn.dev/catnose99/articles/547cbf57e5ad28)
 - 過去のTimetable for icu
-  - http://weeklygiants.co/?p=8872
+  - 1代目「ICUTTABLE」
+    - 不明
+  - 2代目「ICUTTABLE#2」: [ICU生向け時間割アプリ「ICUTTABLE#2」開発者インタビュー](http://weeklygiants.co/?p=1805)
+    - 新井友朗さん（ID17-18か？）
+  - 3代目「Timetable4ICU」:  [私の芽―ICU時間割アプリを作る](http://weeklygiants.co/?p=8872)
+    - 千葉彌平さん（ID19; お会いしたことある, 確か平島大先生のご紹介?） 
+        - 課題: Apple Developers Programの登録料を賄えない
+    - [GitHub](https://github.com/YasuChiba/TimeTableForICU-ios-public)
+    - [Twitter](https://x.com/TimeTableForICU)
+    - [Facebook](https://www.facebook.com/timetableforicu/)
+  - 4代目 : [Timetable4ICU - 国際基督教大学の時間割アプリ](https://www.timetable4icu.com/)
+    - Kohshi Yamaguchi (ID24-25?; お会いしたことある)
+      - Apple Developers Programの登録料は気にならないとお会いしたときに仰っていた
+    - 3代目のスクリーンショットと比較する限り，3代目を引き継いだ？
+    - [GitHub](https://github.com/kohshi54/Timetable4ICU)
+    - [Twitter](https://x.com/timetable4icu)
+
+
 
 ---
 
