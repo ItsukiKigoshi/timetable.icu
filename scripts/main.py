@@ -257,7 +257,7 @@ def get_course_data_json(html_content):
     return res_list
 
 # --- メタデータ（更新日時）保存用 ---
-COURSE_UPDATE_INFO_PATH = './src/db/course-last-update.json'
+COURSE_UPDATE_INFO_PATH = './src/db/data/course-last-update.json'
 
 def save_course_update_metadata():
     """
