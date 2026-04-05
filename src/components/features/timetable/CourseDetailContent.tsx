@@ -59,7 +59,7 @@ const CourseDetailContent = ({
                 </label>
                 <textarea
                     className="textarea textarea-bordered w-full h-24 text-sm focus:textarea-primary"
-                    placeholder="課題や教室のメモ..."
+                    placeholder={t('timetable.memo.content')}
                     defaultValue={course.memo || ""}
                     onBlur={(e) => updateMemo(course.id, e.target.value)} // フォーカスが外れた時に保存
                 ></textarea>

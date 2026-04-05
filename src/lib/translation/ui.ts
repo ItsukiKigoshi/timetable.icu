@@ -105,6 +105,7 @@ const ja = {
   "timetable.my_courses": "授業一覧",
   "timetable.no_courses": "授業が追加されていません",
   "timetable.memo": "メモ",
+  "timetable.memo.content":"課題や試験に関するメモ...",
   "timetable.modal_title": "の授業", // "月 1限の授業" のような使い方
   "timetable.close": "閉じる",
   "timetable.remove": "削除",
@@ -242,6 +243,7 @@ const en = {
   "timetable.my_courses": "Courses",
   "timetable.no_courses": "No Course is Added",
   "timetable.memo": "Notes",
+  "timetable.memo.content":"Notes on exam, homework, etc...",
   "timetable.modal_title": "Courses in", // "Courses in Mon 1" のような使い方
   "timetable.close": "Close",
   "timetable.remove": "Remove",
