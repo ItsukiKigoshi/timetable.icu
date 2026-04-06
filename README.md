@@ -135,21 +135,11 @@ ICU生の時間割・履修登録ツールの決定版
     - [GitHub](https://github.com/kohshi54/Timetable4ICU)
     - [Twitter](https://x.com/timetable4icu)
 
-
-
 ---
 
 # TODO
-- [ ] Test
-  - [ ] Vitest, Playwright
-  - [ ] さすがにType Errorだけでバグを見つける限界に来ている
-  - [ ] 全体
-    - [ ] 400-500番台と，白紙のHTMが出力されていないことを確認
-  - [ ] Explore
-    - [ ] 条件に合う検索結果か（取りこぼしがないか; exhaustかも検証）
-  - [ ] Timetable
-    - [ ] その学期のすべてのコースが表示されているか（Exhaust）
 - [ ] ELAを追加したい: 独自の開始/終了時間は認めずコマに収まる予定の追加機能？
+- [ ] 色選択
 - [ ] 理系の演習選択UI
     - [ ] DBは設計済み
     - [ ] フロントエンドの開発だけでいける
@@ -157,10 +147,18 @@ ICU生の時間割・履修登録ツールの決定版
       - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
 - [ ] C-Week対応（？）
 - [ ] Calendar Export
-- [ ] 色選択
 - [ ] 退会方法を提供
 - [ ] Refactor
   - [ ] 関数やComponentにコメント（JS Docs）をつける
+- [ ] Test
+    - [ ] Vitest, Playwright
+    - [ ] さすがにType Errorだけでバグを見つける限界に来ている
+    - [ ] 全体
+        - [ ] 400-500番台と，白紙のHTMが出力されていないことを確認
+    - [ ] Explore
+        - [ ] 条件に合う検索結果か（取りこぼしがないか; exhaustかも検証）
+    - [ ] Timetable
+        - [ ] その学期のすべてのコースが表示されているか（Exhaust）
 
 # 工程表
 
