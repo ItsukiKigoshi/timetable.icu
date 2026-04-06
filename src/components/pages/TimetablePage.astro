@@ -7,7 +7,6 @@ import TimetableInterface from "@/components/features/timetable/TimetableInterfa
 import {type Language} from "@/lib/translation/ui.ts"
 import type {UserCourseWithDetails} from "@/db/schema/index.ts";
 import {getTranslations} from "@/lib/translation/utils";
-import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
 
 interface Props {
     lang: Language;
@@ -37,7 +36,6 @@ if (user) {
 
     // ユーザー設定をCourseの第一階層にマージする
     initialCourses = results
-        .filter(uc => uc.course.year === selectedYear && uc.course.term === selectedTerm)
         .map((uc) => ({
         ...uc.course,              // 公式のコース情報
         // UserCourseMetadata を展開

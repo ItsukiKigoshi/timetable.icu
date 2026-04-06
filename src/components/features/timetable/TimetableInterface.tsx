@@ -30,6 +30,7 @@ export default function TimetableInterface({
     const {
         courses,       // コース単位のリスト
         schedules,     // 平坦化されたもの
+        displayCourses,
         displaySchedules,
         toggleCourse,
         toggleVisibility,
@@ -95,9 +96,9 @@ export default function TimetableInterface({
 
 
     // Memo
-    // isVisible が true の授業のみの単位合計を計算
+    // isVisible が true かつ選択中の年・学期の授業のみの単位合計を計算
     const visibleTotalUnits = useMemo(() => {
-        return courses
+        return displayCourses
             .filter(c => c.isVisible)
             .reduce((sum, c) => sum + (c.units || 0), 0);
     }, [courses]);
@@ -107,7 +108,6 @@ export default function TimetableInterface({
         // selectedCourse.id をキーに、常に state(courses) 内の最新オブジェクトを返す
         return courses.find(c => c.id === selectedCourse.id) || selectedCourse;
     }, [selectedCourse, courses]);
-
 
     // --- 関数 ---
     const handleToggle = async (course: any) => {
@@ -197,9 +197,7 @@ export default function TimetableInterface({
                     ) : (
                         <div className="h-full w-full overflow-y-auto">
                             <CourseList
-                                items={courses}
-                                selectedYear={selectedYear}
-                                selectedTerm={selectedTerm}
+                                items={displayCourses}
                                 isJa={isJa}
                                 t={t}
                                 setSelectedCourse={setSelectedCourse}
@@ -216,9 +214,7 @@ export default function TimetableInterface({
                     <aside className="w-80 flex flex-col bg-base-200/20 border-r border-base-300">
                         <div className="flex-1 overflow-y-auto">
                             <CourseList
-                                items={courses}
-                                selectedYear={selectedYear}
-                                selectedTerm={selectedTerm}
+                                items={displayCourses}
                                 isJa={isJa}
                                 t={t}
                                 setSelectedCourse={setSelectedCourse}

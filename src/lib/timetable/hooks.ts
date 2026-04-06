@@ -13,7 +13,7 @@ export function useTimetable({
     selectedYear: number,
     selectedTerm: string,
 }) {
-    // 1. Source of Truth (詳細データを含むコース配列)
+    // Source of Truth (詳細データを含むコース配列)
     const [courses, setCourses] = useState<UserCourseWithDetails[]>(initialCourses);
 
     // 初回マウント: LocalStorage(ゲスト) or Props(ログイン) から復元
@@ -33,30 +33,35 @@ export function useTimetable({
         }
     }, [user, initialCourses]);
 
-    // 2. 登録済みIDのSet（ボタンの表示判定用）
-    const registeredIds = useMemo(() => {
-        return new Set(courses.map(c => c.id));
-    }, [courses]);
-
-    // 3. 全スケジュールを平坦化 (全コマ)
+    // 全スケジュールを平坦化 (全コマ)
     const allSchedules = useMemo(() => {
-        return courses
-            .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
-            .flatMap(course =>
+        return courses.flatMap(course =>
                 course.schedules.map(s => ({
                     ...course,
                     ...s,
                     scheduleId: s.id,
                     id: course.id
-            } as FlatSchedule))
-        );
+                } as FlatSchedule))
+            );
     }, [courses]);
 
-    // 4. 描画用のデータ (isVisible=true のみ、かつ位置計算済み)
+    // 選択中の年と学期の授業一覧
+    const displayCourses = useMemo(() => {
+        return courses.filter(uc => uc.year === selectedYear && uc.term === selectedTerm);
+    }, [courses]);
+
+    // 描画用のデータ (isVisible=trueかつ選択中の年と学期のみ、かつ位置計算済み)
     const displaySchedules = useMemo(() => {
-        const visibleOnly = allSchedules.filter(s => s.isVisible !== false);
+        const visibleOnly = allSchedules
+            .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
+            .filter(s => s.isVisible !== false);
         return computeDisplaySchedules(visibleOnly);
     }, [allSchedules]);
+
+    // 登録済みIDのSet（ボタンの表示判定用）
+    const registeredIds = useMemo(() => {
+        return new Set(courses.map(c => c.id));
+    }, [courses]);
 
     // ヘルパー: ローカルストレージ同期
     const syncLocalStorage = (nextCourses: UserCourseWithDetails[]) => {
@@ -65,7 +70,6 @@ export function useTimetable({
     };
 
     // --- ハンドラー ---
-
     // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
     const toggleCourse = async (course: UserCourseWithDetails) => {
         const targetCourseId = course.id;
@@ -136,6 +140,7 @@ export function useTimetable({
     return {
         courses,
         schedules: allSchedules,
+        displayCourses,
         displaySchedules,
         toggleCourse,
         toggleVisibility,

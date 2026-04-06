@@ -2,12 +2,9 @@ import type {UserCourseWithDetails} from "@/db/schema";
 import {Eye, EyeOff, Trash2} from "lucide-react";
 import {useTranslation} from "@/lib/translation/context.tsx";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
-import {DEFAULT_TERM, DEFAULT_YEAR} from "@/constants/time.ts";
 
 interface CourseListProps {
     items: UserCourseWithDetails[];
-    selectedYear: number,
-    selectedTerm: string
     padding?: boolean;
     isJa: boolean;
     t: any;
@@ -19,8 +16,6 @@ interface CourseListProps {
 
 const CourseList = ({
                         items,
-                        selectedYear = DEFAULT_YEAR,
-                        selectedTerm = DEFAULT_TERM,
                         padding = true,
                         setSelectedCourse,
                         toggleVisibility,
@@ -30,9 +25,7 @@ const CourseList = ({
     const {t} = useTranslation();
     return (
         <div className={`flex flex-col gap-2 w-full ${padding ? 'p-2' : ''}`}>
-            {items
-                .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
-                .map(course => {
+            {items.map(course => {
                     return (
                         <div key={course.id}
                              className={`group p-3 bg-base-100 rounded-xl flex justify-between items-center border border-base-300 ${!course.isVisible ? "opacity-60" : ""}`}>

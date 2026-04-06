@@ -140,11 +140,15 @@ ICU生の時間割・履修登録ツールの決定版
 ---
 
 # TODO
-- [ ] Urgent: 表示するコースをyear termによって限定，を徹底する
-  - [ ] その上でlocalStorageにはすべてのコースを．
-  - [ ]  .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)を3箇所でかける実装は危ない
-  - [ ] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧も持つ必要がある
-  - [ ] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
+- [ ] Test
+  - [ ] Vitest, Playwright
+  - [ ] さすがにType Errorだけでバグを見つける限界に来ている
+  - [ ] 全体
+    - [ ] 400-500番台と，白紙のHTMが出力されていないことを確認
+  - [ ] Explore
+    - [ ] 条件に合う検索結果か（取りこぼしがないか; exhaustかも検証）
+  - [ ] Timetable
+    - [ ] その学期のすべてのコースが表示されているか（Exhaust）
 - [ ] ELAを追加したい: 独自の開始/終了時間は認めずコマに収まる予定の追加機能？
 - [ ] 理系の演習選択UI
     - [ ] DBは設計済み
@@ -157,8 +161,6 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 退会方法を提供
 - [ ] Refactor
   - [ ] 関数やComponentにコメント（JS Docs）をつける
-- [ ] Test
-  - [ ] 最低限，500番台と白紙のHTMLになっていないことを確認
 
 # 工程表
 
@@ -211,6 +213,15 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] 休講日を除く
         - [ ] [学年暦](https://www.icu.ac.jp/about/calendar/)
         - [ ] 「公式の Google Calendarも便利だよ」
+    - [x] Urgent: 表示するコースをyear termによって限定，を徹底する
+    - [x] 原因は，useTimetableのsource of truthをFlatSchedule型からUserCourseWithDetails型に変えた時にその辺の実装もごっそり削ってしまったこと
+        - [x] commit #ab319e13が犯人, production環境でこのミスは許されるものではない
+        - [x] このcommit以前の実装を参照
+    - [x] その上で削除時，非表示時，メモ追加時にlocalStorageにはすべてのコースを保存することを徹底．
+    - [x] .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)を3箇所でかける実装は危ない
+    - [x] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧（displayCourses）も持つ必要がある
+        - [x] displaySchedule(FlatSchedule[]型)のUserCourse[]型バージョン．
+    - [x] ~~実装ミスに気づけるようにCourse Headerに常にYear Termを表示~~
 - [x] 授業検索
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!
