@@ -55,18 +55,19 @@ export default function TimetableInterface({
     const coursesInSelectedSlot = useMemo(() => {
         if (!selectedSlot) return [];
         // 1. まずその時間枠にあるコマの ID を取得
-        const slotCourseIds = displaySchedules
+        const slotCourseIds = schedules
             .filter(s =>
+                // 選択された年・学期と一致するかチェックする
+                s.year === selectedYear &&
+                s.term === selectedTerm &&
                 s.isVisible !== false && // 非表示のものは除外
                 s.dayOfWeek === selectedSlot.day &&
                 // periodのlabelが一致する　もしくは　Long授業の条件に合致するコースをそのコマの授業としてカウント
                 (
                     s.period === parseInt(selectedSlot.period) ||
                     // ロング授業のはみ出した部分もクリック可能に
-                    (
-                        timeToMin(s.startTime) ===  timeToMin(selectedSlot.start) + 30 ||   // Long 4（授業開始時刻がそのコマ（昼休み）の開始時刻のちょうど30分後）
-                        timeToMin(s.endTime) === timeToMin(selectedSlot.start) + 30         // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
-                    )
+                    timeToMin(s.startTime) ===  timeToMin(selectedSlot.start) + 30 ||   // Long 4（授業開始時刻がそのコマ（昼休み）の開始時刻のちょうど30分後）
+                    timeToMin(s.endTime) === timeToMin(selectedSlot.start) + 30         // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
                 )
             )
             .map(s => s.id); // UserCourse の ID
