@@ -84,7 +84,7 @@ const TimetableGrid = ({
 
                         return (
                             <div key={`${sched.courseCode}-${i}`}
-                                 className="absolute z-5" // 外側にパディングを持たせて「隙間」を作る
+                                 className="absolute z-5"
                                  style={{
                                      top: getTop(sched.startMin),
                                      height: getHeight(sched.endMin - sched.startMin),
@@ -93,7 +93,7 @@ const TimetableGrid = ({
 
                                  }}>
 
-                                <div className="flex gap-1 h-full w-full items-stretch bg-base-200 rounded-sm p-1 overflow-hidden">
+                                <div className="flex gap-1 h-full w-full items-stretch bg-base-200 rounded-sm md:p-1 p-0.1 overflow-hidden">
                                     {/* 左側のカラーバー */}
                                     <div
                                         className="lg:w-1 w-0.5 rounded-full"
@@ -106,7 +106,7 @@ const TimetableGrid = ({
                                             {isJa ? sched.titleJa : sched.titleEn}
                                         </h1>
                                         {user && sched.room && (
-                                            <p className="lg:text-[10px] text-[7px] font-medium opacity-50 truncate">
+                                            <p className="lg:text-[12px] text-[8px] font-medium opacity-80 truncate">
                                                 {sched.room}
                                             </p>
                                         )}
