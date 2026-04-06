@@ -90,12 +90,12 @@ export default function TimetableInterface({
     // 個別授業詳細モーダルを表示中、その授業が courses から消えたら閉じる
     useEffect(() => {
         if (selectedCourse) {
-            const isStillExists = courses.some(c => c.id === selectedCourse.id);
-            if (!isStillExists) {
+            const isStillVisible = displayCourses.some(c => c.id === selectedCourse.id);
+            if (!isStillVisible) {
                 setSelectedCourse(null);
             }
         }
-    }, [courses, selectedCourse]);
+    }, [displayCourses, selectedCourse]);
 
     // Memo
     // isVisible が true かつ選択中の年・学期の授業のみの単位合計を計算
@@ -107,9 +107,13 @@ export default function TimetableInterface({
 
     const currentSelectedCourse = useMemo(() => {
         if (!selectedCourse) return null;
-        // selectedCourse.id をキーに、常に state(courses) 内の最新オブジェクトを返す
-        return displayCourses.find(c => c.id === selectedCourse.id) || selectedCourse;
-    }, [selectedCourse, courses, displayCourses]);
+
+        // displayCourses（最新の state）から検索
+        const latest = displayCourses.find(c => c.id === selectedCourse.id);
+
+        // 見つからなければ null を返す（モーダルを閉じるトリガーになる）
+        return latest || null;
+    }, [selectedCourse, displayCourses]);
 
     // --- 関数 ---
     const handleToggle = async (course: any) => {
@@ -242,7 +246,10 @@ export default function TimetableInterface({
             {/* 詳細モーダル */}
             <Modal
                 isOpen={!!selectedSlot}
-                onClose={() => setSelectedSlot(null)}
+                onClose={() => {
+                    setSelectedSlot(null);      // スロット選択をリセット
+                    setExpandedCourseId(null);    // 個別授業の選択もリセット
+                }}
                 title={selectedSlot
                     ? (`${translateDay(selectedSlot.day)} ${t('timetable.period').replace('{period}', translatePeriod(selectedSlot.period) ?? '')}`)
                     : ""}>
