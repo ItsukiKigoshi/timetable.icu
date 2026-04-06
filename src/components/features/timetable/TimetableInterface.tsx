@@ -73,7 +73,7 @@ export default function TimetableInterface({
 
 
         // 2. その ID に一致する「コース本体」を courses から抽出
-        return courses.filter(c => slotCourseIds.includes(c.id) && c.isVisible !== false);
+        return displayCourses.filter(c => slotCourseIds.includes(c.id) && c.isVisible !== false);
     }, [selectedSlot, schedules, courses]);
 
     // モーダル内のコースが 0 になったら閉じる
@@ -100,7 +100,7 @@ export default function TimetableInterface({
         return displayCourses
             .filter(c => c.isVisible)
             .reduce((sum, c) => sum + (c.units || 0), 0);
-    }, [courses, displayCourses]);
+    }, [displayCourses]);
 
     const currentSelectedCourse = useMemo(() => {
         if (!selectedCourse) return null;
