@@ -13,7 +13,7 @@ export function useTimetable({
     selectedYear: number,
     selectedTerm: string,
 }) {
-    // Source of Truth (詳細データを含むコース配列)
+    // Source of Truth (詳細データを含むコース配列すべてのデータはcoursesを参照すべし)
     const [courses, setCourses] = useState<UserCourseWithDetails[]>(initialCourses);
 
     // 初回マウント: LocalStorage(ゲスト) or Props(ログイン) から復元

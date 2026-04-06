@@ -219,7 +219,7 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)を3箇所でかける実装は危ない
     - [x] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧（displayCourses）も持つ必要がある
         - [x] displaySchedule(FlatSchedule[]型)のUserCourse[]型バージョン．
-    - [x] ~~実装ミスに気づけるようにCourse Headerに常にYear Termを表示~~
+    - [x] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
 - [x] 授業検索
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!

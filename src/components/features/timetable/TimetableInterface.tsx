@@ -247,7 +247,7 @@ export default function TimetableInterface({
                             // --- 1つの場合：即座に詳細を表示 ---
                             <section className="flex flex-col gap-2">
                                 <div className="mb-2 border-b pb-4">
-                                    <CourseHeader course={coursesInSelectedSlot[0]} />
+                                    <CourseHeader course={coursesInSelectedSlot[0]} showYearTerm={true} />
                                 </div>
                                 <CourseDetailContent
                                     course={coursesInSelectedSlot[0]}
@@ -274,7 +274,7 @@ export default function TimetableInterface({
                                                 role="button"
                                                 tabIndex={0}
                                             >
-                                                <CourseHeader course={c} />
+                                                <CourseHeader course={c} showYearTerm={true} />
                                             </div>
 
                                             {/* 内容部分 */}
@@ -303,7 +303,7 @@ export default function TimetableInterface({
                     {currentSelectedCourse && (
                         <section className="flex flex-col gap-2">
                             <div className="mb-2 border-b pb-4">
-                                <CourseHeader course={currentSelectedCourse} />
+                                <CourseHeader course={currentSelectedCourse} showYearTerm={true} />
                             </div>
                             <CourseDetailContent
                                 course={currentSelectedCourse}
