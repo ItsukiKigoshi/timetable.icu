@@ -47,7 +47,9 @@ export function useTimetable({
 
     // 選択中の年と学期の授業一覧
     const displayCourses = useMemo(() => {
-        return courses.filter(uc => uc.year === selectedYear && uc.term === selectedTerm);
+        return courses
+            .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
+            .filter(s => s.isVisible !== false);
     }, [courses]);
 
     // 描画用のデータ (isVisible=trueかつ選択中の年と学期のみ、かつ位置計算済み)

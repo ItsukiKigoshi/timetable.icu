@@ -55,7 +55,7 @@ export default function TimetableInterface({
     const coursesInSelectedSlot = useMemo(() => {
         if (!selectedSlot) return [];
         // 1. まずその時間枠にあるコマの ID を取得
-        const slotCourseIds = schedules
+        const slotCourseIds = displaySchedules
             .filter(s =>
                 s.isVisible !== false && // 非表示のものは除外
                 s.dayOfWeek === selectedSlot.day &&
@@ -94,20 +94,19 @@ export default function TimetableInterface({
         }
     }, [courses, selectedCourse]);
 
-
     // Memo
     // isVisible が true かつ選択中の年・学期の授業のみの単位合計を計算
     const visibleTotalUnits = useMemo(() => {
         return displayCourses
             .filter(c => c.isVisible)
             .reduce((sum, c) => sum + (c.units || 0), 0);
-    }, [courses]);
+    }, [courses, displayCourses]);
 
     const currentSelectedCourse = useMemo(() => {
         if (!selectedCourse) return null;
         // selectedCourse.id をキーに、常に state(courses) 内の最新オブジェクトを返す
-        return courses.find(c => c.id === selectedCourse.id) || selectedCourse;
-    }, [selectedCourse, courses]);
+        return displayCourses.find(c => c.id === selectedCourse.id) || selectedCourse;
+    }, [selectedCourse, courses, displayCourses]);
 
     // --- 関数 ---
     const handleToggle = async (course: any) => {
