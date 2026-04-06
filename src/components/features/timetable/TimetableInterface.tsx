@@ -34,6 +34,7 @@ export default function TimetableInterface({
         displaySchedules,
         toggleCourse,
         toggleVisibility,
+        updateColor,
         updateMemo
     } = useTimetable({
         initialCourses: initialCourses, // Astroから渡されたもの
@@ -73,7 +74,8 @@ export default function TimetableInterface({
             .map(s => s.id); // UserCourse の ID
 
 
-        // 2. その ID に一致する「コース本体」を courses から抽出
+        // 2. その ID に一致する「コース本体」を displayCourses から抽出
+        // 1.でselectedTerm, selectedYearについてfilterしているが，ここでdisplayCoursesを用いることで二重に他学期の授業が混入しないことを保証
         return displayCourses.filter(c => slotCourseIds.includes(c.id) && c.isVisible !== false);
     }, [selectedSlot, schedules, courses]);
 
@@ -248,11 +250,12 @@ export default function TimetableInterface({
                             // --- 1つの場合：即座に詳細を表示 ---
                             <section className="flex flex-col gap-2">
                                 <div className="mb-2 border-b pb-4">
-                                    <CourseHeader course={coursesInSelectedSlot[0]} showYearTerm={true} />
+                                    <CourseHeader course={coursesInSelectedSlot[0]} showYearTerm={true} showColor={true} colorCustom={coursesInSelectedSlot[0].colorCustom} />
                                 </div>
                                 <CourseDetailContent
                                     course={coursesInSelectedSlot[0]}
                                     updateMemo={updateMemo}
+                                    updateColor={updateColor}
                                     toggleVisibility={() => toggleVisibility(coursesInSelectedSlot[0].id)}
                                     handleToggle={handleToggle}
                                     isSubmitting={isSubmitting}
@@ -275,7 +278,7 @@ export default function TimetableInterface({
                                                 role="button"
                                                 tabIndex={0}
                                             >
-                                                <CourseHeader course={c} showYearTerm={true} />
+                                                <CourseHeader course={c} showYearTerm={true} showColor={true} colorCustom={c.colorCustom} />
                                             </div>
 
                                             {/* 内容部分 */}
@@ -284,6 +287,7 @@ export default function TimetableInterface({
                                                     <CourseDetailContent
                                                         course={c}
                                                         updateMemo={updateMemo}
+                                                        updateColor={updateColor}
                                                         toggleVisibility={() => toggleVisibility(c.id)}
                                                         handleToggle={handleToggle}
                                                         isSubmitting={isSubmitting}
@@ -304,11 +308,12 @@ export default function TimetableInterface({
                     {currentSelectedCourse && (
                         <section className="flex flex-col gap-2">
                             <div className="mb-2 border-b pb-4">
-                                <CourseHeader course={currentSelectedCourse} showYearTerm={true} />
+                                <CourseHeader course={currentSelectedCourse} showYearTerm={true} showColor={true} colorCustom={currentSelectedCourse.colorCustom} />
                             </div>
                             <CourseDetailContent
                                 course={currentSelectedCourse}
                                 updateMemo={updateMemo}
+                                updateColor={updateColor}
                                 toggleVisibility={() => toggleVisibility(currentSelectedCourse.id)}
                                 handleToggle={handleToggle}
                                 isSubmitting={isSubmitting}

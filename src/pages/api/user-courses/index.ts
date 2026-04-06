@@ -68,10 +68,11 @@ export const PATCH: APIRoute = async ({request, locals}) => {
     if (!user) return new Response(JSON.stringify({error: "Unauthorized"}), {status: 401});
 
     try {
-        const {courseId, isVisible, memo} = (await request.json()) as {
+        const {courseId, isVisible, colorCustom, memo} = (await request.json()) as {
             courseId: number;
             isVisible?: boolean;
-            memo?: string
+            colorCustom?: string | null;
+            memo?: string;
         };
 
         if (courseId === undefined) {
@@ -84,6 +85,7 @@ export const PATCH: APIRoute = async ({request, locals}) => {
         const updateData: any = {};
         if (isVisible !== undefined) updateData.isVisible = isVisible;
         if (memo !== undefined) updateData.memo = memo;
+        if (colorCustom !== undefined) updateData.colorCustom = colorCustom;
 
         const result = await db.update(schema.userCourses)
             .set(updateData)

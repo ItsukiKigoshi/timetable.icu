@@ -120,6 +120,24 @@ export function useTimetable({
         }
     };
 
+    // 色の更新
+    const updateColor = async (courseId: number, nextColor: string | null) => {
+        const nextCourses = courses.map(c =>
+            c.id === courseId ? { ...c, colorCustom: nextColor } : c
+        );
+
+        setCourses(nextCourses);
+        syncLocalStorage(nextCourses);
+
+        if (user) {
+            await fetch('/api/user-courses', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId, colorCustom: nextColor })
+            });
+        }
+    };
+
     // メモの更新
     const updateMemo = async (courseId: number, nextMemo: string) => {
         const nextCourses = courses.map(c =>
@@ -145,6 +163,7 @@ export function useTimetable({
         displaySchedules,
         toggleCourse,
         toggleVisibility,
+        updateColor,
         updateMemo,
     };
 }

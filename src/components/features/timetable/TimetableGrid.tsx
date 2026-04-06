@@ -60,7 +60,64 @@ const TimetableGrid = ({
                         {translateDay(day)}
                     </div>
 
-                    {/* 背景スロット: 次のコマの開始時間まで広げて描画 */}
+                    {/* 時限ごとの区切り線用スロット (z-0) */}
+                    {PERIODS.map((p, index) => {
+                        const pStartMin = timeToMin(p.start);
+                        const pEndMin = timeToMin(p.end);
+                        const nextP = PERIODS[index + 1];
+                        const visualEndMin = nextP ? timeToMin(nextP.start) : pEndMin;
+                        return (
+                            <div
+                                key={`grid-line-${p.label}`}
+                                className="absolute w-full border-t border-base-content/10 pointer-events-none z-0"
+                                style={{
+                                    top: getTop(pStartMin),
+                                    height: getHeight(visualEndMin - pStartMin),
+                                }}
+                            />
+                        );
+                    })}
+
+                    {/* 授業カード: 実際の授業時間 (10分休みを含まない) で描画 (z-5) */}
+                    {displaySchedules.filter(s => s.dayOfWeek === day).map((sched, i) => {
+                        const themeColor = sched.colorCustom || 'var(--color-primary)';
+
+                        return (
+                            <div key={`${sched.courseCode}-${i}`}
+                                 className="absolute z-5" // 外側にパディングを持たせて「隙間」を作る
+                                 style={{
+                                     top: getTop(sched.startMin),
+                                     height: getHeight(sched.endMin - sched.startMin),
+                                     left: `${(sched.col * 100) / sched.groupMaxCols}%`,
+                                     width: `${100 / sched.groupMaxCols}%`,
+
+                                 }}>
+
+                                <div className="flex gap-1 h-full w-full items-stretch bg-base-200 rounded-sm p-1 overflow-hidden">
+                                    {/* 左側のカラーバー */}
+                                    <div
+                                        className="lg:w-1 w-0.5 rounded-full"
+                                        style={{ backgroundColor: themeColor }}
+                                    />
+
+                                    {/* テキストコンテンツ */}
+                                    <div className="flex flex-col gap-0 min-w-0 overflow-hidden">
+                                        <h1 className="lg:text-sm md:text-xs text-[10px] font-bold leading-tight line-clamp-3 text-base-content/90">
+                                            {isJa ? sched.titleJa : sched.titleEn}
+                                        </h1>
+                                        {user && sched.room && (
+                                            <p className="lg:text-[10px] text-[7px] font-medium opacity-50 truncate">
+                                                {sched.room}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                        );
+                    })}
+
+                    {/* クリック判定用スロット: 次のコマの開始時間まで広げて描画 (z-10) */}
                     {PERIODS.map((p, index) => {
                         const pStartMin = timeToMin(p.start);
                         const pEndMin = timeToMin(p.end);
@@ -77,10 +134,10 @@ const TimetableGrid = ({
                         return (
                             <div
                                 key={`slot-${p.label}`}
-                                className={`absolute w-full border-t border-base-content/5 ${
+                                className={`absolute w-full z-10 ${
                                     isOccupied
-                                        ? "z-30 cursor-pointer pointer-events-auto"
-                                        : "z-0 pointer-events-none opacity-20"
+                                        ? "cursor-pointer pointer-events-auto"
+                                        : "pointer-events-none"
                                 }`}
                                 style={{
                                     top: getTop(pStartMin),
@@ -90,26 +147,6 @@ const TimetableGrid = ({
                             />
                         );
                     })}
-
-                    {/* 授業カード: 実際の授業時間 (10分休みを含まない) で描画 */}
-                    {displaySchedules.filter(s => s.dayOfWeek === day).map((sched, i) => (
-                        <div key={`${sched.courseCode}-${i}`}
-                             className="card absolute z-10 overflow-hidden shadow-sm rounded-sm bg-primary border border-primary/20"
-                             style={{
-                                 top: getTop(sched.startMin),
-                                 height: getHeight(sched.endMin - sched.startMin),
-                                 left: `${(sched.col * 100) / sched.groupMaxCols}%`,
-                                 width: `calc(${(100 / sched.groupMaxCols)}% - 1px)`,
-                             }}>
-                            <div className="text-primary-content pointer-events-none">
-                                <p className="lg:text-xs md:text-[8px] hidden md:block font-normal">{sched.courseCode}</p>
-                                <h1 className="lg:text-md md:text-xs text-[8px] line-clamp-3 font-bold leading-tight">
-                                    {isJa ? sched.titleJa : sched.titleEn}
-                                </h1>
-                                <h2 className="lg:text-xs text-[8px]">{user && sched.room}</h2>
-                            </div>
-                        </div>
-                    ))}
                 </div>
             ))}
         </div>

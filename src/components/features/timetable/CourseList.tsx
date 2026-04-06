@@ -35,7 +35,7 @@ const CourseList = ({
                                 setSelectedCourse(course);
                                 (document.getElementById('single_course_modal') as HTMLDialogElement)?.showModal();
                             }}>
-                                <CourseHeader course={course} />
+                                <CourseHeader course={course} showColor={true} colorCustom={course.colorCustom} />
                             </div>
 
                             {/* 右側：最小限のクイック操作のみ残す */}
