@@ -143,6 +143,8 @@ export const customCourses = sqliteTable("custom_courses", {
     units: real("units").notNull().default(0),
 
     dayOfWeek: text("day_of_week", {enum: daysEnum}).notNull(),
+
+    period: integer("period"), // 1, 2, 3...
     startTime: text("start_time").notNull(),
     endTime: text("end_time").notNull(),
 

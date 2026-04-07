@@ -2,7 +2,7 @@ import type {UserCourseWithDetails} from "@/db/schema";
 import {DEFAULT_TERM, DEFAULT_YEAR, PERIODS} from "@/constants/time.ts";
 import type {User} from "better-auth";
 import {useEffect, useMemo, useState} from "react";
-import {LayoutGrid, List} from "lucide-react";
+import {LayoutGrid, List, NotebookPen} from "lucide-react";
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {useTimetable} from "@/lib/timetable/hooks.ts";
 import {timeToMin} from "@/lib/timetable/utils.ts";
@@ -16,12 +16,14 @@ import {LanguageProvider} from "@/lib/translation/context.tsx";
 
 export default function TimetableInterface({
                                                initialCourses,
+                                               initialViewMode = 'grid',
                                                user,
                                                lang = 'ja',
                                                selectedYear = DEFAULT_YEAR,
                                                selectedTerm = DEFAULT_TERM
 }: {
     initialCourses: UserCourseWithDetails[],
+    initialViewMode?:  'grid' | 'list',
     user?: User | null,
     lang?: string,
     selectedYear: number,
@@ -43,9 +45,9 @@ export default function TimetableInterface({
         selectedTerm
     });
     // 翻訳
-    const {t, isJa, translateDay, translatePeriod} = createTranslationHelper(lang);
+    const {t, l, isJa, translateDay, translatePeriod} = createTranslationHelper(lang);
 
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>(initialViewMode);
     const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string, start: string, end: string } | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<UserCourseWithDetails | null>(null);
@@ -97,6 +99,18 @@ export default function TimetableInterface({
         }
     }, [displayCourses, selectedCourse]);
 
+    // モバイルで表示中のモードをSearch Parameterで管理
+    useEffect(() => {
+        const handlePopState = () => {
+            const params = new URLSearchParams(window.location.search);
+            const mode = (params.get('view') as 'grid' | 'list') || 'grid';
+            setViewMode(mode);
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
     // Memo
     // isVisible が true かつ選択中の年・学期の授業のみの単位合計を計算
     const visibleTotalUnits = useMemo(() => {
@@ -146,51 +160,126 @@ export default function TimetableInterface({
         }
     };
 
+    // モバイルでList/Gridの表示を切り替えたらSearch Paramにも反映する関数
+    const updateViewMode = (newMode: 'grid' | 'list') => {
+        if (newMode === viewMode) return;
+
+        setViewMode(newMode);
+
+        // URLを更新（現在のURLパラメータを引き継ぎつつ view だけ書き換える）
+        const url = new URL(window.location.href);
+        if (newMode === 'list') {
+            url.searchParams.set('view', 'list');
+        } else {
+            url.searchParams.delete('view'); // デフォルトの grid なら削除してスッキリさせる
+        }
+
+        // pushState で履歴に追加
+        window.history.pushState({}, '', url.pathname + url.search);
+    };
+
     return (
         <LanguageProvider lang={lang}>
-        <section className="flex flex-col w-full select-none h-full relative overflow-hidden">
-            {/* 1. 左側：表示モード切り替え (Grid/List) */}
-            <nav
-                className="lg:hidden fixed bottom-6 left-6 z-50 flex bg-base-100/80 backdrop-blur-md shadow-lg rounded-2xl border border-base-300 p-1.5 gap-1">
-                <button
-                    onClick={() => setViewMode('grid')}
-                    className={`btn btn-md btn-square rounded-xl no-animation ${
-                        viewMode === 'grid' ? 'btn-primary shadow-sm' : 'btn-ghost'
-                    }`}
-                    title={t('timetable.title')}
-                >
-                    <LayoutGrid size={18}/>
-                </button>
-                <button
-                    onClick={() => setViewMode('list')}
-                    className={`btn btn-md btn-square rounded-xl no-animation ${
-                        viewMode === 'list' ? 'btn-primary shadow-sm' : 'btn-ghost'
-                    }`}
-                    title={t('timetable.list_view')}
-                >
-                    <List size={18}/>
-                </button>
-            </nav>
+            <section className="flex flex-col w-full select-none h-full relative overflow-hidden">
+                {/* 左側：表示モード切り替え (Grid/List) */}
+                <nav
+                    className="lg:hidden fixed bottom-15 left-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
+                    <button
+                        onClick={() => updateViewMode('grid')}
+                        className={`btn btn-sm btn-square h-11 w-11 rounded-full border-none transition-all ${
+                            viewMode === 'grid' ? 'btn-primary shadow-md' : 'btn-ghost'
+                        }`}
+                        title={t('timetable.title')}
+                    >
+                        <LayoutGrid size={20}/>
+                    </button>
+                    <button
+                        onClick={() => updateViewMode('list')}
+                        className={`btn btn-sm btn-square h-11 w-11 rounded-full border-none transition-all ${
+                            viewMode === 'list' ? 'btn-primary shadow-md' : 'btn-ghost'
+                        }`}
+                        title={t('timetable.list_view')}
+                    >
+                        <List size={20}/>
+                    </button>
+                </nav>
 
-            {/* フローティング単位表示バッジ */}
-            <section className="fixed bottom-6 left-1/2 -translate-x-1/2 z-60 pointer-events-none">
-                <div
-                    className="bg-neutral text-neutral-content px-4 py-2 rounded-full shadow-lg border border-white/10 flex items-center gap-3 backdrop-blur-md bg-opacity-80 transition-all duration-300">
+                {/* フローティング単位表示バッジ */}
+                <section className="fixed bottom-12 left-1/2 -translate-x-1/2 z-60 pointer-events-none">
+                    <div
+                        className="bg-neutral text-neutral-content px-4 py-2 rounded-full shadow-lg border border-white/10 flex items-center gap-3 backdrop-blur-md bg-opacity-80 transition-all duration-300">
                     <span className="text-lg font-mono font-black">
                         {formatUnits(visibleTotalUnits)}
                     </span>
-                    <span className="text-[10px] uppercase tracking-widest opacity-70 font-bold">
+                        <span className="text-[10px] uppercase tracking-widest opacity-70 font-bold">
                         {t('timetable.units')}
                     </span>
-                </div>
-            </section>
+                    </div>
+                </section>
 
-            {/* メインコンテンツエリア */}
-            <div className="flex-1 overflow-hidden relative">
-                {/* モバイル表示：useStateの値で出し分け */}
-                <div className="lg:hidden h-full w-full">
-                    {viewMode === 'grid' ? (
-                        <div className="h-full w-full">
+
+                {/* 右側: カスタムコース追加ボタン*/}
+                <nav className="fixed bottom-15 right-4 z-50">
+                    <a href={l('/new')}
+                       className="btn btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2 transition-all hover:scale-105 active:scale-95"
+                       aria-label="Create new course"
+                    >
+                        <NotebookPen size="24" className="text-primary-content shrink-0"/>
+
+                        <span
+                            className="hidden lg:inline text-primary-content font-bold tracking-tight whitespace-nowrap">
+                            カスタムコースを作成
+                        </span>
+                    </a>
+                </nav>
+
+
+                {/* メインコンテンツエリア */}
+                <div className="flex-1 overflow-hidden relative">
+                    {/* モバイル表示：useStateの値で出し分け */}
+                    <div className="lg:hidden h-full w-full">
+                        {viewMode === 'grid' ? (
+                            <div className="h-full w-full">
+                                <TimetableGrid
+                                    displaySchedules={displaySchedules}
+                                    user={user}
+                                    isJa={isJa}
+                                    translateDay={translateDay}
+                                    translatePeriod={translatePeriod}
+                                    handleSlotClick={handleSlotClick}
+                                />
+                            </div>
+                        ) : (
+                            <div className="h-full w-full overflow-y-auto">
+                                <CourseList
+                                    items={displayCourses}
+                                    isJa={isJa}
+                                    t={t}
+                                    setSelectedCourse={setSelectedCourse}
+                                    toggleVisibility={toggleVisibility}
+                                    handleToggle={handleToggle}
+                                    isSubmitting={isSubmitting}
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 3. PC用 2カラム*/}
+                    <div className="hidden lg:flex h-full overflow-hidden border-t border-base-300">
+                        <aside className="w-80 flex flex-col bg-base-200/20 border-r border-base-300">
+                            <div className="flex-1 overflow-y-auto">
+                                <CourseList
+                                    items={displayCourses}
+                                    isJa={isJa}
+                                    t={t}
+                                    setSelectedCourse={setSelectedCourse}
+                                    toggleVisibility={toggleVisibility}
+                                    handleToggle={handleToggle}
+                                    isSubmitting={isSubmitting}
+                                />
+                            </div>
+                        </aside>
+                        <main className="flex-1 overflow-hidden bg-base-100">
                             <TimetableGrid
                                 displaySchedules={displaySchedules}
                                 user={user}
@@ -199,123 +288,86 @@ export default function TimetableInterface({
                                 translatePeriod={translatePeriod}
                                 handleSlotClick={handleSlotClick}
                             />
-                        </div>
+                        </main>
+                    </div>
+                </div>
+
+                {/* 詳細モーダル */}
+                <Modal
+                    isOpen={!!selectedSlot}
+                    onClose={() => {
+                        setSelectedSlot(null);      // スロット選択をリセット
+                        setExpandedCourseId(null);    // 個別授業の選択もリセット
+                    }}
+                    title={selectedSlot
+                        ? (`${translateDay(selectedSlot.day)} ${t('timetable.period').replace('{period}', translatePeriod(selectedSlot.period) ?? '')}`)
+                        : ""}>
+                    {coursesInSelectedSlot.length === 1 ? (
+                        // --- 1つの場合：即座に詳細を表示 ---
+                        <section className="flex flex-col gap-2">
+                            <div className="mb-2 border-b pb-4">
+                                <CourseHeader course={coursesInSelectedSlot[0]} showYearTerm={true} showColor={true}
+                                              colorCustom={coursesInSelectedSlot[0].colorCustom}/>
+                            </div>
+                            <CourseDetailContent
+                                course={coursesInSelectedSlot[0]}
+                                updateMemo={updateMemo}
+                                updateColor={updateColor}
+                                toggleVisibility={() => toggleVisibility(coursesInSelectedSlot[0].id)}
+                                handleToggle={handleToggle}
+                                isSubmitting={isSubmitting}
+                            />
+                        </section>
                     ) : (
-                        <div className="h-full w-full overflow-y-auto">
-                            <CourseList
-                                items={displayCourses}
-                                isJa={isJa}
-                                t={t}
-                                setSelectedCourse={setSelectedCourse}
-                                toggleVisibility={toggleVisibility}
-                                handleToggle={handleToggle}
-                                isSubmitting={isSubmitting}
-                            />
-                        </div>
-                    )}
-                </div>
-
-                {/* 3. PC用 2カラム*/}
-                <div className="hidden lg:flex h-full overflow-hidden border-t border-base-300">
-                    <aside className="w-80 flex flex-col bg-base-200/20 border-r border-base-300">
-                        <div className="flex-1 overflow-y-auto">
-                            <CourseList
-                                items={displayCourses}
-                                isJa={isJa}
-                                t={t}
-                                setSelectedCourse={setSelectedCourse}
-                                toggleVisibility={toggleVisibility}
-                                handleToggle={handleToggle}
-                                isSubmitting={isSubmitting}
-                            />
-                        </div>
-                    </aside>
-                    <main className="flex-1 overflow-hidden bg-base-100">
-                        <TimetableGrid
-                            displaySchedules={displaySchedules}
-                            user={user}
-                            isJa={isJa}
-                            translateDay={translateDay}
-                            translatePeriod={translatePeriod}
-                            handleSlotClick={handleSlotClick}
-                        />
-                    </main>
-                </div>
-            </div>
-
-            {/* 詳細モーダル */}
-            <Modal
-                isOpen={!!selectedSlot}
-                onClose={() => {
-                    setSelectedSlot(null);      // スロット選択をリセット
-                    setExpandedCourseId(null);    // 個別授業の選択もリセット
-                }}
-                title={selectedSlot
-                    ? (`${translateDay(selectedSlot.day)} ${t('timetable.period').replace('{period}', translatePeriod(selectedSlot.period) ?? '')}`)
-                    : ""}>
-                        {coursesInSelectedSlot.length === 1 ? (
-                            // --- 1つの場合：即座に詳細を表示 ---
-                            <section className="flex flex-col gap-2">
-                                <div className="mb-2 border-b pb-4">
-                                    <CourseHeader course={coursesInSelectedSlot[0]} showYearTerm={true} showColor={true} colorCustom={coursesInSelectedSlot[0].colorCustom} />
-                                </div>
-                                <CourseDetailContent
-                                    course={coursesInSelectedSlot[0]}
-                                    updateMemo={updateMemo}
-                                    updateColor={updateColor}
-                                    toggleVisibility={() => toggleVisibility(coursesInSelectedSlot[0].id)}
-                                    handleToggle={handleToggle}
-                                    isSubmitting={isSubmitting}
-                                />
-                            </section>
-                        ) : (
-                            // --- 複数の場合：アコーディオン ---
-                            <div className="flex flex-col gap-2">
-                                {coursesInSelectedSlot.map((c) => {
-                                    const isExpanded = expandedCourseId === c.id;
-                                    return (
-                                        <div
-                                            key={c.id}
-                                            className={`collapse collapse-arrow bg-base-200/50 border border-base-300
+                        // --- 複数の場合：アコーディオン ---
+                        <div className="flex flex-col gap-2">
+                            {coursesInSelectedSlot.map((c) => {
+                                const isExpanded = expandedCourseId === c.id;
+                                return (
+                                    <div
+                                        key={c.id}
+                                        className={`collapse collapse-arrow bg-base-200/50 border border-base-300
                                              ${isExpanded ? 'collapse-open' : 'collapse-close'}`}>
-                                            {/* コース概要 */}
-                                            <div
-                                                className="gap-2 collapse-title pr-10 cursor-pointer active:bg-base-300/50"
-                                                onClick={() => setExpandedCourseId(isExpanded ? null : c.id)}
-                                                role="button"
-                                                tabIndex={0}
-                                            >
-                                                <CourseHeader course={c} showYearTerm={true} showColor={true} colorCustom={c.colorCustom} />
-                                            </div>
+                                        {/* コース概要 */}
+                                        <div
+                                            className="gap-2 collapse-title pr-10 cursor-pointer active:bg-base-300/50"
+                                            onClick={() => setExpandedCourseId(isExpanded ? null : c.id)}
+                                            role="button"
+                                            tabIndex={0}
+                                        >
+                                            <CourseHeader course={c} showYearTerm={true} showColor={true}
+                                                          colorCustom={c.colorCustom}/>
+                                        </div>
 
-                                            {/* 内容部分 */}
-                                            <div className="collapse-content border-t border-base-300 bg-base-100 px-0">
-                                                <div className="p-4">
-                                                    <CourseDetailContent
-                                                        course={c}
-                                                        updateMemo={updateMemo}
-                                                        updateColor={updateColor}
-                                                        toggleVisibility={() => toggleVisibility(c.id)}
-                                                        handleToggle={handleToggle}
-                                                        isSubmitting={isSubmitting}
-                                                    />
-                                                </div>
+                                        {/* 内容部分 */}
+                                        <div className="collapse-content border-t border-base-300 bg-base-100 px-0">
+                                            <div className="p-4">
+                                                <CourseDetailContent
+                                                    course={c}
+                                                    updateMemo={updateMemo}
+                                                    updateColor={updateColor}
+                                                    toggleVisibility={() => toggleVisibility(c.id)}
+                                                    handleToggle={handleToggle}
+                                                    isSubmitting={isSubmitting}
+                                                />
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-            </Modal>
-            {/* --- 個別授業詳細モーダル --- */}
-            <Modal
-                isOpen={!!currentSelectedCourse}
-                onClose={() => setSelectedCourse(null)}
-            >
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </Modal>
+                {/* --- 個別授業詳細モーダル --- */}
+                <Modal
+                    isOpen={!!currentSelectedCourse}
+                    onClose={() => setSelectedCourse(null)}
+                >
                     {currentSelectedCourse && (
                         <section className="flex flex-col gap-2">
                             <div className="mb-2 border-b pb-4">
-                                <CourseHeader course={currentSelectedCourse} showYearTerm={true} showColor={true} colorCustom={currentSelectedCourse.colorCustom} />
+                                <CourseHeader course={currentSelectedCourse} showYearTerm={true} showColor={true}
+                                              colorCustom={currentSelectedCourse.colorCustom}/>
                             </div>
                             <CourseDetailContent
                                 course={currentSelectedCourse}
@@ -327,8 +379,8 @@ export default function TimetableInterface({
                             />
                         </section>
                     )}
-            </Modal>
-        </section>
+                </Modal>
+            </section>
         </LanguageProvider>
     );
 }

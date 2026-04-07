@@ -1,5 +1,5 @@
 ---
-import {CalendarDays, Telescope, Plus} from "lucide-astro";
+import {CalendarDays, Telescope} from "lucide-astro";
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang;
@@ -13,7 +13,7 @@ const isActive = (path: string) => {
 };
 ---
 <footer>
-    <nav class="hidden lg:flex dock bg-base-100/80 backdrop-blur-lg border-t border-white/10">
+    <nav class="flex dock bg-base-100/80 backdrop-blur-lg border-t border-white/10">
         <a href={l('/explore')}
            class={`transition-colors ${isActive('/explore') ? 'dock-active text-primary' : 'text-base-content'}`}>
             <Telescope size="24"/>
@@ -25,19 +25,4 @@ const isActive = (path: string) => {
             <span class="dock-label">{t('nav.timetable')}</span>
         </a>
     </nav>
-
-
-    {isActive('/timetable') ? (
-            <nav class="lg:hidden fixed bottom-6 right-6 z-50">
-                <a href={l('/explore')} class="btn btn-xl btn-circle btn-primary shadow-xl border-2 ">
-                    <Plus size="32" class="text-primary-content"/>
-                </a>
-            </nav>
-    ) : (
-            <nav class="lg:hidden fixed bottom-6 left-6 z-50">
-                <a href={l('/timetable')} class="btn btn-xl btn-circle btn-primary shadow-xl border-2 ">
-                    <CalendarDays size="32" class="text-primary-content"/>
-                </a>
-            </nav>
-    )}
 </footer>

@@ -14,6 +14,7 @@ interface Props {
 
 const {user, selectedTerm, selectedYear} = Astro.locals;
 const { lang } = Astro.props;
+const viewParam = Astro.url.searchParams.get('view') || 'grid';
 
 const t = getTranslations(lang);
 
@@ -52,6 +53,7 @@ if (user) {
     <div class="p-2 md:px-6 mx-auto h-[calc(100vh-128px)] overflow-hidden">
             <TimetableInterface
                     initialCourses={initialCourses}
+                    initialViewMode={viewParam as 'grid' | 'list'}
                     user={user}
                     lang={lang}
                     selectedYear={selectedYear}
