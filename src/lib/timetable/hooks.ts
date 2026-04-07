@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import type {CourseFormInput, FlatSchedule, UserCourseWithDetails} from "@/db/schema";
+import type {AnyCourseWithDetails, CourseFormInput, FlatSchedule, UserCourseWithDetails} from "@/db/schema";
 import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
 
 export function useTimetable({
@@ -8,7 +8,7 @@ export function useTimetable({
                                  selectedYear,
                                  selectedTerm
                              }: {
-    initialCourses?: UserCourseWithDetails[],
+    initialCourses?: AnyCourseWithDetails[],
     user: any
     selectedYear: number,
     selectedTerm: string,
@@ -36,12 +36,16 @@ export function useTimetable({
     // 全スケジュールを平坦化 (全コマ)
     const allSchedules = useMemo(() => {
         return courses.flatMap(course =>
-            course.schedules.map(s => ({
-                ...course, // ここで course.id が入る
-                ...s,
-                scheduleId: s.id, // スケジュール自体のID
-                id: course.id     // コース本体のID（custom-xxx または 数値）
-            } as FlatSchedule))
+            course.schedules.map(s => {
+                const { id: _unused, ...scheduleData } = s;
+
+                return {
+                    ...course,
+                    ...scheduleData,
+                    scheduleId: s.id,
+                    id: course.id
+                } as FlatSchedule;
+            })
         );
     }, [courses]);
 
@@ -120,26 +124,26 @@ export function useTimetable({
     };
 
     // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
-    const toggleCourse = async (course: UserCourseWithDetails) => {
+    const toggleCourse = async (course: AnyCourseWithDetails) => {
         const targetCourseId = course.id;
         const isRegistered = registeredIds.has(targetCourseId);
 
-        // カスタムかどうかの判定
-        const isCustom = typeof targetCourseId === 'string' || (typeof targetCourseId === 'number' && targetCourseId > 100000);
+        // idの型によってカスタムかどうかを確実に判定
+        const isCustom = typeof targetCourseId === 'string';
 
-        // 状態更新
-        let nextCourses: UserCourseWithDetails[];
+        let nextCourses: AnyCourseWithDetails[];
 
         if (isRegistered) {
-            // 削除
             nextCourses = courses.filter(c => c.id !== targetCourseId);
         } else {
-            const courseWithContext: UserCourseWithDetails = {
+            // ここで型アサーション(as any)を使わずに安全にコピー
+            const courseWithContext = {
                 ...course,
                 year: course.year || selectedYear,
                 term: course.term || selectedTerm,
                 isVisible: true
-            };
+            } as AnyCourseWithDetails; // 合成された型として扱う
+
             nextCourses = [...courses, courseWithContext];
         }
 

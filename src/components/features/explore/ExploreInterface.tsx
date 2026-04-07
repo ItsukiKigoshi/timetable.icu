@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import type {Categories, CourseWithSchedules} from "@/db/schema";
+import type {Categories, OfficialCourseWithDetails} from "@/db/schema";
 import {
     ArrowDown01,
     CalendarCheck,
@@ -34,13 +34,13 @@ export interface SearchFilters {
         page: number;
     }
 
-    interface SearchResponse {
-        results: CourseWithSchedules[];
-        hasNextPage: boolean;
-    }
+interface SearchResponse {
+    results: OfficialCourseWithDetails[];
+    hasNextPage: boolean;
+}
 
-    interface Props {
-        initialResults: CourseWithSchedules[];
+interface Props {
+        initialResults: OfficialCourseWithDetails[];
         initialFilters: SearchFilters;
         isLoggedIn: boolean;
         categories: Categories[];
@@ -61,7 +61,7 @@ export interface SearchFilters {
         const {t, isJa} = createTranslationHelper(lang);
 
         // --- States ---
-        const [courses, setCourses] = useState<CourseWithSchedules[]>(initialResults);
+        const [courses, setCourses] = useState<OfficialCourseWithDetails[]>(initialResults);
         const [hasNextPage, setHasNextPage] = useState(initialHasNext);
         const [filters, setFilters] = useState<SearchFilters>(initialFilters);
         const [isFetching, setIsFetching] = useState(false);
@@ -98,7 +98,7 @@ export interface SearchFilters {
         /**
          * コースの追加/削除（トグル）処理
          */
-        const toggleCourse = async (course: CourseWithSchedules) => {
+        const toggleCourse = async (course: OfficialCourseWithDetails) => {
             const courseId = course.id;
             const isRegistered = registeredIds.has(courseId);
 
@@ -151,7 +151,7 @@ export interface SearchFilters {
             }
         };
 
-        const handleToggle = async (course: CourseWithSchedules) => {
+        const handleToggle = async (course: OfficialCourseWithDetails) => {
             if (isSubmitting === course.id || !isInitialized) return;
             setIsSubmitting(course.id);
             try {

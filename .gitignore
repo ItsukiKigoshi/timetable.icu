@@ -30,3 +30,5 @@ scripts/out/sync_courses.sql
 
 *.html
 !public/*.html
+
+backup/

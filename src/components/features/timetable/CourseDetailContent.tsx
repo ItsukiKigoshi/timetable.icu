@@ -29,7 +29,7 @@ const CourseDetailContent = ({
             {/* メインアクション */}
             <div className="grid grid-cols-4 gap-2">
                 {/* シラバス/編集 (2/4 を占有) */}
-                {!isCustom ? (
+                {(!isCustom && 'rgNo' in course && course.rgNo) ? (
                     <a href={getSyllabusUrl(course.rgNo, course.year, course.term)} target="_blank" rel="noreferrer"
                        className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300"
                        title={t('timetable.syllabus')}>

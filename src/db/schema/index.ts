@@ -247,6 +247,34 @@ export type UserCourse = InferSelectModel<typeof userCourses>;
 export type CustomCourse = InferSelectModel<typeof customCourses>;
 export type CustomSchedule = InferSelectModel<typeof customCourseSchedules>;
 
+// --- Helper: メタデータ部分だけを抽出 ---
+// userId や createdAt などの不要なカラムを除いた「ユーザー設定」のみの型
+export type UserCourseMetadata = Pick<
+    UserCourse,
+    "isVisible" | "selectedAltGroupId" | "colorCustom" | "memo"
+>;
+
+// --- Final Types ---
+// 公式コース + ユーザーのカスタム設定 (isVisible, colorCustom など)
+export type OfficialCourseWithDetails = Course & UserCourseMetadata & {
+    schedules: Schedule[];
+};
+
+// カスタムコース (これ自体に isVisible や colorCustom が含まれているのでリレーションのみ)
+export type CustomCourseWithDetails = CustomCourse & {
+    schedules: CustomSchedule[];
+};
+
+export type UserCourseWithDetails = OfficialCourseWithDetails | CustomCourseWithDetails;
+
+export type AnyCourseWithDetails = OfficialCourseWithDetails | CustomCourseWithDetails;
+export type Categories = InferSelectModel<typeof categories>;
+
+// Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
+export type FlatSchedule = Schedule & Course & Partial<UserCourseMetadata> & {
+    scheduleId: number;
+};
+
 
 // 利便性のための「共通アクセス用」型（EditorのFormなどで使用）
 export interface CourseFormInput {
@@ -266,32 +294,3 @@ export interface CourseFormInput {
         endTime: string;
     }[];
 }
-
-
-// --- Helper: メタデータ部分だけを抽出 ---
-// userId や createdAt などの不要なカラムを除いた「ユーザー設定」のみの型
-export type UserCourseMetadata = Pick<
-    UserCourse,
-    "isVisible" | "selectedAltGroupId" | "colorCustom" | "memo"
->;
-
-// --- Final Types ---
-// リレーション込みの型
-export type CourseWithSchedules = Course & {
-    schedules: Schedule[];
-};
-// 詳細情報付きのユーザー履修科目
-// 統合された型: 公式科目 or カスタム科目
-// 公式科目の場合は titleJa があり、カスタムの場合は title がある状態を許容する
-export type UserCourseWithDetails = (Partial<Course> & CustomCourse & {
-    schedules: (Schedule | CustomSchedule)[];
-}) | (Course & UserCourseMetadata & {
-    schedules: Schedule[];
-});
-
-export type Categories = InferSelectModel<typeof categories>;
-
-// Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
-export type FlatSchedule = Schedule & Course & Partial<UserCourseMetadata> & {
-    scheduleId: number;
-};

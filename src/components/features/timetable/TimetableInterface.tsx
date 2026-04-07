@@ -57,6 +57,8 @@ export default function TimetableInterface({
     // その時間枠（Day/Period）に該当する UserCourseWithDetails
     const coursesInSelectedSlot = useMemo(() => {
         if (!selectedSlot) return [];
+
+        console.log("Current Schedules:", schedules);
         // 1. まずその時間枠にあるコマの ID を取得
         const slotCourseIds = schedules
             .filter(s =>
@@ -73,13 +75,13 @@ export default function TimetableInterface({
                     timeToMin(s.endTime) === timeToMin(selectedSlot.start) + 30         // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
                 )
             )
-            .map(s => s.id); // UserCourse の ID
+            .map(s => String(s.id)); // UserCourse の ID
 
-
-        // 2. その ID に一致する「コース本体」を displayCourses から抽出
-        // 1.でselectedTerm, selectedYearについてfilterしているが，ここでdisplayCoursesを用いることで二重に他学期の授業が混入しないことを保証
-        return displayCourses.filter(c => slotCourseIds.includes(c.id) && c.isVisible !== false);
-    }, [selectedSlot, schedules, courses]);
+        return displayCourses.filter(c =>
+            slotCourseIds.includes(String(c.id)) &&
+            c.isVisible !== false
+        );
+    }, [selectedSlot, schedules, displayCourses, selectedYear, selectedTerm]);
 
     // モーダル内のコースが 0 になったら閉じる
     useEffect(() => {
