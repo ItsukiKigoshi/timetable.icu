@@ -10,14 +10,14 @@
 2026-04-07 8:52:00にはデータが存在
 2026-04-07 8:55:00にuser_courses, session, passkeyデータが消失
 - 犯人は0018_past_franklin_richards.sqlのmigration (ブランチの先頭にはいないがコミット済み#185b6caf)
-    - 消えたデータはuser.id, { onDelete: "cascade" }というreferenceは貼ってあるもの
+    - 消えたデータは```user.id, { onDelete: "cascade" }```というreferenceは貼ってあるもの
     - おそらく外部キー制約を完全に切ること無くmigrationが走ってしまったのだろう
 
 ## 対処
-- 消えた後最新だった情報をnpx wrangler d1 export timetable-icu --remote --output=current_backup.sqlで保存
+- 消えた後最新だった情報をbun x wrangler d1 export timetable-icu --remote --output=current_backup.sqlで保存
 - user_courses, account, session, userに限りINSERT OR IGNORE INTOするように書き換え
     - 冒頭でPRAGMA foreign_keys = OFF;, 末尾にPRAGMA foreign_keys = ON;
-- 2026-04-07 8:52:00時点のデータにnpx wrangler d1 time-travel restore timetable-icu --timestamp="2026-04-07T08:52:00Z"で戻る（実際はGUIを使用）
+- 2026-04-07 8:52:00時点のデータにbun x wrangler d1 time-travel restore timetable-icu --timestamp="2026-04-07T08:52:00Z"で戻る（実際はGUIを使用）
 - 上記の最新データを流し込む
 - 目視で，insertされたことを確認
 
@@ -27,7 +27,7 @@
 - 安易に「大丈夫だろう」でmigrationしたのがよくなかった．
     - 今回のmigrationではcustom_coursesという本番では誰もデータを入れていないテーブルの操作だったので油断してた
 - migration前には必ずバックアップするべし
-    - bunx wrangler d1 export timetable-icu --remote --output=backup/past_data.sql
+    - bun x wrangler d1 export timetable-icu --remote --output=backup/past_data.sql
 - Drizzleのmigrationファイルは完璧ではない
     - --> statement-breakpointでwrangler applyはPRAGMA foreign_keys = OFF;を勝手にONに戻してしまうことが原因か．
 - migration時は事前のバックアップとローカルでの入念なテストを．

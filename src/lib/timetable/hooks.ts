@@ -90,10 +90,6 @@ export function useTimetable({
             year: selectedYear,
             term: selectedTerm,
         };
-
-        // UI表示用に titleJa も同期させておくと、他のコンポーネントが titleJa を参照していても壊れない
-        newCourse.titleJa = formData.title;
-
         const nextCourses = !isNew
             ? courses.map(c => String(c.id) === String(formData.id) ? newCourse : c)
             : [...courses, newCourse];

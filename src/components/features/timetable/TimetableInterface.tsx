@@ -69,7 +69,7 @@ export default function TimetableInterface({
                 s.dayOfWeek === selectedSlot.day &&
                 // periodのlabelが一致する　もしくは　Long授業の条件に合致するコースをそのコマの授業としてカウント
                 (
-                    s.period === parseInt(selectedSlot.period) ||
+                    String(s.period) === String(selectedSlot.period) ||
                     // ロング授業のはみ出した部分もクリック可能に
                     timeToMin(s.startTime) ===  timeToMin(selectedSlot.start) + 30 ||   // Long 4（授業開始時刻がそのコマ（昼休み）の開始時刻のちょうど30分後）
                     timeToMin(s.endTime) === timeToMin(selectedSlot.start) + 30         // Long 5-7（授業終了時刻がそのコマ（6,7,夜限）の開始時刻のちょうど30分後）
@@ -223,7 +223,7 @@ export default function TimetableInterface({
                 {/* 右側: カスタムコース追加ボタン*/}
                 <nav className="fixed bottom-15 right-4 z-50">
                     <a href={l('/new')}
-                       className="btn btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2 transition-all hover:scale-105 active:scale-95"
+                       className="btn btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2"
                        aria-label="Create new course"
                     >
                         <NotebookPen size="24" className="text-primary-content shrink-0"/>
