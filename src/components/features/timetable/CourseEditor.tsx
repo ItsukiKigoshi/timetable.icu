@@ -2,28 +2,39 @@ import {LanguageProvider} from "@/lib/translation/context";
 import React, {useState} from 'react';
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {PERIODS, SELECTABLE_DAYS} from "@/constants/time.ts";
-import {SWATCHES} from "@/constants/config.ts"; // 定数をインポート
+import {SWATCHES} from "@/constants/config.ts";
+import {useTimetable} from "@/lib/timetable/hooks.ts";
 
 interface CourseEditorProps {
     mode: 'create' | 'edit';
     lang: string;
     initialData?: any;
+    user: any;
+    selectedYear: number;
+    selectedTerm: string;
 }
 
-const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
+const CourseEditor = ({ mode, lang, initialData, user, selectedYear, selectedTerm }: CourseEditorProps) => {
     const { l } = createTranslationHelper(lang);
 
-    // 「夜」以外の時限のみを抽出（1, 2, 3, 昼, 4, 5, 6, 7）
+    // useTimetable から保存関数を取得
+    const { saveCustomCourse } = useTimetable({
+        user,
+        selectedYear,
+        selectedTerm,
+        initialCourses: [] // ここでは更新用関数だけ欲しいので空でOK
+    });
+
     const selectablePeriods = PERIODS.filter(p => p.label !== '夜');
 
     const [formData, setFormData] = useState({
+        id: initialData?.id || undefined, // editモード時はIDを保持
         title: initialData?.title || '',
         instructor: initialData?.instructor || '',
         units: initialData?.units || 2,
         memo: initialData?.memo || '',
         room: initialData?.room || '',
         colorCustom: initialData?.colorCustom || null,
-        // schedules には { dayOfWeek, period, startTime, endTime } を入れる
         schedules: initialData?.schedules || [],
     });
 
@@ -48,10 +59,9 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                 schedules: prev.schedules.filter((s: any) => !(s.dayOfWeek === day && s.period === pLabel))
             }));
         } else {
-            // 選択時に PERIODS から時刻を自動的に拾ってセットする
             const newSchedule = {
                 dayOfWeek: day,
-                period: pLabel, // "昼" なども文字列として保持
+                period: pLabel,
                 startTime: periodData.start,
                 endTime: periodData.end
             };
@@ -75,23 +85,18 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
         setIsSubmitting(true);
 
         try {
-            // 保存用データ作成
-            // 注意: 現在の DB schema (customCourses) が 1レコード1コマ の場合、
-            // schedules の数だけ API を叩くか、サーバー側でバラして保存する必要があります。
-            const payload = {
+            /* --- saveCustomCourse を呼び出す --- */
+            // payload に year と term を含めてフックに渡す
+            await saveCustomCourse({
                 ...formData,
-                // 例として最初の1コマをメインに送るケース（DB構成に合わせて調整が必要）
-                ...formData.schedules[0]
-            };
+                year: selectedYear,
+                term: selectedTerm,
+            });
 
-            console.log("Saving to DB:", payload);
-
-            // TODO: API Call
-            // await fetch('/api/custom-courses', { ... })
-
-            alert("保存しました");
+            // 保存完了後の遷移
             window.location.href = l('/timetable');
         } catch (error) {
+            console.error(error);
             alert("保存に失敗しました");
         } finally {
             setIsSubmitting(false);
@@ -101,9 +106,11 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
     return (
         <LanguageProvider lang={lang}>
             <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-4 flex flex-col gap-6 pb-20">
-                <h1 className="text-2xl font-bold">{mode === 'create' ? '新規コース作成' : 'コース編集'}</h1>
+                <h1 className="text-2xl font-bold">
+                    {mode === 'create' ? '新規コース作成' : 'コース編集'}
+                </h1>
 
-                {/* 科目名 */}
+                {/* --- フォーム入力部分は変更なし --- */}
                 <div className="form-control">
                     <label className="label font-bold">科目名（必須）</label>
                     <input
@@ -117,7 +124,6 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                    {/* 教員 */}
                     <div className="form-control">
                         <label className="label font-bold">教員名</label>
                         <input
@@ -128,7 +134,6 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                             onChange={handleChange}
                         />
                     </div>
-                    {/* 教室 */}
                     <div className="form-control">
                         <label className="label font-bold">教室</label>
                         <input
@@ -143,7 +148,6 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                    {/* 単位数 */}
                     <div className="form-control w-32">
                         <label className="label font-bold text-sm">単位数</label>
                         <select
@@ -160,11 +164,9 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                         </select>
                     </div>
 
-                    {/* カラー選択 */}
                     <div className="form-control">
                         <label className="label font-bold">表示色</label>
                         <div className="flex items-center join">
-                            {/* 現在の色インジケーター */}
                             <div className="flex items-center justify-center w-10 h-10 shrink-0 border border-base-300 rounded-md bg-base-100">
                                 <div
                                     className="w-6 h-6 rounded-full border border-black/10 shadow-sm"
@@ -172,13 +174,11 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                                 />
                             </div>
 
-                            {/* HEX入力 + パレット */}
                             <div className="dropdown dropdown-bottom dropdown-end flex-1">
                                 <div className="flex items-center h-10 px-3 bg-base-100 border border-base-300 rounded-md shadow-sm focus-within:border-primary transition-all">
                                     <span className="text-xs opacity-30 font-mono mr-1.5">#</span>
                                     <input
                                         type="text"
-                                        tabIndex={0}
                                         value={formData.colorCustom ? formData.colorCustom.replace('#', '') : ""}
                                         onChange={(e) => {
                                             const val = e.target.value;
@@ -191,10 +191,8 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                                     />
                                 </div>
 
-                                {/* パレット本体 */}
                                 <div tabIndex={0} className="dropdown-content z-30 mt-1 p-2 bg-base-100 border border-base-300 rounded-md shadow-xl w-72">
                                     <div className="grid grid-cols-7 gap-2">
-                                        {/* デフォルトに戻す */}
                                         <button
                                             type="button"
                                             onClick={() => updateColor(null)}
@@ -204,7 +202,6 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                                                 <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" />
                                             </svg>
                                         </button>
-                                        {/* 色一覧 */}
                                         {SWATCHES.map((hex) => (
                                             <button
                                                 key={hex}
@@ -224,7 +221,6 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                     </div>
                 </div>
 
-                {/* スケジュールグリッド */}
                 <div className="form-control">
                     <label className="label font-bold">スケジュール</label>
                     <div className="overflow-x-auto rounded-lg border border-base-300">
@@ -267,7 +263,6 @@ const CourseEditor = ({ mode, lang, initialData }: CourseEditorProps) => {
                     </div>
                 </div>
 
-                {/* ボタンエリア */}
                 <div className="flex gap-2 mt-4">
                     <button type="submit" className="btn btn-primary flex-1" disabled={isSubmitting}>
                         {isSubmitting ? '保存中...' : '保存する'}

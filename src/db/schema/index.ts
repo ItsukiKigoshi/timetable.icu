@@ -130,39 +130,39 @@ export const userCourses = sqliteTable(
 
 // --- カスタム科目 (他校・手打ち) ---
 // customCoursesは, userIdのユーザの持ち物
+// カスタムコース本体（メタ情報のみ）
 export const customCourses = sqliteTable("custom_courses", {
-    id: integer("id").primaryKey({autoIncrement: true}),
+    id: integer("id").primaryKey({ autoIncrement: true }),
     userId: text("user_id")
         .notNull()
-        .references(() => user.id, {onDelete: "cascade"}),
+        .references(() => user.id, { onDelete: "cascade" }),
 
     title: text("title").notNull(),
     instructor: text("instructor"),
     room: text("room"),
-
     units: real("units").notNull().default(0),
-
-    dayOfWeek: text("day_of_week", {enum: daysEnum}).notNull(),
-
-    period: integer("period"), // 1, 2, 3...
-    startTime: text("start_time").notNull(),
-    endTime: text("end_time").notNull(),
 
     year: integer("year").notNull(),
     term: text("term").notNull(),
 
-    isVisible: integer("is_visible", {mode: "boolean"}).notNull().default(true),
+    isVisible: integer("is_visible", { mode: "boolean" }).notNull().default(true),
     colorCustom: text("color_custom"),
     memo: text("memo"),
 
-    // 公式授業を上書きしたい場合
-    // どの公式授業を上書きしたかの参照（任意）
-    overriddenCourseId: integer("overridden_course_id").references(
-        () => courses.id,
-    ),
+    createdAt: integer("created_at").default(sql`(unixepoch())`),
+});
 
-    createdAt: integer("created_at").default(sql`(unixepoch()
-                                                 )`),
+// カスタムコースのスケジュール（1コースに対して複数レコード可）
+export const customCourseSchedules = sqliteTable("custom_course_schedules", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    customCourseId: integer("custom_course_id")
+        .notNull()
+        .references(() => customCourses.id, { onDelete: "cascade" }), // 親が消えたら消える
+
+    dayOfWeek: text("day_of_week", { enum: daysEnum }).notNull(),
+    period: text("period"), // "昼" などが入る可能性を考慮して text
+    startTime: text("start_time").notNull(),
+    endTime: text("end_time").notNull(),
 });
 
 // --- Categories & Tags ---
@@ -210,8 +210,16 @@ export const userCoursesRelations = relations(userCourses, ({one}) => ({
 }));
 
 // --- customCourses (カスタム科目) のリレーション ---
-export const customCoursesRelations = relations(customCourses, ({one}) => ({
-    user: one(user, {fields: [customCourses.userId], references: [user.id]}),
+export const customCoursesRelations = relations(customCourses, ({ one, many }) => ({
+    user: one(user, { fields: [customCourses.userId], references: [user.id] }),
+    schedules: many(customCourseSchedules), // 1対多のリレーション
+}));
+
+export const customCourseSchedulesRelations = relations(customCourseSchedules, ({ one }) => ({
+    course: one(customCourses, {
+        fields: [customCourseSchedules.customCourseId],
+        references: [customCourses.id],
+    }),
 }));
 
 // --- courses (公式マスタ) とスケジュールのリレーション ---

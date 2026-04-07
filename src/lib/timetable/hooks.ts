@@ -71,10 +71,61 @@ export function useTimetable({
     };
 
     // --- ハンドラー ---
+    // CustomCourseの保存
+    const saveCustomCourse = async (formData: any) => {
+        // 1. IDの生成 (ゲストなら一時的なID、ログインならDB発行のIDを想定)
+        // 既存の数値IDと衝突しないよう "custom-" プレフィックスを維持
+        const isNew = !formData.id;
+        const tempId = formData.id || `custom-${Date.now()}`;
+
+        const newCourse: UserCourseWithDetails = {
+            ...formData,
+            id: tempId,
+            isVisible: true,
+            year: selectedYear,
+            term: selectedTerm,
+            // formData.schedules は既に {dayOfWeek, period, startTime, endTime} を持っている前提
+        };
+
+        // 2. 状態更新
+        const nextCourses = !isNew
+            ? courses.map(c => c.id === formData.id ? newCourse : c) // 編集
+            : [...courses, newCourse]; // 新規
+
+        setCourses(nextCourses);
+        syncLocalStorage(nextCourses);
+
+        // 3. ログイン済みならDBへ
+        if (user) {
+            try {
+                const method = isNew ? 'POST' : 'PATCH';
+                const response = await fetch('/api/custom-courses', {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCourse),
+                });
+
+                if (isNew && response.ok) {
+                    // response.json() の結果に型を付ける
+                    const data = (await response.json()) as { success: boolean; id: number };
+
+                    // DBで確定した数値IDに差し替える (オプションだが推奨)
+                    // tempId (custom-xxx) を DB発行の数値ID に置き換えることで、以降の PATCH が正しく動作する
+                    if (data.id) {
+                        setCourses(prev => prev.map(c => c.id === tempId ? { ...c, id: data.id } : c));
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to save custom course", e);
+            }
+        }
+    };
+
     // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
     const toggleCourse = async (course: UserCourseWithDetails) => {
         const targetCourseId = course.id;
         const isRegistered = registeredIds.has(targetCourseId);
+        const isCustom = typeof targetCourseId === 'string' || targetCourseId > 100000; // カスタムかどうかの判定
 
         // 状態更新 (削除なら消す、追加なら入れる)
         const nextCourses = isRegistered
@@ -86,12 +137,15 @@ export function useTimetable({
 
         if (user) {
             try {
-                await fetch('/api/user-courses', {
-                    method: 'POST',
+                // カスタムコースの場合は専用APIのDELETE、通常コースはuser-coursesのPOST(Toggle)
+                const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
+                const method = isCustom ? 'DELETE' : 'POST';
+
+                await fetch(endpoint, {
+                    method: method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ courseId: targetCourseId }),
+                    body: JSON.stringify({ id: targetCourseId, courseId: targetCourseId }),
                 });
-                // 失敗時のロールバック処理を入れる場合はここに追加
             } catch (e) {
                 console.error("Sync failed", e);
             }
@@ -99,7 +153,7 @@ export function useTimetable({
     };
 
     // 表示/非表示の切り替え
-    const toggleVisibility = async (courseId: number) => {
+    const toggleVisibility = async (courseId: number | string) => {
         const target = courses.find(c => c.id === courseId);
         if (!target) return;
 
@@ -112,16 +166,24 @@ export function useTimetable({
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses', {
+            // IDが文字列（custom-xxx）ならカスタムコース用APIを叩く
+            const isCustom = typeof courseId === 'string';
+            const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
+
+            await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, isVisible: nextVisible })
+                body: JSON.stringify({
+                    id: courseId,       // custom-course API用
+                    courseId: courseId, // user-course API用
+                    isVisible: nextVisible
+                })
             });
         }
     };
 
     // 色の更新
-    const updateColor = async (courseId: number, nextColor: string | null) => {
+    const updateColor = async (courseId: number | string, nextColor: string | null) => {
         const nextCourses = courses.map(c =>
             c.id === courseId ? { ...c, colorCustom: nextColor } : c
         );
@@ -130,16 +192,23 @@ export function useTimetable({
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses', {
+            const isCustom = typeof courseId === 'string';
+            const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
+
+            await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, colorCustom: nextColor })
+                body: JSON.stringify({
+                    id: courseId,
+                    courseId: courseId,
+                    colorCustom: nextColor
+                })
             });
         }
     };
 
     // メモの更新
-    const updateMemo = async (courseId: number, nextMemo: string) => {
+    const updateMemo = async (courseId: number | string, nextMemo: string) => {
         const nextCourses = courses.map(c =>
             c.id === courseId ? { ...c, memo: nextMemo } : c
         );
@@ -148,10 +217,17 @@ export function useTimetable({
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses', {
+            const isCustom = typeof courseId === 'string';
+            const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
+
+            await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, memo: nextMemo })
+                body: JSON.stringify({
+                    id: courseId,
+                    courseId: courseId,
+                    memo: nextMemo
+                })
             });
         }
     };
@@ -161,6 +237,7 @@ export function useTimetable({
         schedules: allSchedules,
         displayCourses,
         displaySchedules,
+        saveCustomCourse,
         toggleCourse,
         toggleVisibility,
         updateColor,
