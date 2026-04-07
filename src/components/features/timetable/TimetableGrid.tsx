@@ -3,7 +3,7 @@ import {timeToMin} from "@/lib/timetable/utils.ts";
 import {PERIODS, SELECTABLE_DAYS, TIMETABLE_CONFIG} from "@/constants/time.ts";
 
 interface TimetableGridProps {
-    // 1. データ (事前計算済みのスタイルを含む)
+    // 1. データ
     displaySchedules: DisplaySchedule[];
     user: any;
 
@@ -103,7 +103,7 @@ const TimetableGrid = ({
                                     {/* テキストコンテンツ */}
                                     <div className="flex flex-col gap-0 min-w-0 overflow-hidden">
                                         <h1 className="lg:text-sm md:text-xs text-[10px] font-bold leading-tight line-clamp-3 text-base-content/90">
-                                            {isJa ? sched.titleJa : sched.titleEn}
+                                            {isJa ? (sched.titleJa || (sched as any).title) : (sched.titleEn || (sched as any).title)}
                                         </h1>
                                         {user && sched.room && (
                                             <p className="lg:text-[12px] text-[8px] font-medium opacity-80 truncate">

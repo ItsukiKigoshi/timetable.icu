@@ -1,6 +1,6 @@
 import type {UserCourseWithDetails} from "@/db/schema";
 import {getSyllabusUrl} from "@/lib/course/utils.ts";
-import {Eye, EyeOff, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
+import {Eye, EyeOff, Pencil, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
 import {useTranslation} from "@/lib/translation/context.tsx";
 import {SWATCHES} from "@/constants/config.ts";
 
@@ -14,26 +14,36 @@ const CourseDetailContent = ({
                                  isSubmitting,
                                     }: {
     course: UserCourseWithDetails,
-    toggleVisibility: (courseId: number) => void;
+    toggleVisibility: (courseId: number | string) => void;
     handleToggle: (c: UserCourseWithDetails) => void,
-    updateMemo: (courseId: number, memo: string) => void,
-    updateColor: (courseId: number, color: string | null) => void,
-    isSubmitting: number | null
+    updateMemo: (courseId: number | string, memo: string) => void,
+    updateColor: (courseId: number | string, color: string | null) => void,
+    isSubmitting: number | string | null
 }) => {
     const {t} = useTranslation();
     const cId = course.id;
+    const isCustom = typeof course.id === 'string';
 
     return (
         <div className="flex flex-col gap-4 py-2">
             {/* メインアクション */}
             <div className="grid grid-cols-4 gap-2">
-                {/* シラバス (2/4 を占有) */}
-                <a href={getSyllabusUrl(course.rgNo, course.year, course.term)} target="_blank" rel="noreferrer"
-                   className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300"
-                   title={t('timetable.syllabus')}>
-                    <SquareArrowOutUpRight size="16"/>
-                    <span className="truncate">{t('timetable.syllabus')}</span>
-                </a>
+                {/* シラバス/編集 (2/4 を占有) */}
+                {!isCustom ? (
+                    <a href={getSyllabusUrl(course.rgNo, course.year, course.term)} target="_blank" rel="noreferrer"
+                       className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300"
+                       title={t('timetable.syllabus')}>
+                        <SquareArrowOutUpRight size="16"/>
+                        <span className="truncate">{t('timetable.syllabus')}</span>
+                    </a>
+                ):(
+                    <a href={`/edit/${course.id}`}
+                       className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300">
+                            <Pencil size={16} />
+                            内容を編集
+                        </a>
+                    )}
+
 
                 {/* 表示/非表示 (1/4 を占有) */}
                 <button onClick={() => toggleVisibility(course.id)}

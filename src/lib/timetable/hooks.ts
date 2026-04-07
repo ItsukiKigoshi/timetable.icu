@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import type {FlatSchedule, UserCourseWithDetails} from "@/db/schema";
+import type {CourseFormInput, FlatSchedule, UserCourseWithDetails} from "@/db/schema";
 import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
 
 export function useTimetable({
@@ -36,20 +36,20 @@ export function useTimetable({
     // 全スケジュールを平坦化 (全コマ)
     const allSchedules = useMemo(() => {
         return courses.flatMap(course =>
-                course.schedules.map(s => ({
-                    ...course,
-                    ...s,
-                    scheduleId: s.id,
-                    id: course.id
-                } as FlatSchedule))
-            );
+            course.schedules.map(s => ({
+                ...course, // ここで course.id が入る
+                ...s,
+                scheduleId: s.id, // スケジュール自体のID
+                id: course.id     // コース本体のID（custom-xxx または 数値）
+            } as FlatSchedule))
+        );
     }, [courses]);
 
     // 選択中の年と学期の授業一覧
     const displayCourses = useMemo(() => {
         return courses
             .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
-    }, [courses]);
+    }, [courses, selectedYear, selectedTerm]);
 
     // 描画用のデータ (isVisible=trueかつ選択中の年と学期のみ、かつ位置計算済み)
     const displaySchedules = useMemo(() => {
@@ -57,7 +57,7 @@ export function useTimetable({
             .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
             .filter(s => s.isVisible !== false);
         return computeDisplaySchedules(visibleOnly);
-    }, [allSchedules]);
+    }, [allSchedules, selectedYear, selectedTerm]);
 
     // 登録済みIDのSet（ボタンの表示判定用）
     const registeredIds = useMemo(() => {
@@ -72,30 +72,32 @@ export function useTimetable({
 
     // --- ハンドラー ---
     // CustomCourseの保存
-    const saveCustomCourse = async (formData: any) => {
-        // 1. IDの生成 (ゲストなら一時的なID、ログインならDB発行のIDを想定)
-        // 既存の数値IDと衝突しないよう "custom-" プレフィックスを維持
+    const saveCustomCourse = async (formData: CourseFormInput) => {
         const isNew = !formData.id;
         const tempId = formData.id || `custom-${Date.now()}`;
 
-        const newCourse: UserCourseWithDetails = {
+        // DB構造に合わせたオブジェクト作成
+        const newCourse: any = {
             ...formData,
             id: tempId,
+            // カスタム科目としての最小要件を満たす
+            title: formData.title,
             isVisible: true,
             year: selectedYear,
             term: selectedTerm,
-            // formData.schedules は既に {dayOfWeek, period, startTime, endTime} を持っている前提
         };
 
-        // 2. 状態更新
+        // UI表示用に titleJa も同期させておくと、他のコンポーネントが titleJa を参照していても壊れない
+        newCourse.titleJa = formData.title;
+
         const nextCourses = !isNew
-            ? courses.map(c => c.id === formData.id ? newCourse : c) // 編集
-            : [...courses, newCourse]; // 新規
+            ? courses.map(c => String(c.id) === String(formData.id) ? newCourse : c)
+            : [...courses, newCourse];
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
-        // 3. ログイン済みならDBへ
+        // ログイン済みならDBへ
         if (user) {
             try {
                 const method = isNew ? 'POST' : 'PATCH';
@@ -106,11 +108,7 @@ export function useTimetable({
                 });
 
                 if (isNew && response.ok) {
-                    // response.json() の結果に型を付ける
                     const data = (await response.json()) as { success: boolean; id: number };
-
-                    // DBで確定した数値IDに差し替える (オプションだが推奨)
-                    // tempId (custom-xxx) を DB発行の数値ID に置き換えることで、以降の PATCH が正しく動作する
                     if (data.id) {
                         setCourses(prev => prev.map(c => c.id === tempId ? { ...c, id: data.id } : c));
                     }
@@ -125,26 +123,43 @@ export function useTimetable({
     const toggleCourse = async (course: UserCourseWithDetails) => {
         const targetCourseId = course.id;
         const isRegistered = registeredIds.has(targetCourseId);
-        const isCustom = typeof targetCourseId === 'string' || targetCourseId > 100000; // カスタムかどうかの判定
 
-        // 状態更新 (削除なら消す、追加なら入れる)
-        const nextCourses = isRegistered
-            ? courses.filter(c => c.id !== targetCourseId)
-            : [...courses, { ...course, isVisible: true }];
+        // カスタムかどうかの判定
+        const isCustom = typeof targetCourseId === 'string' || (typeof targetCourseId === 'number' && targetCourseId > 100000);
+
+        // 状態更新
+        let nextCourses: UserCourseWithDetails[];
+
+        if (isRegistered) {
+            // 削除
+            nextCourses = courses.filter(c => c.id !== targetCourseId);
+        } else {
+            const courseWithContext: UserCourseWithDetails = {
+                ...course,
+                year: course.year || selectedYear,
+                term: course.term || selectedTerm,
+                isVisible: true
+            };
+            nextCourses = [...courses, courseWithContext];
+        }
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
             try {
-                // カスタムコースの場合は専用APIのDELETE、通常コースはuser-coursesのPOST(Toggle)
                 const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
                 const method = isCustom ? 'DELETE' : 'POST';
 
                 await fetch(endpoint, {
                     method: method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: targetCourseId, courseId: targetCourseId }),
+                    body: JSON.stringify({
+                        id: targetCourseId,
+                        courseId: targetCourseId,
+                        year: selectedYear,
+                        term: selectedTerm
+                    }),
                 });
             } catch (e) {
                 console.error("Sync failed", e);
@@ -166,7 +181,6 @@ export function useTimetable({
         syncLocalStorage(nextCourses);
 
         if (user) {
-            // IDが文字列（custom-xxx）ならカスタムコース用APIを叩く
             const isCustom = typeof courseId === 'string';
             const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
 
@@ -174,8 +188,8 @@ export function useTimetable({
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    id: courseId,       // custom-course API用
-                    courseId: courseId, // user-course API用
+                    id: courseId,
+                    courseId: courseId,
                     isVisible: nextVisible
                 })
             });

@@ -9,9 +9,9 @@ interface CourseListProps {
     isJa: boolean;
     t: any;
     setSelectedCourse: (course: UserCourseWithDetails) => void;
-    toggleVisibility: (courseId: number) => void;
+    toggleVisibility: (courseId: number | string) => void;
     handleToggle: (course: UserCourseWithDetails) => void;
-    isSubmitting: number | null;
+    isSubmitting: number | string | null;
 }
 
 const CourseList = ({

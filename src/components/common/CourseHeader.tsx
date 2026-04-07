@@ -37,9 +37,11 @@ const CourseHeader = ({
             <section className="flex flex-col gap-2 w-full min-w-0">
                 {/* 1. 上段: コースコード / 言語 / 単位 / 年度 */}
                 <div className="flex flex-wrap gap-1.5 items-center">
-                    <span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter shrink-0">
+                    {course.courseCode && (
+                        <span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter shrink-0">
                         {course.courseCode}
                     </span>
+                    )}
 
                     {course.language && (
                         <span className="badge badge-xs font-bold badge-outline text-base-content/50">

@@ -243,6 +243,29 @@ export type Course = InferSelectModel<typeof courses>;
 export type Schedule = InferSelectModel<typeof courseSchedules>;
 export type UserCourse = InferSelectModel<typeof userCourses>;
 
+// カスタム科目のベース型
+export type CustomCourse = InferSelectModel<typeof customCourses>;
+export type CustomSchedule = InferSelectModel<typeof customCourseSchedules>;
+
+
+// 利便性のための「共通アクセス用」型（EditorのFormなどで使用）
+export interface CourseFormInput {
+    id?: number | string;
+    title: string;        // カスタムは直接、公式は titleJa を入れる
+    instructor?: string | null;
+    room?: string | null;
+    units: number;
+    memo?: string | null;
+    colorCustom?: string | null;
+    year: number;
+    term: string;
+    schedules: {
+        dayOfWeek: typeof daysEnum[number];
+        period: string;
+        startTime: string;
+        endTime: string;
+    }[];
+}
 
 
 // --- Helper: メタデータ部分だけを抽出 ---
@@ -258,10 +281,14 @@ export type CourseWithSchedules = Course & {
     schedules: Schedule[];
 };
 // 詳細情報付きのユーザー履修科目
-export type UserCourseWithDetails = Course &
-    UserCourseMetadata & {
-    schedules: Schedule[]
-};
+// 統合された型: 公式科目 or カスタム科目
+// 公式科目の場合は titleJa があり、カスタムの場合は title がある状態を許容する
+export type UserCourseWithDetails = (Partial<Course> & CustomCourse & {
+    schedules: (Schedule | CustomSchedule)[];
+}) | (Course & UserCourseMetadata & {
+    schedules: Schedule[];
+});
+
 export type Categories = InferSelectModel<typeof categories>;
 
 // Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応

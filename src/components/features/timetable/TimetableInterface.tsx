@@ -49,9 +49,9 @@ export default function TimetableInterface({
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>(initialViewMode);
     const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string, start: string, end: string } | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<number | string | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<UserCourseWithDetails | null>(null);
-    const [expandedCourseId, setExpandedCourseId] = useState<number | null>(null);
+    const [expandedCourseId, setExpandedCourseId] = useState<number | string | null>(null);
 
     // --- Effect ---
     // その時間枠（Day/Period）に該当する UserCourseWithDetails
@@ -131,7 +131,7 @@ export default function TimetableInterface({
 
     // --- 関数 ---
     const handleToggle = async (course: any) => {
-        const cId = Number(course.courseId || course.id);
+        const cId = course.id;
         if (isSubmitting === cId) return;
         setIsSubmitting(cId);
         try {
