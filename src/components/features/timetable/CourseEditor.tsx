@@ -180,18 +180,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     </div>
 
                     <div className="form-control">
-                        <label className="label font-bold">教員名</label>
-                        <input
-                            type="text"
-                            name="instructor"
-                            className="input input-bordered w-full"
-                            value={formData.instructor}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label font-bold">教室</label>
+                        <label className="label font-bold">教室・場所</label>
                         <input
                             type="text"
                             name="room"
@@ -199,6 +188,17 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                             value={formData.room}
                             onChange={handleChange}
                             placeholder="例: H-101"
+                        />
+                    </div>
+
+                    <div className="form-control">
+                        <label className="label font-bold">教員名</label>
+                        <input
+                            type="text"
+                            name="instructor"
+                            className="input input-bordered w-full"
+                            value={formData.instructor}
+                            onChange={handleChange}
                         />
                     </div>
 

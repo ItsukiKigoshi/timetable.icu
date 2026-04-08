@@ -23,5 +23,5 @@ export const PERIODS = [
 export const TIMETABLE_CONFIG = {
     START_TIME: 8 * 60 + 45,// 08:45
     END_TIME: 20 * 60,// 20:00
-    HEADER_HEIGHT: 40,
+    HEADER_HEIGHT: 20,
 } as const;
