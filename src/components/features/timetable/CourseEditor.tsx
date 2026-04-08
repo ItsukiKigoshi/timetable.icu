@@ -224,7 +224,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     />
 
                     <div className="form-control">
-                        <label className="label font-bold">スケジュール</label>
+                        <label className="label font-bold">スケジュール（必須）</label>
                         <div className="overflow-x-auto rounded-lg border border-base-300">
                             <table className="table table-fixed w-full text-center">
                                 <thead>
@@ -242,13 +242,31 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                                         </th>
                                         {SELECTABLE_DAYS.map(day => {
                                             const isSelected = formData.schedules.some((s: any) => s.dayOfWeek === day && s.period === p.label);
+
+                                            // カスタムカラーがあるか判定
+                                            const hasCustomColor = !!formData.colorCustom;
+
                                             return (
                                                 <td
                                                     key={`${day}-${p.label}`}
-                                                    className={`border border-base-300 cursor-pointer transition-colors p-0 h-12 ${isSelected ? 'bg-primary' : 'hover:bg-base-200'}`}
                                                     onClick={() => toggleSchedule(day, p.label)}
+                                                    className={`border border-base-300 cursor-pointer transition-colors p-0 h-12 ${
+                                                        isSelected
+                                                            ? (!hasCustomColor ? 'bg-primary' : '') // カスタム色がない時だけ daisyUI の bg-primary を使う
+                                                            : 'hover:bg-base-200'
+                                                    }`}
+                                                    style={{
+                                                        // 選択中かつカスタム色がある場合のみ backgroundColor を適用
+                                                        backgroundColor: isSelected && hasCustomColor ? formData.colorCustom : undefined,
+                                                        // カスタム色がある場合、チェックマークの色を白（または適切な色）に固定
+                                                        color: isSelected && hasCustomColor ? '#fff' : undefined
+                                                    }}
                                                 >
-                                                    {isSelected && <div className="text-primary-content font-bold">✓</div>}
+                                                    {isSelected && (
+                                                        <div className={`${!hasCustomColor ? 'text-primary-content' : ''} font-bold`}>
+                                                            ✓
+                                                        </div>
+                                                    )}
                                                 </td>
                                             );
                                         })}
