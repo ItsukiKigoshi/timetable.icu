@@ -143,12 +143,15 @@ ICU生の時間割・履修登録ツールの決定版
 
 # TODO
 - [x] ELAを追加したい: 独自の開始/終了時間は認めずコマに収まる予定の追加機能？
+- [ ] Remoteに実験環境を用意する
+  - [ ] D1, Workersをもう1ペア作り，実験できるようにする，
+  - [ ] 既存のDBはまったく汚さず他の人も実験に参加出来るように．
+  - [ ] 実験環境ではDBのデータが消えてもいい
 - [ ] 手動追加機能 Known Issues
   - [ ] 削除がうまく働いていない
     - [ ] toggleCourseがcustomCourseに関する操作を許容していない？
     - [ ] https://dev-timetable-icu.itsukikigoshi.workers.dev/api/user-coursesが404なのでテスト環境のAPIがDBへのアクセスが拒否されている？
     - [ ] customCourseとscheduleがないcourseが消せない
-    - [ ] 
   - [ ] TimetableInterfaceのModalのopen管理で，複数が同時に開いてしまう
     - [ ] ->remoteでcustomCourseとuserCoursesが同じidを持っているために起きているエラー．
     - [ ] 削除もID重複によるものかも．ID指定だけではtoggleCourseはできない
@@ -374,6 +377,7 @@ ICU生の時間割・履修登録ツールの決定版
               - [ ] プロフィール写真
               - [ ] （パスワードは保存されない）
               - [ ] 管理者を除いて，他のユーザは閲覧不可
+              - [ ] ICUアカウントを必須にしているのは，教室情報などの学内情報にアクセスできる人を制限するため
             - [ ] 登録した情報（データの復旧時のために平文で保持することはやむを得ないと判断）
               - [ ] 授業コード
               - [ ] メモ
