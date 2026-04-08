@@ -159,6 +159,8 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     disabled={isSubmitting}
                     className="flex flex-col gap-6 border-none p-0 m-0"
                 >
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* 科目名（必須） */}
                     <div className="form-control">
                         <label className="label font-bold">科目名（必須）</label>
@@ -171,6 +173,19 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                             required
                             autoComplete="off"
                         />
+                    </div>
+
+                    <div className="form-control">
+                        <label className="label font-bold">教室・場所</label>
+                        <input
+                            type="text"
+                            name="room"
+                            className="input input-bordered w-full"
+                            value={formData.room}
+                            onChange={handleChange}
+                            placeholder="例: H-101"
+                        />
+                    </div>
                     </div>
 
                     <div className="form-control">
@@ -218,18 +233,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                         </div>
                     </div>
 
-                    <div className="form-control">
-                        <label className="label font-bold">教室・場所</label>
-                        <input
-                            type="text"
-                            name="room"
-                            className="input input-bordered w-full"
-                            value={formData.room}
-                            onChange={handleChange}
-                            placeholder="例: H-101"
-                        />
-                    </div>
-
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="form-control">
                         <label className="label font-bold">教員名</label>
                         <input
@@ -242,10 +246,10 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     </div>
 
                     <div className="form-control">
-                        <label className="label font-bold text-sm">単位数</label>
+                        <label className="label font-bold">単位数</label>
                         <select
                             name="units"
-                            className="select select-bordered"
+                            className="select select-bordered w-full"
                             value={formData.units}
                             onChange={handleChange}
                         >
@@ -255,6 +259,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                                 <option key={u} value={u}>{u}</option>
                             ))}
                         </select>
+                    </div>
                     </div>
 
                     <div className="flex gap-2 mt-4">
