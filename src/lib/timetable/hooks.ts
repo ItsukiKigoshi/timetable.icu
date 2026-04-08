@@ -124,6 +124,7 @@ export function useTimetable({
         const targetCourseId = course.id;
         const isRegistered = registeredIds.has(targetCourseId);
 
+        // TODO - これだけでは判定できていない, customCourseIdやの有無も見て判断する必要がある; customCourseのidもnumber型で処理されてる
         // idの型によってカスタムかどうかを確実に判定
         const isCustom = typeof targetCourseId === 'string';
 
@@ -132,7 +133,6 @@ export function useTimetable({
         if (isRegistered) {
             nextCourses = courses.filter(c => c.id !== targetCourseId);
         } else {
-            // ここで型アサーション(as any)を使わずに安全にコピー
             const courseWithContext = {
                 ...course,
                 year: course.year || selectedYear,

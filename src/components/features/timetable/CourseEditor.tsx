@@ -156,7 +156,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
             <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-4 flex flex-col gap-6 pb-20">
                 <header>
                     <h1 className="text-2xl font-bold">
-                        {mode === 'create' ? '新規コース作成' : 'コース編集'}
+                        {mode === 'create' ? 'カスタムコース作成' : 'コース編集'}
                     </h1>
                 </header>
 

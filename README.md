@@ -155,6 +155,7 @@ ICU生の時間割・履修登録ツールの決定版
   - [ ] TimetableInterfaceのModalのopen管理で，複数が同時に開いてしまう
     - [ ] ->remoteでcustomCourseとuserCoursesが同じidを持っているために起きているエラー．
     - [ ] 削除もID重複によるものかも．ID指定だけではtoggleCourseはできない
+    - [ ] localStorageではustomCourseのidに"custom-"のprefixがつくのでid重複（->Modal誤開閉や削除操作の失敗）は起きない
     - [ ] customCourseは"customCourseId"をもっているので，"id"は持たないようにするとか？
   - [ ] ScheduleがないCourseだけをならべても「コースが追加されていない」と言われる（未検証）
 - [ ] ログイン済みのユーザもlocalStorageにバックアップしておき，サーバ側をsource of truthとしつつ通信障害時などにローカルでデータが参照されるように
