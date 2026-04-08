@@ -1,29 +1,40 @@
 ---
-import {env} from "cloudflare:workers";
-import {drizzle} from "drizzle-orm/d1";
+import { env } from "cloudflare:workers";
+import { drizzle } from "drizzle-orm/d1";
 import * as schema from "@/db/schema/index.ts";
 import Layout from "@/components/layout/Layout.astro";
 import TimetableInterface from "@/components/features/timetable/TimetableInterface.tsx";
-import {type Language} from "@/lib/translation/ui.ts"
-import type {UserCourseWithDetails} from "@/db/schema/index.ts";
-import {getTranslations} from "@/lib/translation/utils";
+import { type Language } from "@/lib/translation/ui.ts"
+import {
+    courses,
+    userCourses,
+    customCourses,
+    type UserCourseWithDetails,
+    type termsEnum, type Course
+} from "@/db/schema/index.ts";
+import { getTranslations } from "@/lib/translation/utils";
+import { and, exists, eq } from "drizzle-orm";
 
 interface Props {
     lang: Language;
 }
 
-const {user, selectedTerm, selectedYear} = Astro.locals;
+const { user, selectedTerm, selectedYear } = Astro.locals;
 const { lang } = Astro.props;
 const viewParam = Astro.url.searchParams.get('view') || 'grid';
 
 const t = getTranslations(lang);
 
-// スコープの外側で空配列として初期化しておく
-let initialCourses = [] as UserCourseWithDetails[];
+// Astro.locals からの値を型安全に変換
+const yearNum = Number(selectedYear);
+const termVal = selectedTerm as (typeof termsEnum)[number];
+
+let initialCourses: UserCourseWithDetails[] = [];
 
 if (user) {
     const db = drizzle(env.timetable_icu, { schema });
 
+    // 1. 公式コース
     const results = await db.query.userCourses.findMany({
         where: (uc, { eq }) => eq(uc.userId, user.id),
         with: {
@@ -35,30 +46,50 @@ if (user) {
         }
     });
 
-    // ユーザー設定をCourseの第一階層にマージする
-    initialCourses = results
-        .map((uc) => ({
-        ...uc.course,              // 公式のコース情報
-        // UserCourseMetadata を展開
-        isVisible: uc.isVisible,
-        selectedAltGroupId: uc.selectedAltGroupId,
-        colorCustom: uc.colorCustom,
-        memo: uc.memo,
-        // schedules はそのまま保持
-        schedules: uc.course.schedules,
+    // 2. カスタムコース
+    const customResults = await db.query.customCourses.findMany({
+        where: () => and(
+            eq(customCourses.userId, user.id),
+            eq(customCourses.year, yearNum),
+            eq(customCourses.term, termVal)
+        ),
+        with: {
+            schedules: true
+        }
+    });
+
+    // 3. データの整形
+    const officialMapped = results
+        .filter((uc): uc is typeof uc & { course: NonNullable<typeof uc.course> } => {
+            return uc.course !== null;
+        })
+        .map(uc => ({
+            ...uc.course,
+            isVisible: uc.isVisible,
+            selectedAltGroupId: uc.selectedAltGroupId,
+            colorCustom: uc.colorCustom,
+            memo: uc.memo,
+            isCustom: false as const,
+        }));
+
+    const customMapped = customResults.map((cc) => ({
+        ...cc,
+        isCustom: true as const,
     }));
+
+    initialCourses = [...officialMapped, ...customMapped];
 }
 ---
 <Layout title={`${t('timetable.title')} | ${t('site.title')}`}>
     <div class="p-2 md:px-6 mx-auto h-[calc(100vh-128px)] overflow-hidden">
-            <TimetableInterface
-                    initialCourses={initialCourses}
-                    initialViewMode={viewParam as 'grid' | 'list'}
-                    user={user}
-                    lang={lang}
-                    selectedYear={selectedYear}
-                    selectedTerm={selectedTerm}
-                    client:load
-            />
+        <TimetableInterface
+                initialCourses={initialCourses}
+                initialViewMode={viewParam as 'grid' | 'list'}
+                user={user}
+                lang={lang}
+                selectedYear={selectedYear}
+                selectedTerm={selectedTerm}
+                client:load
+        />
     </div>
 </Layout>

@@ -22,7 +22,9 @@ def generate_sql():
         return
 
     output = [
-        "-- Auto-generated SQL for D1 Sync (Simplified for Wrangler compatibility)"
+        "-- Auto-generated SQL for D1 Sync (Simplified for Wrangler compatibility)",
+        "PRAGMA foreign_keys = OFF;",
+        "BEGIN TRANSACTION;"
     ]
 
     for item in data:
@@ -77,6 +79,9 @@ def generate_sql():
             FROM courses WHERE year={item['year']} AND rg_no={escape_sql(item['rgNo'])};
             """
             output.append(sch_sql.strip())
+
+    output.append("COMMIT;")
+    output.append("PRAGMA foreign_keys = ON;")
 
     with open('scripts/out/sync_courses.sql', 'w', encoding='utf-8') as f:
         f.write("\n".join(output))

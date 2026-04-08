@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import type {AnyCourseWithDetails, CourseFormInput, FlatSchedule, UserCourseWithDetails} from "@/db/schema";
+import type {CourseFormInput, FlatSchedule, UserCourseWithDetails} from "@/db/schema";
 import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
 
 export function useTimetable({
@@ -8,7 +8,7 @@ export function useTimetable({
                                  selectedYear,
                                  selectedTerm
                              }: {
-    initialCourses?: AnyCourseWithDetails[],
+    initialCourses?: UserCourseWithDetails[],
     user: any
     selectedYear: number,
     selectedTerm: string,
@@ -120,14 +120,14 @@ export function useTimetable({
     };
 
     // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
-    const toggleCourse = async (course: AnyCourseWithDetails) => {
+    const toggleCourse = async (course: UserCourseWithDetails) => {
         const targetCourseId = course.id;
         const isRegistered = registeredIds.has(targetCourseId);
 
         // idの型によってカスタムかどうかを確実に判定
         const isCustom = typeof targetCourseId === 'string';
 
-        let nextCourses: AnyCourseWithDetails[];
+        let nextCourses: UserCourseWithDetails[];
 
         if (isRegistered) {
             nextCourses = courses.filter(c => c.id !== targetCourseId);
@@ -138,7 +138,7 @@ export function useTimetable({
                 year: course.year || selectedYear,
                 term: course.term || selectedTerm,
                 isVisible: true
-            } as AnyCourseWithDetails; // 合成された型として扱う
+            } as UserCourseWithDetails; // 合成された型として扱う
 
             nextCourses = [...courses, courseWithContext];
         }

@@ -16,6 +16,8 @@ export const daysEnum = [
     "Sun",
 ] as const;
 
+export const termsEnum = ["Spring", "Autumn", "Winter"] as const;
+
 // --- Courses ---
 // シラバスデータなどの基本情報を保持
 export const courses = sqliteTable(
@@ -25,7 +27,7 @@ export const courses = sqliteTable(
         year: integer("year").notNull(),
         rgNo: text("rg_no").notNull(),
         status: text("status", {enum: ["active", "cancelled"]}).default("active"),
-        term: text("term", {enum: ["Spring", "Autumn", "Winter"]}).notNull(),
+        term: text("term", {enum: termsEnum}).notNull(),
         courseCode: text("course_code").notNull(), // 例: GES001
         titleJa: text("title_ja").notNull(),
         titleEn: text("title_en").notNull(),
@@ -143,7 +145,7 @@ export const customCourses = sqliteTable("custom_courses", {
     units: real("units").notNull().default(0),
 
     year: integer("year").notNull(),
-    term: text("term").notNull(),
+    term: text("term", {enum: termsEnum}).notNull(),
 
     isVisible: integer("is_visible", { mode: "boolean" }).notNull().default(true),
     colorCustom: text("color_custom"),
@@ -177,18 +179,17 @@ export const courseToCategories = sqliteTable(
     {
         courseId: integer("course_id")
             .notNull()
-            .references(() => courses.id),
+            .references(() => courses.id, { onDelete: "cascade" }),
         categoryId: text("category_id")
             .notNull()
-            .references(() => categories.id),
+            .references(() => categories.id, { onDelete: "cascade" }),
     },
     (table) => [
-        primaryKey({columns: [table.courseId, table.categoryId]}),
+        primaryKey({ columns: [table.courseId, table.categoryId] }),
         index("category_id_idx").on(table.categoryId),
         index("category_search_idx").on(table.categoryId, table.courseId),
     ],
 );
-
 // --- User側からのリレーション ---
 // 1人のユーザーは「複数の履修登録(公式)」と「複数のカスタム科目」を持つ
 // Authのuserとのrelationもここでまとめる
@@ -267,7 +268,6 @@ export type CustomCourseWithDetails = CustomCourse & {
 
 export type UserCourseWithDetails = OfficialCourseWithDetails | CustomCourseWithDetails;
 
-export type AnyCourseWithDetails = OfficialCourseWithDetails | CustomCourseWithDetails;
 export type Categories = InferSelectModel<typeof categories>;
 
 // Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応

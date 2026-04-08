@@ -1,4 +1,4 @@
-import type {AnyCourseWithDetails} from "@/db/schema";
+import type {UserCourseWithDetails} from "@/db/schema";
 import {formatUnits} from "@/lib/course/utils.ts";
 import {useTranslation} from "@/lib/translation/context.tsx";
 import {useMemo} from "react";
@@ -9,7 +9,7 @@ const CourseHeader = ({
                           showColor = false,
                           showYearTerm = false,
                       }: {
-    course: AnyCourseWithDetails,
+    course: UserCourseWithDetails,
     colorCustom?: string | null;
     showColor?: boolean;
     showYearTerm?: boolean;
