@@ -47,7 +47,7 @@ const {t, l, currentLang} = createTranslationHelper(lang);
     </aside>
 
     <!--Main Content-->
-    <section class="flex flex-col items-center gap-16 p-6 max-w-5xl mx-auto min-h-screen relative">
+    <section class="flex flex-col items-center lg:gap-16 gap-8 p-6 max-w-5xl mx-auto min-h-screen relative">
         <!-- Toggle Language-->
         <div class="flex justify-center items-center gap-1 p-1 rounded-xl bg-base-200/30 backdrop-blur-sm border border-base-content/5">
             {currentLang === 'ja' ? (
@@ -65,8 +65,7 @@ const {t, l, currentLang} = createTranslationHelper(lang);
             )}
         </div>
         <!--Hero-->
-        <section
-                class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-6 shadow-2xl w-full max-w-7xl mx-auto border border-white/20"
+        <section class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-6 shadow-2xl w-full max-w-7xl mx-auto border border-white/20"
         >
             <header class="hero-content lg:flex-row flex-col lg:gap-16 gap-12">
                 <Logo
@@ -84,7 +83,7 @@ const {t, l, currentLang} = createTranslationHelper(lang);
                     <nav class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4">
                         <a
                                 href={l('/explore')}
-                                class="btn btn-primary md:btn-lg btn-sm  rounded-full px-16"
+                                class="btn btn-primary btn-lg rounded-full px-16"
                         >
                             <Telescope size="24"/>
                             <span>{t('lp.nav.explore')}</span>
@@ -92,7 +91,7 @@ const {t, l, currentLang} = createTranslationHelper(lang);
 
                         <a
                                 href={l('/timetable')}
-                                class="btn btn-neutral md:btn-lg btn-sm rounded-full px-16"
+                                class="btn btn-neutral btn-lg rounded-full px-16"
                         >
                             <CalendarDays size="24"/>
                             <span>{t('lp.nav.timetable')}</span>
