@@ -37,9 +37,10 @@ const CourseHeader = ({
 
     return (
         <div className="flex gap-3 w-full">
+            {/*カラーバー*/}
             {barColor && (
                 <div
-                    className="w-1 rounded-full shrink-0 my-1 shadow-sm transition-colors duration-500"
+                    className="w-1.5 rounded-full shrink-0 my-1 shadow-sm transition-colors duration-500"
                     style={{ backgroundColor: barColor }}
                 />
             )}

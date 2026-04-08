@@ -159,35 +159,6 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     disabled={isSubmitting}
                     className="flex flex-col gap-6 border-none p-0 m-0"
                 >
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* 科目名（必須） */}
-                    <div className="form-control">
-                        <label className="label font-bold">科目名（必須）</label>
-                        <input
-                            type="text"
-                            name="title"
-                            className="input input-bordered w-full"
-                            value={formData.title}
-                            onChange={handleChange}
-                            required
-                            autoComplete="off"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label font-bold">教室・場所</label>
-                        <input
-                            type="text"
-                            name="room"
-                            className="input input-bordered w-full"
-                            value={formData.room}
-                            onChange={handleChange}
-                            placeholder="例: H-101"
-                        />
-                    </div>
-                    </div>
-
                     <div className="form-control">
                         <label className="label font-bold">スケジュール（必須）</label>
                         <div className="overflow-x-auto rounded-lg border border-base-300">
@@ -234,32 +205,60 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="form-control">
-                        <label className="label font-bold">教員名</label>
-                        <input
-                            type="text"
-                            name="instructor"
-                            className="input input-bordered w-full"
-                            value={formData.instructor}
-                            onChange={handleChange}
-                        />
+                        {/* 科目名（必須） */}
+                        <div className="form-control">
+                            <label className="label font-bold">科目名（必須）</label>
+                            <input
+                                type="text"
+                                name="title"
+                                className="input input-bordered w-full"
+                                value={formData.title}
+                                onChange={handleChange}
+                                required
+                                autoComplete="off"
+                            />
+                        </div>
+
+                        <div className="form-control">
+                            <label className="label font-bold">教室・場所</label>
+                            <input
+                                type="text"
+                                name="room"
+                                className="input input-bordered w-full"
+                                value={formData.room}
+                                onChange={handleChange}
+                                placeholder="例: H-101"
+                            />
+                        </div>
                     </div>
 
-                    <div className="form-control">
-                        <label className="label font-bold">単位数</label>
-                        <select
-                            name="units"
-                            className="select select-bordered w-full"
-                            value={formData.units}
-                            onChange={handleChange}
-                        >
-                            <option value={0}>0</option>
-                            <option value={0.333}>1/3</option>
-                            {[1, 2, 3, 4, 5, 6].map(u => (
-                                <option key={u} value={u}>{u}</option>
-                            ))}
-                        </select>
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="form-control">
+                            <label className="label font-bold">教員名</label>
+                            <input
+                                type="text"
+                                name="instructor"
+                                className="input input-bordered w-full"
+                                value={formData.instructor}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="form-control">
+                            <label className="label font-bold">単位数</label>
+                            <select
+                                name="units"
+                                className="select select-bordered w-full"
+                                value={formData.units}
+                                onChange={handleChange}
+                            >
+                                <option value={0}>0</option>
+                                <option value={0.333}>1/3</option>
+                                {[1, 2, 3, 4, 5, 6].map(u => (
+                                    <option key={u} value={u}>{u}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="flex gap-2 mt-4">

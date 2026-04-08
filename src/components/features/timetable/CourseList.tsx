@@ -28,7 +28,7 @@ const CourseList = ({
             {items.map(course => {
                     return (
                         <div key={course.id}
-                             className={`group p-3 bg-base-100 rounded-xl flex justify-between items-center border border-base-300 ${!course.isVisible ? "opacity-60" : ""}`}>
+                             className={`group p-3 bg-base-200 rounded-xl flex justify-between items-center border border-base-300 ${!course.isVisible ? "opacity-60" : ""}`}>
 
                             {/* 左側：クリックで詳細モーダルへ */}
                             <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
