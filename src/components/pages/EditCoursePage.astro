@@ -8,7 +8,7 @@ import {env} from "cloudflare:workers";
 
 interface Props {
     lang: string;
-    targetId: string;
+    targetId?: string;
 }
 
 const { lang, targetId } = Astro.props;
@@ -20,8 +20,8 @@ let initialData = null;
 
 // ログイン済みならDBから取得
 if (user && db) {
-    const numericId = parseInt(targetId);
-    if (!isNaN(numericId)) {
+    const numericId = Number(targetId);
+    if (Number.isFinite(numericId)) {
         const result = await db.query.customCourses.findFirst({
             where: (cc) => and(
                 eq(cc.userId, user.id),
