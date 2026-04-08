@@ -93,7 +93,7 @@ const TimetableGrid = ({
 
                                  }}>
 
-                                <div className="flex gap-1 h-full w-full items-stretch bg-base-200 rounded-sm md:p-1 p-0.1 overflow-hidden">
+                                <div className="flex gap-1 h-full w-full items-stretch bg-base-300 rounded-sm md:p-1 p-0.1 overflow-hidden">
                                     {/* 左側のカラーバー */}
                                     <div
                                         className="w-1 rounded-full"
