@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e27083e2-79af-4b8a-810b-51cfdd071928",
+  "id": "d04dc7a6-139d-4551-9ba0-4d044add752b",
   "prevId": "01693a8d-c01b-43c2-aef4-0759eb7387bd",
   "tables": {
     "categories": {
@@ -195,7 +195,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "course_to_categories_category_id_categories_id_fk": {
@@ -208,7 +208,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
