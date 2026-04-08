@@ -2,8 +2,9 @@ import {LanguageProvider} from "@/lib/translation/context";
 import React, {useEffect, useState} from 'react';
 import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {PERIODS, SELECTABLE_DAYS} from "@/constants/time.ts";
-import {SWATCHES} from "@/constants/config.ts";
+
 import {useTimetable} from "@/lib/timetable/hooks.ts";
+import {ColorPicker} from "@/components/common/ColorPicker.tsx";
 
 interface CourseEditorProps {
     mode: 'create' | 'edit';
@@ -111,7 +112,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
         }
     };
 
-    const updateColor = (hex: string | null) => {
+    const updateColor = (targetId: string | undefined, hex: string | null) => {
         if (!isInitialized) return;
         setFormData(prev => ({ ...prev, colorCustom: hex }));
     };
@@ -219,50 +220,10 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                             </select>
                         </div>
 
-                        <div className="form-control">
-                            <label className="label font-bold">表示色</label>
-                            <div className="flex items-center join">
-                                <div className="flex items-center justify-center w-10 h-10 shrink-0 border border-base-300 rounded-md bg-base-100">
-                                    <div
-                                        className="w-6 h-6 rounded-full border border-black/10 shadow-sm"
-                                        style={{ backgroundColor: formData.colorCustom || "var(--color-primary)" }}
-                                    />
-                                </div>
-                                <div className="dropdown dropdown-bottom dropdown-end flex-1">
-                                    <div tabIndex={0} className="flex items-center h-10 px-3 bg-base-100 border border-base-300 rounded-md shadow-sm focus-within:border-primary transition-all">
-                                        <span className="text-xs opacity-30 font-mono mr-1.5">#</span>
-                                        <input
-                                            type="text"
-                                            value={formData.colorCustom ? formData.colorCustom.replace('#', '') : ""}
-                                            onChange={(e) => {
-                                                const val = e.target.value;
-                                                if (/^[0-9A-Fa-f]{0,6}$/.test(val)) {
-                                                    updateColor(val ? `#${val}` : null);
-                                                }
-                                            }}
-                                            className="w-full bg-transparent border-none outline-none font-mono text-sm p-0"
-                                            placeholder="DEFAULT"
-                                        />
-                                    </div>
-                                    <div className="dropdown-content z-30 mt-1 p-2 bg-base-100 border border-base-300 rounded-md shadow-xl w-72">
-                                        <div className="grid grid-cols-7 gap-2">
-                                            <button type="button" onClick={() => updateColor(null)} className="w-8 h-8 rounded border flex items-center justify-center bg-base-200">
-                                                <svg className="w-4 h-4 opacity-40" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" /></svg>
-                                            </button>
-                                            {SWATCHES.map((hex) => (
-                                                <button
-                                                    key={hex}
-                                                    type="button"
-                                                    onClick={() => { updateColor(hex); (document.activeElement as HTMLElement)?.blur(); }}
-                                                    className={`w-8 h-8 rounded border border-black/5 ${formData.colorCustom === hex ? 'ring-2 ring-primary' : ''}`}
-                                                    style={{ backgroundColor: hex }}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <ColorPicker
+                            value={formData.colorCustom}
+                            onChange={(color) => updateColor(formData.id, color)}
+                        />
                     </div>
 
                     <div className="form-control">
