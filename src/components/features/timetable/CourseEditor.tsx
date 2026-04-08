@@ -4,7 +4,6 @@ import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {PERIODS, SELECTABLE_DAYS} from "@/constants/time.ts";
 
 import {useTimetable} from "@/lib/timetable/hooks.ts";
-import {ColorPicker} from "@/components/common/ColorPicker.tsx";
 
 interface CourseEditorProps {
     mode: 'create' | 'edit';
@@ -112,11 +111,6 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
         }
     };
 
-    const updateColor = (targetId: string | undefined, hex: string | null) => {
-        if (!isInitialized) return;
-        setFormData(prev => ({ ...prev, colorCustom: hex }));
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isInitialized || isSubmitting) return;
@@ -165,24 +159,6 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     disabled={isSubmitting}
                     className="flex flex-col gap-6 border-none p-0 m-0"
                 >
-                    <div className="flex gap-3 mt-6">
-                        <button
-                            type="button"
-                            className="btn btn-ghost flex-1 border border-base-300"
-                            onClick={() => window.history.back()}
-                            disabled={isSubmitting}
-                        >
-                            キャンセル
-                        </button>
-                        <button
-                            type="submit"
-                            className="btn btn-primary flex-1"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? <span className="loading loading-spinner"></span> : '保存する'}
-                        </button>
-                    </div>
-
                     {/* 科目名（必須） */}
                     <div className="form-control">
                         <label className="label font-bold">科目名（必須）</label>
@@ -217,27 +193,18 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                                         {SELECTABLE_DAYS.map(day => {
                                             const isSelected = formData.schedules.some((s: any) => s.dayOfWeek === day && s.period === p.label);
 
-                                            // カスタムカラーがあるか判定
-                                            const hasCustomColor = !!formData.colorCustom;
-
                                             return (
                                                 <td
                                                     key={`${day}-${p.label}`}
                                                     onClick={() => toggleSchedule(day, p.label)}
                                                     className={`border border-base-300 cursor-pointer transition-colors p-0 h-12 ${
                                                         isSelected
-                                                            ? (!hasCustomColor ? 'bg-primary' : '') // カスタム色がない時だけ daisyUI の bg-primary を使う
+                                                            ? 'bg-primary'
                                                             : 'hover:bg-base-200'
                                                     }`}
-                                                    style={{
-                                                        // 選択中かつカスタム色がある場合のみ backgroundColor を適用
-                                                        backgroundColor: isSelected && hasCustomColor ? formData.colorCustom : undefined,
-                                                        // カスタム色がある場合、チェックマークの色を白（または適切な色）に固定
-                                                        color: isSelected && hasCustomColor ? '#fff' : undefined
-                                                    }}
                                                 >
                                                     {isSelected && (
-                                                        <div className={`${!hasCustomColor ? 'text-primary-content' : ''} font-bold`}>
+                                                        <div className={"text-primary-content font-bold"}>
                                                             ✓
                                                         </div>
                                                     )}
@@ -290,21 +257,14 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                         </select>
                     </div>
 
-                    <ColorPicker
-                        value={formData.colorCustom}
-                        onChange={(color) => updateColor(formData.id, color)}
-                    />
-
-                 {/*<div className="form-control">
-                        <label className="label font-bold">メモ</label>
-                        <textarea
-                            name="memo"
-                            className="textarea textarea-bordered w-full h-24"
-                            value={formData.memo}
-                            onChange={handleChange}
-                            placeholder="例: レポート締め切りなど"
-                        />
-                    </div>*/}
+                    <div className="flex gap-2 mt-4">
+                        <button type="button" className="btn btn-ghost" onClick={() => window.history.back()} disabled={isSubmitting}>
+                            キャンセル
+                        </button>
+                        <button type="submit" className="btn btn-primary flex-1" disabled={isSubmitting}>
+                            {isSubmitting ? <span className="loading loading-spinner"></span> : '保存する'}
+                        </button>
+                    </div>
                 </fieldset>
             </form>
         </LanguageProvider>
