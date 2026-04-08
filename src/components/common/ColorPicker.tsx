@@ -19,7 +19,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
                 type="button"
                 onClick={() => onChange(null)}
                 className={`w-8 h-8 rounded border flex items-center justify-center transition-all active:scale-95 ${
-                    value === null ? 'ring-2 ring-primary bg-base-300' : 'bg-base-200'
+                    value === null ? 'ring-2 ring-primary bg-primary' : 'bg-base-200'
                 }`}
                 title="Reset to default"
             >
