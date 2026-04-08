@@ -27,36 +27,27 @@ const CourseDetailContent = ({
     return (
         <div className="flex flex-col gap-4 py-2">
            {/* カラー選択セクション */}
-            <div className="flex items-center gap-3">
-                <div className="form-control w-full">
-                    <label className="label font-bold text-sm">表示色</label>
-                    {/* カラーパレット */}
-                    <div className="grid grid-cols-7 sm:grid-cols-8 gap-2">
-                        {/* リセットボタン（デフォルトに戻す） */}
-                        <button
-                            type="button"
-                            onClick={() => updateColor(course.id, null)}
-                            className={`w-8 h-8 rounded border bg-primary transition-all active:scale-90  
-                            ${course.colorCustom === null && 'ring-2 ring-primary ring-offset-2'}`}
-                            title="Reset to default"
-                        />
+            <div className="grid grid-cols-7 gap-2 w-full">
+                {/* リセットボタン */}
+                <button
+                    type="button"
+                    onClick={() => updateColor(course.id, null)}
+                    className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95 bg-primary 
+                                ${course.colorCustom === null ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                />
 
-                        {/* スウォッチ一覧 */}
-                        {SWATCHES.map((hex) => (
-                            <button
-                                key={hex}
-                                type="button"
-                                onClick={() => updateColor(course.id, hex)}
-                                className={`w-8 h-8 rounded border border-black/5 transition-all active:scale-90
-                                ${course.colorCustom === hex && 'ring-2 ring-primary ring-offset-2'}`}
-                                style={{ backgroundColor: hex }}
-                                title={hex}
-                            />
-                        ))}
-                    </div>
-                </div>
+                {/* スウォッチ一覧 */}
+                {SWATCHES.map((hex) => (
+                    <button
+                        key={hex}
+                        type="button"
+                        onClick={() => updateColor(course.id, hex)}
+                        className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95
+                                    ${course.colorCustom === hex ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                        style={{ backgroundColor: hex }}
+                    />
+                ))}
             </div>
-
 
             {/* メモ */}
             <div className="form-control w-full">

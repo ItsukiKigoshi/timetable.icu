@@ -544,6 +544,11 @@ Debug with Cloudflare Environment
 bun run build && bun x wrangler dev
 ```
 
+D1にSQL文を入れる例
+```bash
+bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
+```
+
 ### Corse data insertion
 
 Create JSON from HTML
