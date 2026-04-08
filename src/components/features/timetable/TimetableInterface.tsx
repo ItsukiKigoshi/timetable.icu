@@ -57,8 +57,6 @@ export default function TimetableInterface({
     // その時間枠（Day/Period）に該当する UserCourseWithDetails
     const coursesInSelectedSlot = useMemo(() => {
         if (!selectedSlot) return [];
-
-        console.log("Current Schedules:", schedules);
         // 1. まずその時間枠にあるコマの ID を取得
         const slotCourseIds = schedules
             .filter(s =>
