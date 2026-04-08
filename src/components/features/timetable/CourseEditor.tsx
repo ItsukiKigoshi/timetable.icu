@@ -165,11 +165,20 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     disabled={isSubmitting}
                     className="flex flex-col gap-6 border-none p-0 m-0"
                 >
-                    <div className="flex gap-2 mt-4">
-                        <button type="button" className="btn btn-ghost" onClick={() => window.history.back()} disabled={isSubmitting}>
+                    <div className="flex gap-3 mt-6">
+                        <button
+                            type="button"
+                            className="btn btn-ghost flex-1 border border-base-300"
+                            onClick={() => window.history.back()}
+                            disabled={isSubmitting}
+                        >
                             キャンセル
                         </button>
-                        <button type="submit" className="btn btn-primary flex-1" disabled={isSubmitting}>
+                        <button
+                            type="submit"
+                            className="btn btn-primary flex-1"
+                            disabled={isSubmitting}
+                        >
                             {isSubmitting ? <span className="loading loading-spinner"></span> : '保存する'}
                         </button>
                     </div>
@@ -187,50 +196,6 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                             autoComplete="off"
                         />
                     </div>
-
-                    <div className="form-control">
-                        <label className="label font-bold">教室・場所</label>
-                        <input
-                            type="text"
-                            name="room"
-                            className="input input-bordered w-full"
-                            value={formData.room}
-                            onChange={handleChange}
-                            placeholder="例: H-101"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label font-bold">教員名</label>
-                        <input
-                            type="text"
-                            name="instructor"
-                            className="input input-bordered w-full"
-                            value={formData.instructor}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label font-bold text-sm">単位数</label>
-                        <select
-                            name="units"
-                            className="select select-bordered"
-                            value={formData.units}
-                            onChange={handleChange}
-                        >
-                            <option value={0}>0</option>
-                            <option value={0.333}>1/3</option>
-                            {[1, 2, 3, 4, 5, 6].map(u => (
-                                <option key={u} value={u}>{u}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <ColorPicker
-                        value={formData.colorCustom}
-                        onChange={(color) => updateColor(formData.id, color)}
-                    />
 
                     <div className="form-control">
                         <label className="label font-bold">スケジュール（必須）</label>
@@ -287,6 +252,50 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     </div>
 
                     <div className="form-control">
+                        <label className="label font-bold">教室・場所</label>
+                        <input
+                            type="text"
+                            name="room"
+                            className="input input-bordered w-full"
+                            value={formData.room}
+                            onChange={handleChange}
+                            placeholder="例: H-101"
+                        />
+                    </div>
+
+                    <div className="form-control">
+                        <label className="label font-bold">教員名</label>
+                        <input
+                            type="text"
+                            name="instructor"
+                            className="input input-bordered w-full"
+                            value={formData.instructor}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="form-control">
+                        <label className="label font-bold text-sm">単位数</label>
+                        <select
+                            name="units"
+                            className="select select-bordered"
+                            value={formData.units}
+                            onChange={handleChange}
+                        >
+                            <option value={0}>0</option>
+                            <option value={0.333}>1/3</option>
+                            {[1, 2, 3, 4, 5, 6].map(u => (
+                                <option key={u} value={u}>{u}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <ColorPicker
+                        value={formData.colorCustom}
+                        onChange={(color) => updateColor(formData.id, color)}
+                    />
+
+                 {/*<div className="form-control">
                         <label className="label font-bold">メモ</label>
                         <textarea
                             name="memo"
@@ -295,7 +304,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                             onChange={handleChange}
                             placeholder="例: レポート締め切りなど"
                         />
-                    </div>
+                    </div>*/}
                 </fieldset>
             </form>
         </LanguageProvider>
