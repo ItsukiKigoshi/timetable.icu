@@ -35,6 +35,8 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
         memo: data?.memo || '',
         room: data?.room || '',
         colorCustom: data?.colorCustom || null,
+        year: data?.year || selectedYear,
+        term: data?.term || selectedTerm,
         schedules: (data?.schedules || []).map((s: any) => ({
             ...s,
             id: s.id || `temp-sched-${Math.random().toString(36).substr(2, 9)}`
@@ -119,13 +121,15 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
             alert("スケジュールを1つ以上選択してください");
             return;
         }
+
         setIsSubmitting(true);
         try {
-            await saveCustomCourse({
+            const finalData = {
                 ...formData,
                 year: selectedYear,
                 term: selectedTerm,
-            });
+            };
+            await saveCustomCourse(finalData);
             window.location.href = l('/timetable');
         } catch (error) {
             console.error(error);
