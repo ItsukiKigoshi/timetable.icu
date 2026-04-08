@@ -222,7 +222,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                         <div className="form-control">
                             <label className="label font-bold">表示色</label>
                             <div className="flex items-center join">
-                                <div className="flex items-center justify-center w-10 h-10 shrink-0 rounded-md bg-base-100">
+                                <div className="flex items-center justify-center w-10 h-10 shrink-0 border border-base-300 rounded-md bg-base-100">
                                     <div
                                         className="w-6 h-6 rounded-full border border-black/10 shadow-sm"
                                         style={{ backgroundColor: formData.colorCustom || "var(--color-primary)" }}
