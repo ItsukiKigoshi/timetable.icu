@@ -165,6 +165,15 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     disabled={isSubmitting}
                     className="flex flex-col gap-6 border-none p-0 m-0"
                 >
+                    <div className="flex gap-2 mt-4">
+                        <button type="button" className="btn btn-ghost flex-1" onClick={() => window.history.back()} disabled={isSubmitting}>
+                            キャンセル
+                        </button>
+                        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                            {isSubmitting ? <span className="loading loading-spinner"></span> : '保存する'}
+                        </button>
+                    </div>
+
                     {/* 科目名（必須） */}
                     <div className="form-control">
                         <label className="label font-bold">科目名（必須）</label>
@@ -286,15 +295,6 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                             onChange={handleChange}
                             placeholder="例: レポート締め切りなど"
                         />
-                    </div>
-
-                    <div className="flex gap-2 mt-4">
-                        <button type="submit" className="btn btn-primary flex-1" disabled={isSubmitting}>
-                            {isSubmitting ? <span className="loading loading-spinner"></span> : '保存する'}
-                        </button>
-                        <button type="button" className="btn btn-ghost" onClick={() => window.history.back()} disabled={isSubmitting}>
-                            キャンセル
-                        </button>
                     </div>
                 </fieldset>
             </form>
