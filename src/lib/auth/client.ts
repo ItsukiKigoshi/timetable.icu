@@ -2,7 +2,9 @@ import {createAuthClient} from "better-auth/react";
 import {passkeyClient} from "@better-auth/passkey/client"
 
 export const client = createAuthClient({
-    baseURL: import.meta.env.PUBLIC_BASE_URL,
+    baseURL: typeof window !== "undefined"
+        ? window.location.origin
+        : import.meta.env.PUBLIC_BASE_URL,
     plugins: [
         passkeyClient()
     ]
