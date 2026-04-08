@@ -129,6 +129,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                 year: selectedYear,
                 term: selectedTerm,
             };
+
             await saveCustomCourse(finalData);
             window.location.href = l('/timetable');
         } catch (error) {

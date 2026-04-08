@@ -80,16 +80,16 @@ export function useTimetable({
         const isNew = !formData.id;
         const tempId = formData.id || `custom-${Date.now()}`;
 
-        // DB構造に合わせたオブジェクト作成
+        const { year: _y, term: _t, ...restCourses } = formData;
+
         const newCourse: any = {
-            ...formData,
-            id: tempId,
-            // カスタム科目としての最小要件を満たす
-            title: formData.title,
+            year: formData.year || selectedYear,
+            term: formData.term || selectedTerm,
             isVisible: true,
-            year: selectedYear,
-            term: selectedTerm,
+            ...restCourses,
+            id: tempId,
         };
+
         const nextCourses = !isNew
             ? courses.map(c => String(c.id) === String(formData.id) ? newCourse : c)
             : [...courses, newCourse];
