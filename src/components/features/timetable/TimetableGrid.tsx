@@ -34,7 +34,7 @@ const TimetableGrid = ({
         <div className="flex w-full bg-base-100 border-b border-base-content/20 h-full"
              style={{height: "100%"}}>
             {/* 時刻軸 (左端のカラム) */}
-            <div className="w-10 border-l border-r border-base-content/50 relative shrink-0 bg-base-100 z-20">
+            <div className="w-10 border-l border-r border-base-content/50 relative shrink-0 bg-base-100 z-0">
                 <div style={{height: TIMETABLE_CONFIG.HEADER_HEIGHT}} className="border-b border-base-content/50"/>
                 {PERIODS.map(p => {
                     const sMin = timeToMin(p.start);
