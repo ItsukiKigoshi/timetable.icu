@@ -10,12 +10,14 @@ export const client = createAuthClient({
     ]
 });
 
-export const signInWithGoogle = async (currentOrigin?: string) => {
-    const origin = currentOrigin || (typeof window !== "undefined" ? window.location.origin : "");
+export const signInWithGoogle = async () => {
+    const callbackURL = typeof window !== "undefined"
+        ? window.location.href  // これで /timetable や /explore が保持される
+        : (import.meta.env.PUBLIC_BASE_URL || "");
 
     const { data, error } = await client.signIn.social({
         provider: "google",
-        callbackURL: origin,
+        callbackURL: callbackURL,
     });
 
     if (error) throw error;
