@@ -8,20 +8,14 @@ export const client = createAuthClient({
     ]
 });
 
-export const signInWithGoogle = async () => {
-    const callbackURL = typeof window !== "undefined"
-        ? window.location.href
-        : import.meta.env.PUBLIC_BASE_URL;
+export const signInWithGoogle = async (currentOrigin?: string) => {
+    const origin = currentOrigin || (typeof window !== "undefined" ? window.location.origin : "");
 
-    const {data, error} = await client.signIn.social({
+    const { data, error } = await client.signIn.social({
         provider: "google",
-        callbackURL: callbackURL,
+        callbackURL: origin,
     });
 
-    if (error) {
-        console.error("Login failed:", error.message);
-        throw error;
-    }
-
+    if (error) throw error;
     return data;
 };
