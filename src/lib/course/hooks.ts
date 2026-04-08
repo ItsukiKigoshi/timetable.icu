@@ -16,7 +16,7 @@ export function useSync(user: any) {
             }
 
             setSyncStatus('syncing');
-            const res = await fetch('/api/user-courses/sync', {
+            const res = await fetch('/api/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ courseItems: items }),
