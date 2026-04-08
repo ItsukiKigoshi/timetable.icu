@@ -2,7 +2,7 @@ import type {UserCourseWithDetails} from "@/db/schema";
 import {getSyllabusUrl} from "@/lib/course/utils.ts";
 import {Eye, EyeOff, Pencil, SquareArrowOutUpRight, StickyNote, Trash2} from "lucide-react";
 import {useTranslation} from "@/lib/translation/context.tsx";
-import {ColorPicker} from "@/components/common/ColorPicker.tsx";
+import {SWATCHES} from "@/constants/config.ts";
 
 // --- 授業の詳細: メモ, シラバス，表示非表示，削除 ---
 const CourseDetailContent = ({
@@ -28,10 +28,33 @@ const CourseDetailContent = ({
         <div className="flex flex-col gap-4 py-2">
            {/* カラー選択セクション */}
             <div className="flex items-center gap-3">
-                <ColorPicker
-                    value={course.colorCustom}
-                    onChange={(color) => updateColor(course.id, color)}
-                />
+                <div className="form-control w-full">
+                    <label className="label font-bold text-sm">表示色</label>
+                    {/* カラーパレット */}
+                    <div className="grid grid-cols-7 sm:grid-cols-8 gap-2">
+                        {/* リセットボタン（デフォルトに戻す） */}
+                        <button
+                            type="button"
+                            onClick={() => updateColor(course.id, null)}
+                            className={`w-8 h-8 rounded border bg-primary transition-all active:scale-90  
+                            ${course.colorCustom === null && 'ring-2 ring-primary ring-offset-2'}`}
+                            title="Reset to default"
+                        />
+
+                        {/* スウォッチ一覧 */}
+                        {SWATCHES.map((hex) => (
+                            <button
+                                key={hex}
+                                type="button"
+                                onClick={() => updateColor(course.id, hex)}
+                                className={`w-8 h-8 rounded border border-black/5 transition-all active:scale-90
+                                ${course.colorCustom === hex && 'ring-2 ring-primary ring-offset-2'}`}
+                                style={{ backgroundColor: hex }}
+                                title={hex}
+                            />
+                        ))}
+                    </div>
+                </div>
             </div>
 
 
