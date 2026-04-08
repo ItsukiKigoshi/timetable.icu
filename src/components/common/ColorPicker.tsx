@@ -12,22 +12,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
       <div className="form-control w-full">
         {label && <label className="label font-bold text-sm">{label}</label>}
 
-        <div className="flex flex-col gap-3 p-3 bg-base-100 border border-base-300 rounded-md shadow-sm">
-          {/* 上段：現在の選択状態を表示 */}
-          <div className="flex items-center gap-3 pb-2 border-b border-base-200">
-            <div
-                className="w-8 h-8 rounded-full border border-black/10 shadow-sm shrink-0"
-                style={{ backgroundColor: value || "var(--color-primary, #570df8)" }}
-            />
-            <div className="flex flex-col">
-            <span className="text-xs font-mono font-bold">
-              {value ? value.toUpperCase() : "DEFAULT"}
-            </span>
-              <span className="text-[10px] opacity-50 uppercase">Current Color</span>
-            </div>
-          </div>
-
-          {/* 下段：カラーパレット本体（埋め込み） */}
+          {/* カラーパレット */}
           <div className="grid grid-cols-7 sm:grid-cols-8 gap-2">
             {/* リセットボタン（デフォルトに戻す） */}
             <button
@@ -57,7 +42,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
                 />
             ))}
           </div>
-        </div>
       </div>
   );
 };
