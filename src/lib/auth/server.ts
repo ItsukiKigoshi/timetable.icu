@@ -6,6 +6,11 @@ import * as schema from "@/db/schema";
 
 export const getAuth = (env: Env) => {
   return betterAuth({
+    trustedOrigins: [
+      "https://timetable.icu",
+      "https://dev-timetable-icu.itsukikigoshi.workers.dev",
+      "http://localhost:4321"
+    ],
     database: drizzleAdapter(drizzle(env.timetable_icu), {
       provider: "sqlite",
       schema: schema,
