@@ -3,15 +3,7 @@
 // /timetable/new.astro
 import Layout from "@/components/layout/Layout.astro";
 import CourseEditor from "@/components/features/timetable/CourseEditor";
-import {DEFAULT_TERM} from "@/constants/time.ts";
-
-const { lang } = Astro.locals;
-const { user } = Astro.locals; // ログイン中ならユーザー情報も取得
-
-// URLのクエリパラメータから year と term を取得
-const url = new URL(Astro.request.url);
-const selectedYear = parseInt(url.searchParams.get("year") || new Date().getFullYear().toString());
-const selectedTerm = url.searchParams.get("term") || DEFAULT_TERM;
+const { lang, user, selectedYear, selectedTerm } = Astro.locals;
 ---
 
 <Layout title="新規作成">
