@@ -128,7 +128,7 @@ const TimetableGrid = ({
                   <div className="flex gap-0.5 h-full w-full items-stretch bg-base-200 rounded-sm md:p-1 p-0 overflow-hidden">
                     {/* 左側のカラーバー */}
                     <div
-                      className="lg:w-1 w-0.5 rounded-full shrink-0"
+                      className="w-1 rounded-full shrink-0"
                       style={{ backgroundColor: themeColor }}
                     />
                     {/* テキストコンテンツ */}
