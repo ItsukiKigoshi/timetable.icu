@@ -1,15 +1,17 @@
-import {useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
+import { getTranslations } from '@/lib/translation/utils';
+import { defaultLang } from "@/lib/translation/ui";
 
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
     children: React.ReactNode;
+    lang: string; 
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
-
-
+export default function Modal({ isOpen, onClose, title, children, lang=defaultLang }: ModalProps) {
+    const t = getTranslations(lang);    
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     useEffect(() => {
@@ -44,7 +46,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
 
                 {/* 閉じるボタン */}
                 <div className="p-4">
-                    <button className="btn btn-block" onClick={onClose}>閉じる</button>
+                    <button className="btn btn-block" onClick={onClose}>{t('meta.close')}</button>
                 </div>
             </div>
 

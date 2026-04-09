@@ -1,9 +1,11 @@
 const ja = {
+  "meta.close": "閉じる",
+  
   "site.title": "ICUのじかんわり",
   "site.tagline": "ICU生の時間割アプリ・履修計画ツールの決定版",
   "site.description":
     "ICU生の時間割アプリ・履修計画ツールの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期で，国際基督教大学での学生生活をより快適に．ICU '27が愛を込めて開発中だよん．",
-
+  
   "auth.login": "ログイン",
   "auth.logout": "ログアウト",
   "auth.logging_out": "ログアウト中...",
@@ -154,6 +156,8 @@ const ja = {
 };
 
 const en = {
+  "meta.close": "Close",
+  
   "site.title": "Timetable.icu",
   "site.tagline": "The Ultimate Academic Planning Tool for ICU",
   "site.description":

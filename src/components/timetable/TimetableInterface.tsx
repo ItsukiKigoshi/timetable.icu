@@ -13,12 +13,13 @@ import CourseList from "@/components/timetable/CourseList.tsx";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
 import Modal from "@/components/common/Modal.tsx";
 import {LanguageProvider} from "@/lib/translation/context.tsx";
+import { defaultLang } from "@/lib/translation/ui";
 
 export default function TimetableInterface({
                                                initialCourses,
                                                initialViewMode = 'grid',
                                                user,
-                                               lang = 'ja',
+                                               lang = defaultLang,
                                                selectedYear = DEFAULT_YEAR,
                                                selectedTerm = DEFAULT_TERM
 }: {
