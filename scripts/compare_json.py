@@ -59,12 +59,12 @@ def compare():
     print(f"\n--- icuMAP にのみ存在 ({len(only_im)}件) ---")
     for k in sorted(list(only_im)):
         item = im_data[k]
-        print(f"[{item['rgNo']}]\t{item['year']}\t{item['term']}\t{item['status']}\t{item['term']}\t{item['courseCode']}\t{item['titleJa'][:20]}")
+        print(f"[{item['rgNo']}]\t{item['year']}\t{item['term']}\t{item['status']}\t{item['courseCode']}\t{item['titleJa'][:20]}")
 
     print(f"\n--- ehandbook にのみ存在 ({len(only_eh)}件) ---")
     for k in sorted(list(only_eh)):
         item = eh_data[k]
-        print(f"[{item['rgNo']}]\t{item['year']}\t{item['term']}\t{item['status']}\t{item['term']}\t{item['courseCode']}\t{item['titleJa'][:20]}")
+        print(f"[{item['rgNo']}]\t{item['year']}\t{item['term']}\t{item['status']}\t{item['courseCode']}\t{item['titleJa'][:20]}")
 
 if __name__ == "__main__":
     compare()
