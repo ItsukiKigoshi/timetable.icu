@@ -483,18 +483,22 @@ ICU生の時間割・履修登録ツールの決定版
 ### Frontend
 
 - Astro
+- React
 - Tailwindcss
 - DaisyUI
+- Typescript
 
 ### Backend
 
 - Astro
 - BetterAuth (Google OAuth/Passkey)
+- Drizzle ORM
+- Typescript
 
 ### Infra
 
-- Cloudflare Pages with Functions (Worker)
-- D1
+- Cloudflare Workers
+- Cloudflare D1
 
 ## 🚀 Project Structure
 
