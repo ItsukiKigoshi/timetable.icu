@@ -1,6 +1,6 @@
 # ehandbook(公開情報)経由のHTML解析
 # https://campus.icu.ac.jp/public/ehandbook/SearchCourseAndSyllabus.aspx
-# 英語, 日本語のHTMLを./scripts/data/ehandbook/all_courses_en.html,. /scripts/data/ehandbook/all_courses_ja.htmlへ配置
+# 英語, 日本語のHTMLを./scripts/data/ehandbook/all_courses_en.html, ./scripts/data/ehandbook/all_courses_ja.htmlへ配置
 import json
 import os
 import re
@@ -90,13 +90,13 @@ def merge_and_format(en_list, ja_list):
     return final_results
 
 def run_parser():
-    path_en = "scripts/data/ehandbook/all_courses_en.html"
-    path_ja = "scripts/data/ehandbook/all_courses_ja.html"
+    file_path_en = "scripts/data/ehandbook/all_courses_en.html"
+    file_path_ja = "scripts/data/ehandbook/all_courses_ja.html"
     output_file = 'scripts/out/dist_courses.json'
 
-    if os.path.exists(path_en) and os.path.exists(path_ja):
-        with open(path_en, "r", encoding="utf-8") as f: html_en = f.read()
-        with open(path_ja, "r", encoding="utf-8") as f: html_ja = f.read()
+    if os.path.exists(file_path_en) and os.path.exists(file_path_ja):
+        with open(file_path_en, "r", encoding="utf-8") as f: html_en = f.read()
+        with open(file_path_ja, "r", encoding="utf-8") as f: html_ja = f.read()
 
         print("--- ehandbook Parser Start ---")
         raw_en = parse_ehandbook_html(html_en, is_english=True)
@@ -109,7 +109,7 @@ def run_parser():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
 
-        # 既存のメタデータ更新関数を実行
+        # メタデータ更新
         save_course_update_metadata()
 
         print(f"--- Process Completed ---")

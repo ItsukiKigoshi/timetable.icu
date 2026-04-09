@@ -4,82 +4,83 @@
 import json
 import os
 from bs4 import BeautifulSoup
-from utils import parse_full_schedule, parse_units, save_course_update_metadata, get_category_id_from_code
+from utils import (
+    parse_full_schedule,
+    parse_units,
+    save_course_update_metadata,
+    get_category_id_from_code,
+    TERM_MAP
+)
 
-
-# --- HTML解析メイン関数 ---
 def parse_icumap_html(html_content):
     soup = BeautifulSoup(html_content, 'lxml')
-    # テーブルの各行(tr)を取得
-    rows = soup.find_all('tr')
+
+    # 1. テーブルの特定 (IDが ctl00_ContentPlaceHolder1_grv_course)
+    table = soup.find('table', id="ctl00_ContentPlaceHolder1_grv_course")
+
+    if not table:
+        print("⚠️ テーブルが見つかりませんでした。IDを確認してください。")
+        return []
+
+    # 2. 全ての行を取得
+    # recursive=Falseを外し入れ子構造の中にある tr も確実に拾う
+    rows = table.find_all('tr')
 
     res_list = []
-    seen_rgno = set()  # 重複チェック用の集合
+    seen_rgno = set()
 
     for row in rows:
-        # IDが "lbl_rgno" で終わる span を探す（インデックスに頼らない）
+        # 3. rgNoの特定 (提供されたHTML内の id に合わせて後方一致)
         rgno_tag = row.select_one('span[id$="_lbl_rgno"]')
-
         if not rgno_tag:
             continue
 
         rgno = rgno_tag.get_text(strip=True)
-
-        # 1. 重複チェック：すでに処理した rgNo はスキップ
-        if rgno in seen_rgno:
-            # デバッグ用に重複があったことを通知（必要なければ消してOK）
-            print(f"⚠️ Skipping duplicate rgNo: {rgno}")
+        # ヘッダーや重複を弾く
+        if not rgno.isdigit() or rgno in seen_rgno:
             continue
-
-        # 2. バリデーション：rgNo が空、または数字以外（ヘッダー行など）ならスキップ
-        if not rgno.isdigit():
-            continue
-
-        # 重複リストに登録
         seen_rgno.add(rgno)
 
-        # 3. IDのプレフィックスを動的に作成 (例: ctl00_..._ctl02_lbl_)
+        # 4. IDのプレフィックスを生成
+        # 例: "ctl00_ContentPlaceHolder1_grv_course_ctl02_lbl_rgno"
+        # -> "ctl00_ContentPlaceHolder1_grv_course_ctl02_lbl_"
         base_id = rgno_tag['id'].replace('lbl_rgno', 'lbl_')
 
-        # 4. 開講中止(Cancelled)の判定
-        # 「日本語科目名」の span またはその親要素に 'word_line_through' クラスがあるか確認
+        # 5. キャンセル判定 (打消し線クラスの確認)
         title_ja_tag = row.find('span', id=base_id + "title_j")
         is_cancelled = False
         if title_ja_tag:
-            # span 自体のクラスを確認
-            has_strike_class = "word_line_through" in (title_ja_tag.get('class') or [])
-            # 親要素(divなど)のクラスを確認
-            parent_has_strike = "word_line_through" in (title_ja_tag.parent.get('class') or [])
-            is_cancelled = has_strike_class or parent_has_strike
+            # クラス名リストを結合してチェック
+            combined_classes = (title_ja_tag.get('class') or []) + \
+                               (title_ja_tag.parent.get('class') or [])
+            is_cancelled = "word_line_through" in combined_classes
 
-        # ヘルパー関数：指定したラベルのテキストを取得
+        # テキスト取得ヘルパー
         def get_text(label):
             tag = row.find('span', id=base_id + label)
             return tag.get_text(strip=True) if tag else ""
 
-        # 5. オブジェクトの組み立て
-        course_code = get_text("course_no")  # 変数に入れておく
+        # 6. 学期の正規化
+        raw_term = get_text("season")
+        term = TERM_MAP.get(raw_term, raw_term)
 
-        # 単位数
-        unit_str = get_text("unit")
+        course_code = get_text("course_no")
 
-        # カテゴリIDを判定
-        cat_id = get_category_id_from_code(course_code)
-
+        # 7. オブジェクト構築
         course_obj = {
             "rgNo": rgno,
             "status": "cancelled" if is_cancelled else "active",
             "year": int(get_text("ay") or 2026),
-            "term": get_text("season"),
+            "term": term,
             "courseCode": course_code,
             "titleJa": get_text("title_j"),
             "titleEn": get_text("title_e"),
             "instructor": get_text("instructor"),
             "room": get_text("room"),
             "language": get_text("lang"),
-            "categoryId": cat_id,
-            "units": parse_units(unit_str),
-            "schedules": parse_full_schedule(get_text("schedule")) if get_text("schedule") else []
+            "categoryId": get_category_id_from_code(course_code),
+            "units": parse_units(get_text("unit")),
+            "schedules": parse_full_schedule(get_text("schedule"))
         }
 
         res_list.append(course_obj)
@@ -87,34 +88,30 @@ def parse_icumap_html(html_content):
     return res_list
 
 def run_parser():
-    html_data = ""
+    file_path = "scripts/data/icumap/all_courses.html"
+    output_file = 'scripts/out/dist_courses.json'
 
-    # 方法A: 既存の scrape モジュールを使う場合
-    # import scrape
-    # html_data = scrape.get_courses("all")
-
-    # 方法B: 保存済みのHTMLファイルを読み込む場合 (推奨: デバッグしやすいため)
-    file_path = "scripts/data/icumap/all_courses.html"  # ファイル名を合わせてください
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             html_data = f.read()
+
+        print("--- icuMAP Parser Start ---")
+        results = parse_icumap_html(html_data)
+
+        # 保存
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+
+        # メタデータ更新
+        save_course_update_metadata()
+
+        print(f"--- Process Completed ---")
+        print(f"Total courses: {len(results)}")
+        print(f"Output: {os.path.abspath(output_file)}")
+        print("icuMAP parsing completed.")
     else:
-        print(f"Error: {file_path} が見つかりません。")
-        exit()
+        print(f"Error: {file_path} Not Found")
 
-    print(f"解析開始... 行数をスキャン中")
-    results = parse_icumap_html(html_data)
-
-    # 結果をJSONとして保存
-    output_file = 'scripts/out/dist_courses.json'
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
-    save_course_update_metadata()
-    print(f"--- 解析完了 ---")
-    print(f"総科目数: {len(results)}")
-    print(f"出力先: {os.path.abspath(output_file)}")
-    print("icumap parsing completed.")
-
-# --- メイン実行部分 ---
 if __name__ == "__main__":
     run_parser()
