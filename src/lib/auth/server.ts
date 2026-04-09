@@ -3,6 +3,8 @@ import {drizzleAdapter} from "better-auth/adapters/drizzle";
 import {drizzle} from "drizzle-orm/d1";
 import {passkey} from "@better-auth/passkey";
 import * as schema from "@/db/schema";
+import { createAuthMiddleware } from "better-auth/api";
+import { eq } from "drizzle-orm";
 
 export const getAuth = (env: Env, request: Request) => {
   const url = new URL(request.url);
@@ -35,5 +37,17 @@ export const getAuth = (env: Env, request: Request) => {
         hd: "icu.ac.jp",
       },
     },
+    hooks: {
+      after: createAuthMiddleware(async (ctx) => {
+        if (ctx.path === "/callback/:id") {
+          const user = ctx.context.newSession?.user;
+          if (user && !user.email.endsWith("@icu.ac.jp")) {
+            const db = drizzle(env.timetable_icu);
+            await db.delete(schema.user).where(eq(schema.user.id, user.id));
+            throw ctx.redirect("/?error=INVALID_DOMAIN");
+          }
+        }
+      }),
+    }
   })
 };
