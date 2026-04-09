@@ -46,7 +46,7 @@ export default function TimetableInterface({
         selectedTerm
     });
     // 翻訳
-    const {t, l, isJa, translateDay, translatePeriod} = createTranslationHelper(lang);
+    const {t, l, isJa, translateDay, translatePeriod, currentLang} = createTranslationHelper(lang);
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>(initialViewMode);
     const [selectedSlot, setSelectedSlot] = useState<{ day: string, period: string, start: string, end: string } | null>(null);
@@ -291,7 +291,8 @@ export default function TimetableInterface({
                 </div>
 
                 {/* 詳細モーダル */}
-                <Modal
+                  <Modal
+                    lang={currentLang}
                     isOpen={!!selectedSlot}
                     onClose={() => {
                         setSelectedSlot(null);      // スロット選択をリセット
@@ -360,6 +361,7 @@ export default function TimetableInterface({
                 </Modal>
                 {/* --- 個別授業詳細モーダル --- */}
                 <Modal
+                    lang={currentLang}        
                     isOpen={!!currentSelectedCourse}
                     onClose={() => setSelectedCourse(null)}
                 >

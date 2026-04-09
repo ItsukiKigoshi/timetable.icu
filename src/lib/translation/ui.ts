@@ -231,9 +231,9 @@ const en = {
   "lp.features.todo.offline.title": "Offline Support",
   "lp.features.todo.offline.desc":
     "An internet connection is currently required to view courses.",
-  "lp.features.todo.custom.title": "[Beta]Custom Course Entry",
+  "lp.features.todo.custom.title": "[Beta] Custom Course Entry",
   "lp.features.todo.custom.desc":
-    "Currently official courses + testflighting with custom entry.",
+    "Currently testflighting custom entry feature.",
   "lp.features.todo.calendar.title": "Calendar Export",
   "lp.features.todo.calendar.desc":
     "Exporting to external calendars (Google, etc.) is under consideration.",

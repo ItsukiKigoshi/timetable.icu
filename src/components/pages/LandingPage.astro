@@ -83,7 +83,7 @@ const {t, l, currentLang} = createTranslationHelper(lang);
                     <nav class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4">
                         <a
                                 href={l('/explore')}
-                                class="btn btn-primary btn-lg rounded-full px-16"
+                                class="btn btn-primary btn-lg rounded-full lg:px-16 px-12"
                         >
                             <Telescope size="24"/>
                             <span>{t('lp.nav.explore')}</span>
@@ -91,7 +91,7 @@ const {t, l, currentLang} = createTranslationHelper(lang);
 
                         <a
                                 href={l('/timetable')}
-                                class="btn btn-neutral btn-lg rounded-full px-16"
+                                class="btn btn-neutral btn-lg rounded-full lg:px-16 px-12"
                         >
                             <CalendarDays size="24"/>
                             <span>{t('lp.nav.timetable')}</span>
@@ -212,7 +212,8 @@ const {t, l, currentLang} = createTranslationHelper(lang);
                     {t('lp.profile.description.bottom')}
                     <a
                             class="inline-flex items-center gap-1 underline transition-colors"
-                            href="mailto:itsukikigoshi+timetableicu@gmail.com"
+                            target="_blank"
+                            href="https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform"
                     >{t('lp.profile.contact')}</a>{t('lp.profile.dot')}<br/>
                     <a target="_blank" class="link" href="https://github.com/sponsors/ItsukiKigoshi">{t('lp.profile.support')}</a>
                     </p>   
