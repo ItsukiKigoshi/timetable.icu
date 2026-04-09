@@ -80,7 +80,6 @@ ICU生の時間割・履修登録ツールの決定版
 
 # まだできないこと
 
-- [ ] マニュアル登録
 - [ ] Google Calendar / .icsエクスポート？
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
@@ -92,11 +91,13 @@ ICU生の時間割・履修登録ツールの決定版
     - [ ] 卒業要件PDF (ehandbook)
 - [ ] 授業評価（TES）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
-    - [ ] TODO - Over Year TES解析 (RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python)
+    - [ ] TODO - Over Year TES解析
+        - [ ] RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python
         - [ ] 経年評価や同一講師の授業評価を可視化
 - [ ] オフラインで確認すること
     - [ ] 代わりに: Apple/Google Calendarへのエクスポート
     - [x] 代わりに: スクショしやすい画面配置
+- [x] マニュアル登録: できるようになった
 
 # 挑戦したいこと
 
@@ -200,6 +201,11 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧（displayCourses）も持つ必要がある
         - [x] displaySchedule(FlatSchedule[]型)のUserCourse[]型バージョン．
     - [x] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
+    - [ ] 理系の演習選択UI
+      - [ ] DBは設計済み
+      - [ ] フロントエンドの開発だけでいける
+          - [ ] 演習選択Dialog
+          - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
 - [x] 授業検索
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!
@@ -431,14 +437,7 @@ ICU生の時間割・履修登録ツールの決定版
     - [ ] 手書き風&アニメーション?
 - [ ] 副産物
     - [ ] 授業ヒートマップ
-- [ ] 理系の演習選択UI
-    - [ ] DBは設計済み
-    - [ ] フロントエンドの開発だけでいける
-        - [ ] 演習選択Dialog
-        - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
 - [ ] C-Week対応（？）
-- [ ] Calendar Export
-- [ ] 退会方法を提供
 - [ ] Refactor
     - [ ] 関数やComponentにコメント（JS Docs）をつける
 - [ ] Test
