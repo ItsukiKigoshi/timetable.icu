@@ -9,11 +9,16 @@ import { eq } from "drizzle-orm";
 export const getAuth = (env: Env, request: Request) => {
   const url = new URL(request.url);
 
-  const currentOrigin = url.hostname.includes("itsukikigoshi.workers.dev")
-      ? `https://${url.hostname}`
-      : "https://timetable.icu";
+  let currentOrigin = env.BETTER_AUTH_URL;
+  const isWorkersDev = url.hostname.includes("itsukikigoshi.workers.dev");
+  const isLocal = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  if (isWorkersDev || isLocal) {
+    const protocol = isLocal ? "http" : "https";
+    currentOrigin = `${protocol}://${url.host}`;
+  }
 
   return betterAuth({
+    baseURL: currentOrigin,
     trustedOrigins: [
       "https://timetable.icu",
       "https://dev-timetable-icu.itsukikigoshi.workers.dev",
