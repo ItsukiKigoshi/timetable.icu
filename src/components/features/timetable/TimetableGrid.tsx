@@ -81,6 +81,19 @@ const TimetableGrid = ({
                     {displaySchedules.filter(s => s.dayOfWeek === day).map((sched, i) => {
                         const themeColor = sched.colorCustom || 'var(--color-primary)';
 
+                        // sched.memo内に@から始まる行があればroomとして表示
+                        // 1. メモから「＠」行を抽出
+                        const getMemoOverride = () => {
+                            if (!sched.memo) return null;
+                            const match = sched.memo.match(/^[＠@](.*)$/m);
+                            return match ? match[1].trim() : null;
+                        };
+                        const memoOverride = getMemoOverride();
+                        // 2. 表示判定ロジック
+                        // - メモ上書きがあれば無条件で表示
+                        // - メモ上書きがない場合は「カスタム科目」または「ログイン済み」の時だけ本来の room を表示
+                        const displayRoom = memoOverride || ((sched.type === 'custom' || user) ? sched.room : null);
+
                         return (
                             <div key={`${sched.courseCode}-${i}`}
                                  className="absolute z-5"
@@ -104,10 +117,9 @@ const TimetableGrid = ({
                                         <h1 className="lg:text-sm md:text-xs text-[10px] font-bold leading-tight line-clamp-3 text-base-content/90">
                                             {isJa ? (sched.titleJa || (sched as any).title) : (sched.titleEn || (sched as any).title)}
                                         </h1>
-                                        {/* (カスタムコースである) OR (ログイン済み) の場合にのみ教室を表示 */}
-                                        {(sched.type === 'custom' || user) && sched.room && (
+                                        {displayRoom && (
                                             <p className="lg:text-[12px] text-[8px] font-medium opacity-80 truncate">
-                                                {sched.room}
+                                                {displayRoom}
                                             </p>
                                         )}
                                     </div>
