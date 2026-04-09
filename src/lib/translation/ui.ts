@@ -111,7 +111,7 @@ const ja = {
   'timetable.color.default': 'Default',
   'timetable.color.custom': 'Custom',
   "timetable.memo": "メモ",
-  "timetable.memo.content":"課題や試験に関するメモ．\n\"@場所\"と書いて時間割に表示する教室情報をカスタマイズ．",
+  "timetable.memo.content":"課題や試験に関するメモ．\n\"@場所\"と書いて時間割に表示する教室をカスタマイズ．",
   "timetable.period": "{period}限",
   "timetable.close": "閉じる",
   "timetable.remove": "削除",
