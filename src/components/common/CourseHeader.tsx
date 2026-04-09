@@ -1,4 +1,4 @@
-import type {UserCourseWithDetails} from "@/db/schema";
+import type {CustomCourseWithDetails, OfficialCourseWithDetails, UserCourseWithDetails} from "@/db/schema";
 import {formatUnits} from "@/lib/course/utils.ts";
 import {useTranslation} from "@/lib/translation/context.tsx";
 import {useMemo} from "react";
@@ -22,9 +22,6 @@ const CourseHeader = ({
         return colorCustom ?? 'var(--color-primary)';
     }, [showColor, colorCustom]);
 
-    // 2. 公式科目かカスタム科目かの判定（型ガード）
-    const isOfficial = course.type === 'official';
-
     return (
         <div className="flex gap-3 w-full">
             {/*カラーバー*/}
@@ -36,17 +33,17 @@ const CourseHeader = ({
             )}
 
             <section className="flex flex-col gap-2 w-full min-w-0">
-                {/* 1. 上段: 公式科目特有の情報は isOfficial で保護 */}
+                {/* 1. 上段: コースコード, 言語, 単位数，時期 */}
                 <div className="flex flex-wrap gap-1.5 items-center">
-                    {isOfficial && course.courseCode && (
+                    {(course as OfficialCourseWithDetails).courseCode && (
                         <span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter shrink-0">
-                            {course.courseCode}
+                            {(course as OfficialCourseWithDetails).courseCode}
                         </span>
                     )}
 
-                    {isOfficial && course.language && (
+                    {(course as OfficialCourseWithDetails).language && (
                         <span className="badge badge-xs font-bold badge-outline text-base-content/50">
-                            {course.language}
+                            {(course as OfficialCourseWithDetails).language}
                         </span>
                     )}
 
@@ -65,7 +62,10 @@ const CourseHeader = ({
 
                 {/* 2. 中段: タイトル */}
                 <h2 className="text-sm sm:text-base font-bold leading-tight line-clamp-2 text-base-content">
-                    {isJa ? ((course as any).titleJa || (course as any).title) : ((course as any).titleEn || (course as any).title)}
+                    {isJa
+                        ? ((course as OfficialCourseWithDetails).titleJa || (course as CustomCourseWithDetails).title)
+                        : ((course as OfficialCourseWithDetails).titleEn || (course as CustomCourseWithDetails).title)
+                    }
                 </h2>
 
                 {/* 3. 下段: 教員名 (共通プロパティ) */}
