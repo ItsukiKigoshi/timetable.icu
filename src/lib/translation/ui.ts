@@ -32,7 +32,7 @@ const ja = {
   "term.Winter": "冬学期",
 
   // フッター
-  "footer.privacy": "Privacy Policy", // 個人情報規約
+  "footer.privacy": "個人情報規約",
   "footer.terms": "利用規約",
   "footer.support": "サポート / 要望",
 
@@ -61,7 +61,7 @@ const ja = {
     "Long 4, 5, 6, 7など、ICUならではのコマ割りも表示",
   "lp.features.can.sync.title": "マルチデバイス同期",
   "lp.features.can.sync.desc":
-    "Googleアカウントでログインすることで、作成した時間割をクラウドに保存し、PCやスマートフォンなど複数のデバイスからいつでも確認できるようになります。また、将来的にGoogleカレンダーへの予定同期機能を提供します。", // ログインしてすべてのデバイスで最新の時間割を共有"
+    "ログインしてすべてのデバイスで最新の時間割を共有",
 
   // 検討中
   "lp.features.todo.label": "検討中の機能",
