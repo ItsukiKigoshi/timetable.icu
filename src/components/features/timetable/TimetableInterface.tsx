@@ -180,7 +180,7 @@ export default function TimetableInterface({
             <section className="flex flex-col w-full h-full select-none relative overflow-hidden">
                 {/* 左側：表示モード切り替え (Grid/List) */}
                 <nav
-                    className="lg:hidden fixed bottom-15 left-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
+                    className="lg:hidden fixed bottom-16 left-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
                     <button
                         onClick={() => updateViewMode('grid')}
                         className={`btn btn-xs btn-square h-11 w-11 rounded-full border-none transition-all ${
@@ -216,7 +216,7 @@ export default function TimetableInterface({
 
 
                 {/* 右側: カスタムコース追加ボタン*/}
-                <nav className="fixed bottom-15 right-2 z-50">
+                <nav className="fixed bottom-16 right-2 z-50">
                     <a href={l('/new')}
                        className="btn btn-sm btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2"
                        aria-label="Create new course"
