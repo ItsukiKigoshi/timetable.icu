@@ -80,7 +80,7 @@ const isLoggedIn = !!user;
                             <p class="text-xs text-base-content/60">
                                 {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
                             </p>
-                            <div class="w-full join mt-2 border border-base-300">
+                            <nav class="w-full join mt-2 border border-base-300">
                                 <button
                                         class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
                                         data-lang-switch="en"
@@ -93,12 +93,23 @@ const isLoggedIn = !!user;
                                 >
                                     JA
                                 </button>
-                            </div>
+                            </nav>
                         </li>
                         <div class="divider my-3 opacity-20 w-full"></div>
                         <li class="w-full flex flex-col gap-2">
                             <LoginButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
                             <PasskeyButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
+                        </li>
+                        <li class="w-full mt-4">
+                            <a
+                                    target="_blank"
+                                    href="https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform"
+                                    class="flex flex-col items-center link"
+                            >
+                                <span class="text-[11px]">
+                                    {t('header.support')}
+                                </span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -121,7 +132,7 @@ const isLoggedIn = !!user;
         url.searchParams.set('year', yearSelect.value);
         url.searchParams.set('term', termSelect.value);
 
-        // ページネーションがある場合、年度が変わったら1ページ目に戻すのが一般的
+        // ページネーションがある場合、年度が変わったら1ページ目に戻す
         if (url.searchParams.has('page')) {
             url.searchParams.set('page', '1');
         }

@@ -27,6 +27,8 @@ const ja = {
   "header.hi": "Hi! {name}",
   "header.synced": "同期済み",
   "header.login_to_sync": "ログインして同期",
+  "header.support": "サポートに連絡する",
+
   "term.Spring": "春学期",
   "term.Autumn": "秋学期",
   "term.Winter": "冬学期",
@@ -187,6 +189,8 @@ const en = {
   "header.hi": "Hi, {name}!",
   "header.synced": "Synced",
   "header.login_to_sync": "Login to sync",
+  "header.support": "Contact Support",
+
   "term.Spring": "Spring",
   "term.Autumn": "Autumn",
   "term.Winter": "Winter",
