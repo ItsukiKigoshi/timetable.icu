@@ -49,7 +49,7 @@ const ja = {
 
   // --- ランディングページ ---
   // Hero
-  "lp.hero.description": "ICU生の時間割アプリ・履修計画ツールの決定版",
+  "lp.hero.description": "ICU生の時間割・履修計画アプリの決定版",
   "lp.nav.explore": "コースを探す",
   "lp.nav.timetable": "時間割を見る",
 
