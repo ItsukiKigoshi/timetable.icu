@@ -32,7 +32,7 @@ const ja = {
   "term.Winter": "冬学期",
 
   // フッター
-  "footer.privacy": "個人情報規約",
+  "footer.privacy": "プライバシーポリシー (Privacy Policy)", // 個人情報規約
   "footer.terms": "利用規約",
   "footer.support": "サポート / 要望",
 
@@ -61,7 +61,7 @@ const ja = {
     "Long 4, 5, 6, 7など、ICUならではのコマ割りも表示",
   "lp.features.can.sync.title": "マルチデバイス同期",
   "lp.features.can.sync.desc":
-    "ログインしてすべてのデバイスで最新の時間割を共有",
+    "Googleでログインしてすべてのデバイスで最新の時間割を共有", // ログインしてすべてのデバイスで最新の時間割を共有"
 
   // 検討中
   "lp.features.todo.label": "検討中の機能",

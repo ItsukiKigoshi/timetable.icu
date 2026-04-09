@@ -23,7 +23,7 @@ const lang = Astro.locals.lang;
 const {t, l, currentLang} = createTranslationHelper(lang);
 ---
 
-<Layout title=`${t('site.title')} | ${t('site.tagline')}` isLanding={true}>
+<Layout title=`${t('site.title')}` isLanding={true}>
     <!--背景画像-->
     <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
         <Image
@@ -75,12 +75,8 @@ const {t, l, currentLang} = createTranslationHelper(lang);
                         class="drop-shadow-2xl"
                 />
                 <div class="lg:text-left text-center">
-                    <h1 class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content">
-                        {t('site.title')}
-                    </h1>
-                    <p class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl">
-                        {t('lp.hero.description')}
-                    </p>
+                    <h1 class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content">{t('site.title')}</h1>
+                    <p class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl">{t('lp.hero.description')}</p>
                     <nav class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4">
                         <a
                                 href={l('/explore')}
