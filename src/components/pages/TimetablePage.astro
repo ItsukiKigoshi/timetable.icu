@@ -69,12 +69,12 @@ if (user) {
             selectedAltGroupId: uc.selectedAltGroupId,
             colorCustom: uc.colorCustom,
             memo: uc.memo,
-            isCustom: false as const,
+            type: 'official' as const,
         }));
-
+    
     const customMapped = customResults.map((cc) => ({
         ...cc,
-        isCustom: true as const,
+        type: 'custom' as const,
     }));
 
     initialCourses = [...officialMapped, ...customMapped];

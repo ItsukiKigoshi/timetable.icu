@@ -121,12 +121,9 @@ export default function TimetableInterface({
 
     const currentSelectedCourse = useMemo(() => {
         if (!selectedCourse) return null;
-
-        // displayCourses（最新の state）から検索
-        const latest = displayCourses.find(c => c.id === selectedCourse.id);
-
-        // 見つからなければ null を返す（モーダルを閉じるトリガーになる）
-        return latest || null;
+        return displayCourses.find(c => 
+            c.id === selectedCourse.id && c.type === selectedCourse.type
+        ) || null;
     }, [selectedCourse, displayCourses]);
 
     // --- 関数 ---
@@ -313,7 +310,7 @@ export default function TimetableInterface({
                                 course={coursesInSelectedSlot[0]}
                                 updateMemo={updateMemo}
                                 updateColor={updateColor}
-                                toggleVisibility={() => toggleVisibility(coursesInSelectedSlot[0].id)}
+                                toggleVisibility={()=>toggleVisibility(coursesInSelectedSlot[0])}
                                 handleToggle={handleToggle}
                                 isSubmitting={isSubmitting}
                             />
@@ -322,16 +319,18 @@ export default function TimetableInterface({
                         // --- 複数の場合：アコーディオン ---
                         <div className="flex flex-col gap-2">
                             {coursesInSelectedSlot.map((c) => {
-                                const isExpanded = expandedCourseId === c.id;
+                              const uniqueKey = `${c.type}-${c.id}`;
+                                  const isExpanded = expandedCourseId === uniqueKey;
+                              
                                 return (
                                     <div
-                                        key={c.id}
+                                        key={uniqueKey}
                                         className={`collapse collapse-arrow bg-base-200/50 border border-base-300
                                              ${isExpanded ? 'collapse-open' : 'collapse-close'}`}>
                                         {/* コース概要 */}
                                         <div
                                             className="gap-2 collapse-title pr-10 cursor-pointer active:bg-base-300/50"
-                                            onClick={() => setExpandedCourseId(isExpanded ? null : c.id)}
+                                            onClick={() => setExpandedCourseId(isExpanded ? null : uniqueKey)}
                                             role="button"
                                             tabIndex={0}
                                         >
@@ -346,7 +345,7 @@ export default function TimetableInterface({
                                                     course={c}
                                                     updateMemo={updateMemo}
                                                     updateColor={updateColor}
-                                                    toggleVisibility={() => toggleVisibility(c.id)}
+                                                    toggleVisibility={() => toggleVisibility(c)}
                                                     handleToggle={handleToggle}
                                                     isSubmitting={isSubmitting}
                                                 />
@@ -373,7 +372,7 @@ export default function TimetableInterface({
                                 course={currentSelectedCourse}
                                 updateMemo={updateMemo}
                                 updateColor={updateColor}
-                                toggleVisibility={() => toggleVisibility(currentSelectedCourse.id)}
+                                toggleVisibility={() => toggleVisibility(currentSelectedCourse)}
                                 handleToggle={handleToggle}
                                 isSubmitting={isSubmitting}
                             />

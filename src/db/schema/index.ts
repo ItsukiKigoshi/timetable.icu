@@ -258,12 +258,14 @@ export type UserCourseMetadata = Pick<
 // --- Final Types ---
 // 公式コース + ユーザーのカスタム設定 (isVisible, colorCustom など)
 export type OfficialCourseWithDetails = Course & UserCourseMetadata & {
-    schedules: Schedule[];
+  schedules: Schedule[];
+  type: 'official';
 };
 
 // カスタムコース (これ自体に isVisible や colorCustom が含まれているのでリレーションのみ)
 export type CustomCourseWithDetails = CustomCourse & {
-    schedules: CustomSchedule[];
+  schedules: CustomSchedule[];
+  type: 'custom';
 };
 
 export type UserCourseWithDetails = OfficialCourseWithDetails | CustomCourseWithDetails;
@@ -279,14 +281,16 @@ export type FlatSchedule = Schedule & Course & Partial<UserCourseMetadata> & {
 // 利便性のための「共通アクセス用」型（EditorのFormなどで使用）
 export interface CourseFormInput {
     id?: number | string;
-    title: string;        // カスタムは直接、公式は titleJa を入れる
+    courseId?: number | string; // hookから送られてくる別名
+    title: string;
     instructor?: string | null;
     room?: string | null;
     units: number;
     memo?: string | null;
     colorCustom?: string | null;
     year: number;
-    term: string;
+    term: typeof termsEnum[number];
+    isVisible?: boolean;
     schedules: {
         dayOfWeek: typeof daysEnum[number];
         period: string;

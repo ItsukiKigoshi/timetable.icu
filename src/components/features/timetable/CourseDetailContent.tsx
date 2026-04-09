@@ -14,10 +14,10 @@ const CourseDetailContent = ({
                                  isSubmitting,
                                     }: {
     course: UserCourseWithDetails,
-    toggleVisibility: (courseId: number | string) => void;
     handleToggle: (c: UserCourseWithDetails) => void,
-    updateMemo: (courseId: number | string, memo: string) => void,
-    updateColor: (courseId: number | string, color: string | null) => void,
+    toggleVisibility: (course: UserCourseWithDetails) => void;
+    updateMemo: (course: UserCourseWithDetails, memo: string) => void;
+    updateColor: (course: UserCourseWithDetails, color: string | null) => void;
     isSubmitting: number | string | null
 }) => {
     const {t} = useTranslation();
@@ -31,7 +31,7 @@ const CourseDetailContent = ({
                 {/* リセットボタン */}
                 <button
                     type="button"
-                    onClick={() => updateColor(course.id, null)}
+                    onClick={() => updateColor(course, null)}
                     className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95 bg-primary 
                                 ${course.colorCustom === null ? 'ring-2 ring-primary ring-offset-2' : ''}`}
                 />
@@ -41,7 +41,7 @@ const CourseDetailContent = ({
                     <button
                         key={hex}
                         type="button"
-                        onClick={() => updateColor(course.id, hex)}
+                        onClick={() => updateColor(course, hex)}
                         className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95
                                     ${course.colorCustom === hex ? 'ring-2 ring-primary ring-offset-2' : ''}`}
                         style={{ backgroundColor: hex }}
@@ -60,7 +60,7 @@ const CourseDetailContent = ({
                     className="textarea textarea-bordered w-full h-24 text-sm focus:textarea-primary"
                     placeholder={t('timetable.memo.content')}
                     defaultValue={course.memo || ""}
-                    onBlur={(e) => updateMemo(course.id, e.target.value)} // フォーカスが外れた時に保存
+                    onBlur={(e) => updateMemo(course,e.target.value)} // フォーカスが外れた時に保存
                 ></textarea>
             </div>
 
@@ -84,7 +84,7 @@ const CourseDetailContent = ({
 
 
                 {/* 表示/非表示 (1/4 を占有) */}
-                <button onClick={() => toggleVisibility(course.id)}
+                <button onClick={() => toggleVisibility(course)}
                         className={`btn btn-md gap-2 col-span-1 ${!course.isVisible ? 'btn-ghost border-base-300    ' : 'btn-neutral'}`}>
                     {course.isVisible ? <Eye size="18"/> : <EyeOff size="18"/>}
                 </button>

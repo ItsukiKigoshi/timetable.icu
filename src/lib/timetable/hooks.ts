@@ -1,15 +1,15 @@
-import {useEffect, useMemo, useState} from 'react';
-import type {CourseFormInput, FlatSchedule, UserCourseWithDetails} from "@/db/schema";
-import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
+import { useEffect, useMemo, useState } from 'react';
+import type { FlatSchedule, UserCourseWithDetails, CourseFormInput } from "@/db/schema";
+import { computeDisplaySchedules } from "@/lib/timetable/utils.ts";
 
 export function useTimetable({
-                                 initialCourses = [], // Astroから渡された UserCourseWithDetails[]
+                                 initialCourses = [],
                                  user,
                                  selectedYear,
                                  selectedTerm
                              }: {
     initialCourses?: UserCourseWithDetails[],
-    user: any
+    user: any,
     selectedYear: number,
     selectedTerm: string,
 }) {
@@ -24,7 +24,6 @@ export function useTimetable({
                 try {
                     setCourses(JSON.parse(cached));
                 } catch (e) {
-                    console.error("Failed to parse local timetable", e);
                     setCourses(initialCourses);
                 }
             }
@@ -33,12 +32,11 @@ export function useTimetable({
         }
     }, [user, initialCourses]);
 
-    // 全スケジュールを平坦化 (全コマ)
+    // 全スケジュールを平坦化
     const allSchedules = useMemo(() => {
         return courses.flatMap(course =>
             course.schedules.map(s => {
                 const { id: _unused, ...scheduleData } = s;
-
                 return {
                     ...course,
                     ...scheduleData,
@@ -51,11 +49,10 @@ export function useTimetable({
 
     // 選択中の年と学期の授業一覧
     const displayCourses = useMemo(() => {
-        return courses
-            .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
+        return courses.filter(uc => uc.year === selectedYear && uc.term === selectedTerm);
     }, [courses, selectedYear, selectedTerm]);
 
-    // 描画用のデータ (isVisible=trueかつ選択中の年と学期のみ、かつ位置計算済み)
+    // 描画用のデータ（isVisible=trueかつ選択中の年と学期のみ）
     const displaySchedules = useMemo(() => {
         const visibleOnly = allSchedules
             .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
@@ -63,48 +60,46 @@ export function useTimetable({
         return computeDisplaySchedules(visibleOnly);
     }, [allSchedules, selectedYear, selectedTerm]);
 
-    // 登録済みIDのSet（ボタンの表示判定用）
-    const registeredIds = useMemo(() => {
-        return new Set(courses.map(c => c.id));
+    // 登録済み判定用：IDとTypeの組み合わせでSetを作る
+    const registeredKeys = useMemo(() => {
+        return new Set(courses.map(c => `${c.type}-${c.id}`));
     }, [courses]);
 
-    // ヘルパー: ローカルストレージ同期
     const syncLocalStorage = (nextCourses: UserCourseWithDetails[]) => {
         if (user) return;
         localStorage.setItem('guest_timetable', JSON.stringify(nextCourses));
     };
 
     // --- ハンドラー ---
-    // CustomCourseの保存
+    // CustomCourseの保存（フォーム入力から）
     const saveCustomCourse = async (formData: CourseFormInput) => {
-        const isNew = !formData.id;
+        const isNew = !formData.id || String(formData.id).startsWith('custom-');
         const tempId = formData.id || `custom-${Date.now()}`;
 
-        const { year: _y, term: _t, ...restCourses } = formData;
-
-        const newCourse: any = {
-            year: formData.year || selectedYear,
-            term: formData.term || selectedTerm,
+        const newCourse: UserCourseWithDetails = {
+            ...formData,
+            id: tempId as any,
+            type: 'custom',
             isVisible: true,
-            ...restCourses,
-            id: tempId,
-        };
+            year: selectedYear,
+            term: selectedTerm as any,
+            schedules: formData.schedules.map((s, idx) => ({ ...s, id: idx })),
+        } as UserCourseWithDetails;
 
         const nextCourses = !isNew
-            ? courses.map(c => String(c.id) === String(formData.id) ? newCourse : c)
+            ? courses.map(c => (c.type === 'custom' && String(c.id) === String(formData.id)) ? newCourse : c)
             : [...courses, newCourse];
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
-        // ログイン済みならDBへ
         if (user) {
             try {
                 const method = isNew ? 'POST' : 'PATCH';
                 const response = await fetch('/api/custom-courses', {
                     method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newCourse),
+                    body: JSON.stringify({ ...formData, id: isNew ? undefined : formData.id }),
                 });
 
                 if (isNew && response.ok) {
@@ -119,129 +114,93 @@ export function useTimetable({
         }
     };
 
-    // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
+    // 削除・追加
     const toggleCourse = async (course: UserCourseWithDetails) => {
-        const targetCourseId = course.id;
-        const isRegistered = registeredIds.has(targetCourseId);
-
-        // TODO - これだけでは判定できていない, customCourseIdやの有無も見て判断する必要がある; customCourseのidもnumber型で処理されてる
-        // idの型によってカスタムかどうかを確実に判定
-        const isCustom = typeof targetCourseId === 'string';
+        const { id, type } = course;
+        const courseKey = `${type}-${id}`;
+        const isRegistered = registeredKeys.has(courseKey);
 
         let nextCourses: UserCourseWithDetails[];
-
         if (isRegistered) {
-            nextCourses = courses.filter(c => c.id !== targetCourseId);
+            nextCourses = courses.filter(c => `${c.type}-${c.id}` !== courseKey);
         } else {
-            const courseWithContext = {
-                ...course,
-                year: course.year || selectedYear,
-                term: course.term || selectedTerm,
-                isVisible: true
-            } as UserCourseWithDetails; // 合成された型として扱う
-
-            nextCourses = [...courses, courseWithContext];
+            nextCourses = [...courses, { ...course, isVisible: true }];
         }
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            try {
-                const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
-                const method = isCustom ? 'DELETE' : 'POST';
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
+            // 公式もカスタムも、登録済みなら削除リクエストを送る
+            const method = isRegistered ? 'DELETE' : 'POST';
 
-                await fetch(endpoint, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: targetCourseId,
-                        courseId: targetCourseId,
-                        year: selectedYear,
-                        term: selectedTerm
-                    }),
-                });
-            } catch (e) {
-                console.error("Sync failed", e);
-            }
+            await fetch(endpoint, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, courseId: id }),
+            });
         }
     };
 
-    // 表示/非表示の切り替え
-    const toggleVisibility = async (courseId: number | string) => {
-        const target = courses.find(c => c.id === courseId);
-        if (!target) return;
+    // 表示/非表示
+    const toggleVisibility = async (course: UserCourseWithDetails) => {
+        const { id, type, isVisible } = course;
+        const nextVisible = !isVisible;
 
-        const nextVisible = !target.isVisible;
         const nextCourses = courses.map(c =>
-            c.id === courseId ? { ...c, isVisible: nextVisible } : c
+            (c.id === id && c.type === type) ? { ...c, isVisible: nextVisible } : c
         );
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            const isCustom = typeof courseId === 'string';
-            const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
-
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
             await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: courseId,
-                    courseId: courseId,
-                    isVisible: nextVisible
-                })
+                body: JSON.stringify({ id, courseId: id, isVisible: nextVisible })
             });
         }
     };
 
     // 色の更新
-    const updateColor = async (courseId: number | string, nextColor: string | null) => {
+    const updateColor = async (course: UserCourseWithDetails, nextColor: string | null) => {
+        const { id, type } = course;
         const nextCourses = courses.map(c =>
-            c.id === courseId ? { ...c, colorCustom: nextColor } : c
+            (c.id === id && c.type === type) ? { ...c, colorCustom: nextColor } : c
         );
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            const isCustom = typeof courseId === 'string';
-            const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
-
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
             await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: courseId,
-                    courseId: courseId,
-                    colorCustom: nextColor
-                })
+                body: JSON.stringify({ id, courseId: id, colorCustom: nextColor })
             });
         }
     };
 
     // メモの更新
-    const updateMemo = async (courseId: number | string, nextMemo: string) => {
+    const updateMemo = async (course: UserCourseWithDetails, nextMemo: string) => {
+        const { id, type } = course;
         const nextCourses = courses.map(c =>
-            c.id === courseId ? { ...c, memo: nextMemo } : c
+            (c.id === id && c.type === type) ? { ...c, memo: nextMemo } : c
         );
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            const isCustom = typeof courseId === 'string';
-            const endpoint = isCustom ? '/api/custom-courses' : '/api/user-courses';
-
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
             await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: courseId,
-                    courseId: courseId,
-                    memo: nextMemo
-                })
+                body: JSON.stringify({ id, courseId: id, memo: nextMemo })
             });
         }
     };

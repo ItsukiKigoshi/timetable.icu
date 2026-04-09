@@ -142,22 +142,12 @@ ICU生の時間割・履修登録ツールの決定版
 ---
 
 # TODO
-- [x] ELAを追加したい: 独自の開始/終了時間は認めずコマに収まる予定の追加機能？
+  - [ ] ScheduleがないCourseだけをならべても「コースが追加されていない」と言われる（未検証）
 - [ ] Remoteに実験環境を用意する
   - [ ] D1, Workersをもう1ペア作り，実験できるようにする，
   - [ ] 既存のDBはまったく汚さず他の人も実験に参加出来るように．
   - [ ] 実験環境ではDBのデータが消えてもいい
-- [ ] 手動追加機能 Known Issues
-  - [ ] 削除がうまく働いていない
-    - [ ] toggleCourseがcustomCourseに関する操作を許容していない？
-    - [ ] https://dev-timetable-icu.itsukikigoshi.workers.dev/api/user-coursesが404なのでテスト環境のAPIがDBへのアクセスが拒否されている？
-    - [ ] customCourseとscheduleがないcourseが消せない
-  - [ ] TimetableInterfaceのModalのopen管理で，複数が同時に開いてしまう
-    - [ ] ->remoteでcustomCourseとuserCoursesが同じidを持っているために起きているエラー．
-    - [ ] 削除もID重複によるものかも．ID指定だけではtoggleCourseはできない
-    - [ ] localStorageではustomCourseのidに"custom-"のprefixがつくのでid重複（->Modal誤開閉や削除操作の失敗）は起きない
-    - [ ] customCourseは"customCourseId"をもっているので，"id"は持たないようにするとか？
-  - [ ] ScheduleがないCourseだけをならべても「コースが追加されていない」と言われる（未検証）
+- [ ] サポートボタンをログインボタンの下において分かりやすく
 - [ ] ログイン済みのユーザもlocalStorageにバックアップしておき，サーバ側をsource of truthとしつつ通信障害時などにローカルでデータが参照されるように
   - [ ] 「オフラインです，インターネットに接続されると同期されます」
 - [ ] !userではCustomCourseにroomを追加しても表示されない in CourseHeader & TimetableGrid
@@ -165,11 +155,6 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 編集機能: オーバーライドしても表示されるのは1授業，
 - [ ] 時間割になにも授業が無ければExploreに誘導
   - [ ] 手書き風&アニメーション?
-- [x] 色選択
-  - [x] 色を表示する方法
-    - [x] 背景色: ちゃんとカラーパレットを設定すればいい感じになると思う
-    - [x] 棒（上）
-    - [x] 棒（左）
 - [ ] 副産物
   - [ ] 授業ヒートマップ
 - [ ] 理系の演習選択UI
@@ -191,6 +176,14 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] 条件に合う検索結果か（取りこぼしがないか; exhaustかも検証）
     - [ ] Timetable
         - [ ] その学期のすべてのコースが表示されているか（Exhaust）
+        - [ ] toggleCourse
+          - [ ] フロントの状態
+          - [ ] DBの状態
+        - [ ] togleVisiblety
+          - [ ] フロントの状態
+          - [ ] DBの状態
+    - [ ] 同期
+        - [ ] LocaStorageのデータがDBに確実に格納される
 
 # 工程表
 
@@ -290,6 +283,11 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] 時間割
         - [x] 表示
         - [x] 合計単位数表示（体育どうする！）
+- [x] 色選択
+    - [x] 色を表示する方法
+        - [x] 背景色: ちゃんとカラーパレットを設定すればいい感じになると思う
+        - [x] 棒（上）
+        - [x] 棒（左）
 - [x] 独自スケジュール
     - [x] そもそも必要？このアプリはスケジュール管理アプリではなく履修計画アプリ．
       - [x] スケジュール管理には外部のそれに特化したサービス（GCal, Apple Calendar等を使ってほしい） 
@@ -303,6 +301,16 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] メモ
     - [x] カスタム色追加
     - [x] 検索: Scheduleがない授業の追加を許可（Listがあるので現在でも追加して良いっちゃ良い）
+    - [x] 手動追加機能 Known Issues
+      - [x] 削除がうまく働いていない
+          - [x] toggleCourseがcustomCourseに関する操作を許容していない？
+          - [x] https://dev-timetable-icu.itsukikigoshi.workers.dev/api/user-coursesが404なのでテスト環境のAPIがDBへのアクセスが拒否されている？
+          - [x] customCourseとscheduleがないcourseが消せない
+      - [x] TimetableInterfaceのModalのopen管理で，複数が同時に開いてしまう
+          - [x] ->remoteでcustomCourseとuserCoursesが同じidを持っているために起きているエラー．
+          - [x] 削除もID重複によるものかも．ID指定だけではtoggleCourseはできない
+          - [x] localStorageではcustomCourseのidに"custom-"のprefixがつくのでid重複（->Modal誤開閉や削除操作の失敗）は起きない
+          - [x] customCourseは"customCourseId"をもっているので，"id"は持たないようにするとか？いや，customCourseIdはschedulesが持っているもの
 - [ ] 自動テスト
     - [ ] 時間割
         - [ ] 様々なデータで描画
@@ -334,7 +342,7 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] フォント（こだわろう; 明朝?）
         - [ ] 他のAIみの少ないサイトを参照
             - [x] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
-            - [x] landingpageのみSSG?
+            - [x] landing pageのみSSG?
 - [ ] Landing Page
     - [x] 背景画像と言語選択のコントラスト
     - [x] 背景画像最適化: そもそもブラーをかけておく，画質落とす
@@ -369,7 +377,7 @@ ICU生の時間割・履修登録ツールの決定版
 - [x] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
     - [x] Default localeをjaとenどっちにするか？
     - [x] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
-- [x] Google OAuthをpublesh
+- [x] Google OAuthをpublish
     - [x] 組織内アカウントなら審査なしでいける
     - [x] Privacy Policy
         - [ ] わかりやすく

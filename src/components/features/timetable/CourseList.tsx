@@ -9,7 +9,7 @@ interface CourseListProps {
     isJa: boolean;
     t: any;
     setSelectedCourse: (course: UserCourseWithDetails) => void;
-    toggleVisibility: (courseId: number | string) => void;
+    toggleVisibility: (course: UserCourseWithDetails) => void;
     handleToggle: (course: UserCourseWithDetails) => void;
     isSubmitting: number | string | null;
 }
@@ -40,7 +40,7 @@ const CourseList = ({
 
                             {/* 右側：最小限のクイック操作のみ残す */}
                             <div className="flex gap-1 shrink-0 ml-2">
-                                <button onClick={() => toggleVisibility(course.id)}
+                                <button onClick={() => toggleVisibility(course)}
                                         className="btn btn-sm btn-square btn-ghost border-base-300">
                                     {course.isVisible ? <Eye size="14"/> : <EyeOff size="14" className="text-error"/>}
                                 </button>
