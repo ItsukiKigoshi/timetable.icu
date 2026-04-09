@@ -114,9 +114,24 @@ const ja = {
   "timetable.close": "閉じる",
   "timetable.remove": "削除",
   "timetable.syllabus": "シラバス",
+  "timetable.edit": "編集",
   "timetable.units": "単位",
   "timetable.show": "表示",
   "timetable.hide": "隠す",
+
+  "custom.create": "カスタムコースを作成",
+  "custom.edit": "コースを編集",
+  "custom.loading": "データを読み込み中...",
+  "custom.necessary": "必須",
+  "custom.schedule": "スケジュール",
+  "custom.title": "タイトル",
+  "custom.room": "教室・場所",
+  "custom.instructor": "教員名",
+  "custom.units": "単位数",
+  "custom.save": "保存する",
+  "custom.cancel": "キャンセル",
+  "custom.alert.schedule.null": "スケジュールを1つ以上選択してください",
+  "custom.alert.save.failed": "保存に失敗しました",
 
   "days.mon": "月",
   "days.tue": "火",
@@ -203,7 +218,7 @@ const en = {
   "lp.features.can.sync.desc":
     "Login to sync your latest timetable across all your devices.",
 
-  // Features - Todo
+  // Features
   "lp.features.todo.label": "Planned Features",
   "lp.features.todo.offline.title": "Offline Support",
   "lp.features.todo.offline.desc":
@@ -256,9 +271,25 @@ const en = {
   "timetable.close": "Close",
   "timetable.remove": "Remove",
   "timetable.syllabus": "Syllabus",
+  "timetable.edit": "Edit",
   "timetable.units": "Units",
   "timetable.show": "Show",
   "timetable.hide": "Hide",
+
+  "custom.create": "Create Custom Course",
+  "custom.edit": "Edit Course",
+  "custom.loading": "Loading...",
+  "custom.necessary": "Necessary",
+  "custom.schedule": "Schedule",
+  "custom.title": "Title",
+  "custom.room": "Room/Location",
+  "custom.instructor": "Instructor",
+  "custom.units": "Units",
+  "custom.save": "Save",
+  "custom.cancel": "Cancel",
+  "custom.alert.schedule.null": "Select at least 1 schedule",
+  "custom.alert.save.failed": "Failed to save",
+
 
   "days.mon": "Mon",
   "days.tue": "Tue",

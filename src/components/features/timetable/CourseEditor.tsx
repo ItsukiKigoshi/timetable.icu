@@ -4,6 +4,7 @@ import {createTranslationHelper} from "@/lib/translation/utils.ts";
 import {PERIODS, SELECTABLE_DAYS} from "@/constants/time.ts";
 
 import {useTimetable} from "@/lib/timetable/hooks.ts";
+import type {Course} from "@/db/schema";
 
 interface CourseEditorProps {
     mode: 'create' | 'edit';
@@ -16,9 +17,8 @@ interface CourseEditorProps {
 }
 
 const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, selectedTerm }: CourseEditorProps) => {
-    const { l } = createTranslationHelper(lang);
+    const { t, l } = createTranslationHelper(lang);
 
-    // SSR対策: マウント完了フラグ
     const [isMounted, setIsMounted] = useState(false);
 
     const { courses, saveCustomCourse } = useTimetable({
@@ -118,7 +118,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
         if (!isInitialized || isSubmitting) return;
 
         if (formData.schedules.length === 0) {
-            alert("スケジュールを1つ以上選択してください");
+            alert(t('custom.alert.schedule.null'));
             return;
         }
 
@@ -127,14 +127,14 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
             const finalData = {
                 ...formData,
                 year: selectedYear,
-                term: selectedTerm,
+                term: selectedTerm as Course['term'],
             };
 
             await saveCustomCourse(finalData);
             window.location.href = l('/timetable');
         } catch (error) {
             console.error(error);
-            alert("保存に失敗しました");
+            alert(t('custom.alert.save.failed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -146,7 +146,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <span className="loading loading-spinner loading-lg text-primary"></span>
-                <p className="text-sm opacity-60 animate-pulse">データを読み込み中...</p>
+                <p className="text-sm opacity-60 animate-pulse">{t('custom.loading')}</p>
             </div>
         );
     }
@@ -156,7 +156,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
             <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-4 flex flex-col gap-6 pb-20">
                 <header>
                     <h1 className="text-2xl font-bold">
-                        {mode === 'create' ? 'カスタムコース作成' : 'コース編集'}
+                        {mode === 'create' ? t('custom.create') : t('custom.edit')}
                     </h1>
                 </header>
 
@@ -165,7 +165,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     className="flex flex-col gap-6 border-none p-0 m-0"
                 >
                     <div className="form-control">
-                        <label className="label font-bold">スケジュール（必須）</label>
+                        <label className="label font-bold">{t('custom.schedule') } ({t('custom.necessary')})</label>
                         <div className="overflow-x-auto rounded-lg border border-base-300">
                             <table className="table table-fixed w-full text-center">
                                 <thead>
@@ -212,7 +212,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* 科目名（必須） */}
                         <div className="form-control">
-                            <label className="label font-bold">科目名（必須）</label>
+                            <label className="label font-bold">{t('custom.title')} ({t('custom.necessary')})</label>
                             <input
                                 type="text"
                                 name="title"
@@ -225,21 +225,20 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                         </div>
 
                         <div className="form-control">
-                            <label className="label font-bold">教室・場所</label>
+                            <label className="label font-bold">{t('custom.room')}</label>
                             <input
                                 type="text"
                                 name="room"
                                 className="input input-bordered w-full"
                                 value={formData.room}
                                 onChange={handleChange}
-                                placeholder="例: H-101"
                             />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="form-control">
-                            <label className="label font-bold">教員名</label>
+                            <label className="label font-bold">{t('custom.instructor')}</label>
                             <input
                                 type="text"
                                 name="instructor"
@@ -250,7 +249,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                         </div>
 
                         <div className="form-control">
-                            <label className="label font-bold">単位数</label>
+                            <label className="label font-bold">{t('custom.units')}</label>
                             <select
                                 name="units"
                                 className="select select-bordered w-full"
@@ -268,10 +267,10 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
 
                     <div className="flex gap-2 mt-4">
                         <button type="button" className="btn btn-ghost" onClick={() => window.history.back()} disabled={isSubmitting}>
-                            キャンセル
+                            t('custom.cancel')
                         </button>
                         <button type="submit" className="btn btn-primary flex-1" disabled={isSubmitting}>
-                            {isSubmitting ? <span className="loading loading-spinner"></span> : '保存する'}
+                            {isSubmitting ? <span className="loading loading-spinner"></span> : t('custom.save')}
                         </button>
                     </div>
                 </fieldset>

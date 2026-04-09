@@ -78,7 +78,7 @@ const CourseDetailContent = ({
                     <a href={`/edit/${course.id}`}
                        className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300">
                         <Pencil size={16} />
-                        編集
+                        {t('timetable.edit')}
                     </a>
                 )}
 
