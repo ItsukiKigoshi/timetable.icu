@@ -69,9 +69,9 @@ const ja = {
   "lp.features.todo.label": "検討中の機能",
   "lp.features.todo.offline.title": "オフライン表示",
   "lp.features.todo.offline.desc": "現状閲覧にはインターネット接続が必要",
-  "lp.features.todo.custom.title": "独自コースの追加",
+  "lp.features.todo.custom.title": "[試験提供]独自コースの追加",
   "lp.features.todo.custom.desc":
-    "現在は公式提供コースのみ。カスタム追加機能も検討中",
+    "公式提供コースに加えてカスタム追加機能も試験提供中",
   "lp.features.todo.calendar.title": "カレンダー連携",
   "lp.features.todo.calendar.desc": "外部カレンダーへの書き出し機能を検討中",
 
@@ -227,9 +227,9 @@ const en = {
   "lp.features.todo.offline.title": "Offline Support",
   "lp.features.todo.offline.desc":
     "An internet connection is currently required to view courses.",
-  "lp.features.todo.custom.title": "Custom Course Entry",
+  "lp.features.todo.custom.title": "[Beta]Custom Course Entry",
   "lp.features.todo.custom.desc":
-    "Currently official courses only. Custom entry is being planned.",
+    "Currently official courses + testflighting with custom entry.",
   "lp.features.todo.calendar.title": "Calendar Export",
   "lp.features.todo.calendar.desc":
     "Exporting to external calendars (Google, etc.) is under consideration.",
