@@ -453,7 +453,7 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] toggleCourse
             - [ ] フロントの状態
             - [ ] DBの状態
-        - [ ] togleVisiblety
+        - [ ] toggleVisiblety
             - [ ] フロントの状態
             - [ ] DBの状態
     - [ ] 同期

@@ -1,6 +1,8 @@
 # ehandbook(公開情報)経由のHTML解析
 # https://campus.icu.ac.jp/public/ehandbook/SearchCourseAndSyllabus.aspx
-# 英語, 日本語のHTMLを./scripts/data/ehandbook/all_courses_en.html, ./scripts/data/ehandbook/all_courses_ja.htmlへ配置
+# 英語, 日本語のHTMLを./scripts/data/ehandbook/に
+# all_courses_cla_en.html, all_courses_cla_ja.html, all_courses_doctor_en.html, all_courses_doctor_ja.html, all_courses_master_en.html, all_courses_master_ja.html
+# の6ファイルを配置
 import json
 import os
 import re
@@ -14,7 +16,7 @@ def generate_unique_key(item):
     """
     # 記号や空白による不一致を防ぐため正規化
     instructor = re.sub(r'[\s,]', '', item.get('instructor', '')).lower()
-    return f"{item['rgNo']}-{item['courseCode']}-{instructor}-{item['term']}"
+    return f"{item['rgNo']}-{item['courseCode']}-{instructor}-{item['year']}{item['term']}"
 
 def parse_ehandbook_html(html_content, is_english=True):
     soup = BeautifulSoup(html_content, 'lxml')
@@ -90,34 +92,65 @@ def merge_and_format(en_list, ja_list):
     return final_results
 
 def run_parser():
-    file_path_en = "scripts/data/ehandbook/all_courses_en.html"
-    file_path_ja = "scripts/data/ehandbook/all_courses_ja.html"
+    base_dir = "scripts/data/ehandbook"
+    # 解析対象のファイルペアを定義
+    target_files = [
+        ("all_courses_cla_en.html", "all_courses_cla_ja.html", "CLA"),
+        ("all_courses_master_en.html", "all_courses_master_ja.html", "Master"),
+        ("all_courses_doctor_en.html", "all_courses_doctor_ja.html", "Doctor")
+    ]
+
     output_file = 'scripts/out/dist_courses.json'
+    all_combined_results = []
+    total_found_files = 0
 
-    if os.path.exists(file_path_en) and os.path.exists(file_path_ja):
-        with open(file_path_en, "r", encoding="utf-8") as f: html_en = f.read()
-        with open(file_path_ja, "r", encoding="utf-8") as f: html_ja = f.read()
+    print("--- ehandbook Parser Start ---")
 
-        print("--- ehandbook Parser Start ---")
-        raw_en = parse_ehandbook_html(html_en, is_english=True)
-        raw_ja = parse_ehandbook_html(html_ja, is_english=False)
+    for en_file, ja_file, label in target_files:
+        path_en = os.path.join(base_dir, en_file)
+        path_ja = os.path.join(base_dir, ja_file)
 
-        results = merge_and_format(raw_en, raw_ja)
+        if os.path.exists(path_en) and os.path.exists(path_ja):
+            print(f"Processing {label}...")
+            with open(path_en, "r", encoding="utf-8") as f: html_en = f.read()
+            with open(path_ja, "r", encoding="utf-8") as f: html_ja = f.read()
 
-        # 保存
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(results, f, ensure_ascii=False, indent=2)
+            raw_en = parse_ehandbook_html(html_en, is_english=True)
+            raw_ja = parse_ehandbook_html(html_ja, is_english=False)
 
-        # メタデータ更新
-        save_course_update_metadata()
+            # このカテゴリのEN/JAをマージ
+            merged = merge_and_format(raw_en, raw_ja)
+            all_combined_results.extend(merged)
 
-        print(f"--- Process Completed ---")
-        print(f"Total courses: {len(results)}")
-        print(f"Output: {os.path.abspath(output_file)}")
-        print("ehandbook parsing completed.")
-    else:
-        print("Error: Input files (en/ja) not found.")
+            print(f"  - {label} items: {len(merged)}")
+            total_found_files += 2
+        else:
+            print(f"Warning: Files for {label} not found. Skipping...")
+
+    if not all_combined_results:
+        print("Error: No data processed. Check file paths.")
+        return
+
+    # rgNoがある場合は rgNoを、ない場合は _merge_key を使って重複を排除
+    unique_dict = {}
+    for c in all_combined_results:
+        # rgNoがあれば優先、なければ予備のキーを使う
+        key = c['rgNo'] if c['rgNo'] else generate_unique_key(c)
+        # まだ登録されていないか、既存データが空文字で今回データがrgNo持ちなら上書き
+        if key not in unique_dict:
+            unique_dict[key] = c
+    final_list = list(unique_dict.values())
+
+    # 保存
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(final_list, f, ensure_ascii=False, indent=2)
+
+    save_course_update_metadata()
+
+    print(f"--- Process Completed ---")
+    print(f"Total processed items (after deduplication): {len(final_list)}")
+    print(f"Output: {os.path.abspath(output_file)}")
 
 if __name__ == "__main__":
     run_parser()
