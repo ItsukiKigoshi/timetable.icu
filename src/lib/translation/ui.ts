@@ -110,7 +110,7 @@ const ja = {
   'timetable.color.default': 'Default',
   'timetable.color.custom': 'Custom',
   "timetable.memo": "メモ",
-  "timetable.memo.content":"課題や試験に関するメモ．\n\"@場所\"と書いて時間割に表示する教室をカスタマイズ．",
+  "timetable.memo.content": "課題や試験に関するメモ．\n\"@場所\"と書いて時間割に表示する教室をカスタマイズ．",
   "timetable.period": "{period}限",
   "timetable.close": "閉じる",
   "timetable.remove": "削除",
@@ -119,6 +119,7 @@ const ja = {
   "timetable.units": "単位",
   "timetable.show": "表示",
   "timetable.hide": "隠す",
+  "timetable.create.custom": "カスタムコースを作成",
 
   "custom.create": "カスタムコースを作成",
   "custom.edit": "コースを編集",
@@ -278,6 +279,7 @@ const en = {
   "timetable.units": "Units",
   "timetable.show": "Show",
   "timetable.hide": "Hide",
+  "timetable.create.custom": "Create Custom Course",
 
   "custom.create": "Create Custom Course",
   "custom.edit": "Edit Course",

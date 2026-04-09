@@ -225,7 +225,7 @@ export default function TimetableInterface({
 
                         <span
                             className="hidden lg:inline text-primary-content font-bold tracking-tight whitespace-nowrap">
-                            カスタムコースを作成
+                            {t('timetable.create.custom')}
                         </span>
                     </a>
                 </nav>
