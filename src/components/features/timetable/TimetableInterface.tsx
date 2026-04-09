@@ -177,13 +177,13 @@ export default function TimetableInterface({
 
     return (
         <LanguageProvider lang={lang}>
-            <section className="flex flex-col w-full select-none h-full relative overflow-hidden">
+            <section className="flex flex-col w-full h-full select-none relative overflow-hidden">
                 {/* 左側：表示モード切り替え (Grid/List) */}
                 <nav
-                    className="lg:hidden fixed bottom-18 left-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
+                    className="lg:hidden fixed bottom-15 left-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
                     <button
                         onClick={() => updateViewMode('grid')}
-                        className={`btn btn-sm btn-square h-11 w-11 rounded-full border-none transition-all ${
+                        className={`btn btn-xs btn-square h-11 w-11 rounded-full border-none transition-all ${
                             viewMode === 'grid' ? 'btn-primary shadow-md' : 'btn-ghost'
                         }`}
                         title={t('timetable.title')}
@@ -202,7 +202,7 @@ export default function TimetableInterface({
                 </nav>
 
                 {/* フローティング単位表示バッジ */}
-                <section className="fixed bottom-12 left-1/2 -translate-x-1/2 z-60 pointer-events-none">
+                <section className="fixed bottom-10 left-1/2 -translate-x-1/2 z-60 pointer-events-none">
                     <div
                         className="bg-neutral text-neutral-content px-4 py-2 rounded-full shadow-lg border border-white/10 flex items-center gap-3 backdrop-blur-md bg-opacity-80 transition-all duration-300">
                     <span className="text-lg font-mono font-black">
@@ -216,9 +216,9 @@ export default function TimetableInterface({
 
 
                 {/* 右側: カスタムコース追加ボタン*/}
-                <nav className="fixed bottom-18 right-4 z-50">
+                <nav className="fixed bottom-15 right-2 z-50">
                     <a href={l('/new')}
-                       className="btn btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2"
+                       className="btn btn-sm btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2"
                        aria-label="Create new course"
                     >
                         <NotebookPen size="24" className="text-primary-content shrink-0"/>
@@ -232,7 +232,7 @@ export default function TimetableInterface({
 
 
                 {/* メインコンテンツエリア */}
-                <div className="flex-1 overflow-hidden relative">
+                <div className="flex-1 min-h-0 overflow-hidden relative">
                     {/* モバイル表示：useStateの値で出し分け */}
                     <div className="lg:hidden h-full w-full">
                         {viewMode === 'grid' ? (
@@ -262,8 +262,8 @@ export default function TimetableInterface({
                     </div>
 
                     {/* 3. PC用 2カラム*/}
-                    <div className="hidden lg:flex h-full overflow-hidden border-t border-base-300">
-                        <aside className="w-80 flex flex-col bg-base-200/20 border-r border-base-300">
+                    <div className="hidden lg:flex h-full overflow-hidden">
+                        <aside className="w-80 flex flex-col bg-base-200/20">
                             <div className="flex-1 overflow-y-auto">
                                 <CourseList
                                     items={displayCourses}

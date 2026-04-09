@@ -72,9 +72,11 @@ export function useTimetable({
 
     // --- ハンドラー ---
     // CustomCourseの保存（フォーム入力から）
-    const saveCustomCourse = async (formData: CourseFormInput) => {
-        const isNew = !formData.id || String(formData.id).startsWith('custom-');
-        const tempId = formData.id || `custom-${Date.now()}`;
+    const saveCustomCourse = async (formData: CourseFormInput, mode: 'create' | 'edit') => {
+        const isNew = mode === 'create';
+
+        // IDの確定
+        const tempId = isNew ? `custom-${Date.now()}` : formData.id;
 
         const newCourse: UserCourseWithDetails = {
             ...formData,
@@ -86,6 +88,7 @@ export function useTimetable({
             schedules: formData.schedules.map((s, idx) => ({ ...s, id: idx })),
         } as UserCourseWithDetails;
 
+        // 更新または追加
         const nextCourses = !isNew
             ? courses.map(c => (c.type === 'custom' && String(c.id) === String(formData.id)) ? newCourse : c)
             : [...courses, newCourse];

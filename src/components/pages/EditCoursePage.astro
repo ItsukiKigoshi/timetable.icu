@@ -5,6 +5,7 @@ import Layout from "@/components/layout/Layout.astro";
 import CourseEditor from "@/components/features/timetable/CourseEditor";
 import { eq, and } from "drizzle-orm";
 import {env} from "cloudflare:workers";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
 
 interface Props {
     lang: string;
@@ -46,6 +47,7 @@ if (user && db) {
         }
     }
 }
+const {t} = createTranslationHelper(lang);
 ---
 
 <Layout title=`${t('custom.edit')} | ${t('site.title')}`>

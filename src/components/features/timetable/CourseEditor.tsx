@@ -130,7 +130,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
                 term: selectedTerm as Course['term'],
             };
 
-            await saveCustomCourse(finalData);
+            await saveCustomCourse(finalData, mode);
             window.location.href = l('/timetable');
         } catch (error) {
             console.error(error);
@@ -267,7 +267,7 @@ const CourseEditor = ({ mode, lang, targetId, initialData, user, selectedYear, s
 
                     <div className="flex gap-2 mt-4">
                         <button type="button" className="btn btn-ghost" onClick={() => window.history.back()} disabled={isSubmitting}>
-                            t('custom.cancel')
+                            {t('custom.cancel')}
                         </button>
                         <button type="submit" className="btn btn-primary flex-1" disabled={isSubmitting}>
                             {isSubmitting ? <span className="loading loading-spinner"></span> : t('custom.save')}

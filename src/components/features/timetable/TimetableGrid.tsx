@@ -31,18 +31,17 @@ const TimetableGrid = ({
     const getHeight = (duration: number) => `calc(${duration} * ${minuteUnit})`;
 
     return (
-        <div className="flex w-full bg-base-100 border-b border-base-content/20 h-full"
-             style={{height: "100%"}}>
+        <div className="flex w-full bg-base-100 border-b border-base-content/50 h-full">
             {/* 時刻軸 (左端のカラム) */}
-            <div className="w-10 border-l border-r border-base-content/50 relative shrink-0 bg-base-100 z-0">
-                <div style={{height: TIMETABLE_CONFIG.HEADER_HEIGHT}} className="border-b border-base-content/50"/>
+            <div className="w-10 border-l border-r border-t border-base-content/50 relative shrink-0 bg-base-100 z-0">
+                <div className="border-b border-base-content/50" style={{height: TIMETABLE_CONFIG.HEADER_HEIGHT}}/>
                 {PERIODS.map(p => {
                     const sMin = timeToMin(p.start);
                     return (
                         <div key={p.label}
-                             className="absolute w-full flex flex-col items-center border-t border-base-content/50"
+                             className="absolute w-full h-full flex flex-col items-center border-t border-base-content/50"
                              style={{top: getTop(sMin)}}>
-                            <span className="text-[9px] opacity-60 leading-none mt-1">{p.start}</span>
+                            <span className="text-[9px] opacity-60 leading-none pt-1">{p.start}</span>
                             <span className="font-bold text-xs mx-auto">{translatePeriod(p.label)}</span>
                         </div>
                     );
@@ -51,7 +50,7 @@ const TimetableGrid = ({
 
             {/* 曜日カラム内 */}
             {SELECTABLE_DAYS.map(day => (
-                <div key={day} className="flex-1 border-r border-base-content/50 relative h-full bg-base-100">
+                <div key={day} className="flex-1 border-r border-t border-base-content/50 relative h-full bg-base-100">
 
                     {/* 曜日ヘッダー */}
                     <div
