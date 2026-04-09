@@ -206,7 +206,7 @@ const en = {
   "toast.sync.fail": "Sync failed. Check Your Connection.",
 
   // --- Landing Page ---
-  "lp.hero.description": "Your Academic Planning starts here.",
+  "lp.hero.description": "Your Academic Planning at ICU starts here.",
   "lp.nav.explore": "Explore Courses",
   "lp.nav.timetable": "View Timetable",
 
