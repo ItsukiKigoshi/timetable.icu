@@ -125,7 +125,7 @@ const TimetableGrid = ({
                     width: `${100 / sched.groupMaxCols}%`,
                   }}
                 >
-                  <div className="flex gap-0.5 h-full w-full items-stretch bg-base-200 rounded-sm md:p-1 p-0 overflow-hidden">
+                  <div className="flex lg:gap-1 gap-0.5 h-full w-full items-stretch bg-base-200 rounded-sm md:p-1 p-0 overflow-hidden">
                     {/* 左側のカラーバー */}
                     <div
                       className="w-1 rounded-full shrink-0"
