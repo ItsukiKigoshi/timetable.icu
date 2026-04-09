@@ -5,22 +5,31 @@ import {env} from "cloudflare:workers";
 import {limitPerPage} from "@/constants/config.ts";
 import {getCourseSearchConfig} from "@/lib/course/query.ts";
 
-export const GET: APIRoute = async ({request}) => {
-    const db = drizzle(env.timetable_icu, {schema});
-    const {where, page} = getCourseSearchConfig(new URL(request.url), db);
+export const GET: APIRoute = async ({ request, locals }) => { // localsを追加
+    const user = locals.user; // ログインユーザーの取得
+    const db = drizzle(env.timetable_icu, { schema });
+    const { where, page } = getCourseSearchConfig(new URL(request.url), db);
 
     const results = await db.query.courses.findMany({
         where,
-        with: {schedules: true},
-        orderBy: (courses, {asc}) => [asc(courses.courseCode)], // courseCode順, ELAが最初にでないように
+        with: { schedules: true },
+        orderBy: (courses, { asc }) => [asc(courses.courseCode)],
         limit: limitPerPage + 1,
         offset: (page - 1) * limitPerPage,
     });
 
     const hasNextPage = results.length > limitPerPage;
-    const data = hasNextPage ? results.slice(0, limitPerPage) : results;
+    let data = hasNextPage ? results.slice(0, limitPerPage) : results;
 
-    return new Response(JSON.stringify({results: data, hasNextPage}), {
-        headers: {"Content-Type": "application/json"}
+    // --- 未ログイン時の教室情報隠蔽処理 ---
+    if (!user) {
+        data = data.map(course => ({
+            ...course,
+            room: null, // 公式コースの教室を強制的にnullにする
+        }));
+    }
+
+    return new Response(JSON.stringify({ results: data, hasNextPage }), {
+        headers: { "Content-Type": "application/json" }
     });
 };

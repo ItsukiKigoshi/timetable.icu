@@ -23,17 +23,21 @@ const CourseHeader = ({
     }, [showColor, colorCustom]);
 
     // 2. 公式科目かカスタム科目かの判定（型ガード）
-    // 'courseCode' が存在すれば公式科目 (Course) と判断される
-    const isOfficial = "courseCode" in course;
+    const isOfficial = course.type === 'official';
 
     // 3. タイトルの決定 (型安全にアクセス)
     const displayTitle = useMemo(() => {
-        if (isOfficial) {
-            return isJa ? course.titleJa : (course.titleEn || course.titleJa);
+        // 1. 公式コースの処理
+        if (course.type === 'official') {
+            const ja = course.titleJa;
+            const en = course.titleEn;
+            return isJa ? (ja || en) : (en || ja);
         }
-        // カスタム科目の場合は .title プロパティを参照
-        return course.title;
-    }, [isJa, course, isOfficial]);
+
+        // 2. カスタムコースの処理
+        // カスタムコースは CustomCourse 型を継承しており title プロパティを持つ
+        return (course as any).title || "No Title";
+    }, [isJa, course]);
 
     return (
         <div className="flex gap-3 w-full">

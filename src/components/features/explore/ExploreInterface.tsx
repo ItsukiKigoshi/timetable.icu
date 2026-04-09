@@ -174,14 +174,19 @@ interface Props {
                 });
                 const res = await fetch(`/api/courses?${params.toString()}`);
                 const data = (await res.json()) as SearchResponse;
-                setCourses(data.results);
+                const typedResults = data.results.map(course => ({
+                    ...course,
+                    type: 'official' as const
+                }));
+
+                setCourses(typedResults);
                 setHasNextPage(data.hasNextPage);
             } catch (e) {
                 console.error("Failed to fetch courses:", e);
             } finally {
                 setIsFetching(false);
             }
-        };
+        }
 
         const update = (newParams: Partial<SearchFilters>) => {
             const nextFilters = {...filters, ...newParams};

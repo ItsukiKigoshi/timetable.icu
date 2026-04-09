@@ -273,9 +273,21 @@ export type UserCourseWithDetails = OfficialCourseWithDetails | CustomCourseWith
 export type Categories = InferSelectModel<typeof categories>;
 
 // Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
-export type FlatSchedule = Schedule & Course & Partial<UserCourseMetadata> & {
+export type FlatSchedule = (Schedule | CustomSchedule) &
+    Partial<Course> &
+    Partial<CustomCourse> &
+    Partial<UserCourseMetadata> & {
     scheduleId: number;
+    type: 'official' | 'custom';
 };
+
+export type DisplaySchedule = FlatSchedule & {
+    startMin: number;
+    endMin: number;
+    col: number;
+    groupMaxCols: number;
+    type: 'official' | 'custom';
+}
 
 
 // 利便性のための「共通アクセス用」型（EditorのFormなどで使用）

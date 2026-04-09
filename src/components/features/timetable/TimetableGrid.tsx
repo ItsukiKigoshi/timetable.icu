@@ -1,4 +1,4 @@
-import type {DisplaySchedule} from "@/lib/timetable/utils.ts";
+import type {DisplaySchedule} from "@/db/schema/index.ts";
 import {timeToMin} from "@/lib/timetable/utils.ts";
 import {PERIODS, SELECTABLE_DAYS, TIMETABLE_CONFIG} from "@/constants/time.ts";
 
@@ -105,7 +105,8 @@ const TimetableGrid = ({
                                         <h1 className="lg:text-sm md:text-xs text-[10px] font-bold leading-tight line-clamp-3 text-base-content/90">
                                             {isJa ? (sched.titleJa || (sched as any).title) : (sched.titleEn || (sched as any).title)}
                                         </h1>
-                                        {user && sched.room && (
+                                        {/* (カスタムコースである) OR (ログイン済み) の場合にのみ教室を表示 */}
+                                        {(sched.type === 'custom' || user) && sched.room && (
                                             <p className="lg:text-[12px] text-[8px] font-medium opacity-80 truncate">
                                                 {sched.room}
                                             </p>

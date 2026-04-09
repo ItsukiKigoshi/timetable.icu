@@ -1,4 +1,4 @@
-import type {FlatSchedule} from "@/db/schema";
+import type {FlatSchedule, DisplaySchedule} from "@/db/schema";
 import {SELECTABLE_DAYS} from "@/constants/time.ts";
 
 /**
@@ -9,13 +9,6 @@ export const timeToMin = (timeStr: string) => {
     const [h, m] = timeStr.split(':').map(Number);
     return h * 60 + m;
 };
-
-export interface DisplaySchedule extends FlatSchedule {
-    startMin: number;
-    endMin: number;
-    col: number;
-    groupMaxCols: number;
-}
 
 // Flat Schedule（平坦化されたSchedule+Course）に, 時間割描画に必要な情報（startMin, endMin, col, groupMaxCols, styles）を付加
 export const computeDisplaySchedules = (schedules: FlatSchedule[]): DisplaySchedule[] => {
