@@ -69,9 +69,8 @@ const ja = {
   "lp.features.todo.label": "検討中の機能",
   "lp.features.todo.offline.title": "オフライン表示",
   "lp.features.todo.offline.desc": "現状閲覧にはインターネット接続が必要",
-  "lp.features.todo.custom.title": "[試験提供]独自コースの追加",
-  "lp.features.todo.custom.desc":
-    "公式提供コースに加えてカスタム追加機能も試験提供中",
+  "lp.features.todo.custom.title": "独自コースの追加 [試験提供中]",
+  "lp.features.todo.custom.desc": "カスタムコース追加機能を試験提供中",
   "lp.features.todo.calendar.title": "カレンダー連携",
   "lp.features.todo.calendar.desc": "外部カレンダーへの書き出し機能を検討中",
 
