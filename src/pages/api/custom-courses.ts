@@ -5,13 +5,10 @@ import { and, eq } from "drizzle-orm";
 import { env } from "cloudflare:workers";
 import type { CourseFormInput } from "@/db/schema/index.ts";
 
-// IDが文字列（一時ID）で来る可能性があるため、処理用のヘルパー
-const parseId = (id: any): number | null => {
-    if (typeof id === 'number') return id;
-    if (typeof id === 'string') {
-        const match = id.match(/\d+/);
-        return match ? parseInt(match[0], 10) : parseInt(id, 10);
-    }
+// IDが文字列で来る可能性があるため，処理用のヘルパー
+const parseId = (id: any): string | null => {
+    if (typeof id === 'string' && id.length > 0) return id;
+    if (typeof id === 'number') return String(id);
     return null;
 };
 
@@ -98,6 +95,7 @@ export const PATCH: APIRoute = async ({ request, locals }) => {
         // スケジュールの更新 (存在する場合のみ)
         if (body.schedules && Array.isArray(body.schedules)) {
             batchQueries.push(
+                //ここ
                 db.delete(schema.customCourseSchedules).where(eq(schema.customCourseSchedules.customCourseId, id))
             );
             const scheduleValues = body.schedules.map((s: any) => ({

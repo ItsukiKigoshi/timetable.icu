@@ -20,31 +20,27 @@ const db = drizzle(env.timetable_icu, { schema });
 let initialData = null;
 
 // ログイン済みならDBから取得
-if (user && db) {
-    const numericId = Number(targetId);
-    if (Number.isFinite(numericId)) {
-        const result = await db.query.customCourses.findFirst({
-            where: (cc) => and(
-                eq(cc.userId, user.id),
-                eq(cc.id, numericId)
-            ),
-            with: {
-                schedules: true
-            }
-        });
-
-        if (result) {
-            // フロントエンド(CourseEditor)が扱いやすい形にマッピング
-            initialData = {
-                ...result,
-                schedules: result.schedules.map(s => ({
-                    dayOfWeek: s.dayOfWeek,
-                    period: s.period,
-                    startTime: s.startTime,
-                    endTime: s.endTime
-                }))
-            };
+if (user && db && targetId) {
+    const result = await db.query.customCourses.findFirst({
+        where: (cc) => and(
+            eq(cc.userId, user.id),
+            eq(cc.id, targetId)
+        ),
+        with: {
+            schedules: true
         }
+    });
+
+    if (result) {
+        initialData = {
+            ...result,
+            schedules: result.schedules.map(s => ({
+                dayOfWeek: s.dayOfWeek,
+                period: s.period,
+                startTime: s.startTime,
+                endTime: s.endTime
+            }))
+        };
     }
 }
 const {t} = createTranslationHelper(lang);

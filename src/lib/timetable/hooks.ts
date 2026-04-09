@@ -38,11 +38,12 @@ export function useTimetable({
             course.schedules.map(s => {
                 const { id: _unused, ...scheduleData } = s;
                 return {
-                    ...course,
-                    ...scheduleData,
-                    scheduleId: s.id,
-                    id: course.id
-                } as FlatSchedule;
+                    ...course,        // コース情報の展開
+                    ...scheduleData,  // スケジュール情報の展開
+                    id: course.id,    // コースID (string | number)
+                    scheduleId: s.id,  // スケジュール自身のID
+                    type: course.type // 'official' | 'custom'
+                } as unknown as FlatSchedule;
             })
         );
     }, [courses]);
@@ -108,7 +109,12 @@ export function useTimetable({
                 if (isNew && response.ok) {
                     const data = (await response.json()) as { success: boolean; id: number };
                     if (data.id) {
-                        setCourses(prev => prev.map(c => c.id === tempId ? { ...c, id: data.id } : c));
+                        setCourses(prev => prev.map(c => {
+                            if (c.id === tempId) {
+                                return { ...c, id: data.id } as UserCourseWithDetails;
+                            }
+                            return c;
+                        }));
                     }
                 }
             } catch (e) {

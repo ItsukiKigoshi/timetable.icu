@@ -134,7 +134,8 @@ export const userCourses = sqliteTable(
 // customCoursesは, userIdのユーザの持ち物
 // カスタムコース本体（メタ情報のみ）
 export const customCourses = sqliteTable("custom_courses", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    // idは/editページでユーザに見えるため，連番ではなくランダムな値に
+    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text("user_id")
         .notNull()
         .references(() => user.id, { onDelete: "cascade" }),
@@ -157,7 +158,7 @@ export const customCourses = sqliteTable("custom_courses", {
 // カスタムコースのスケジュール（1コースに対して複数レコード可）
 export const customCourseSchedules = sqliteTable("custom_course_schedules", {
     id: integer("id").primaryKey({ autoIncrement: true }),
-    customCourseId: integer("custom_course_id")
+    customCourseId: text("custom_course_id")
         .notNull()
         .references(() => customCourses.id, { onDelete: "cascade" }), // 親が消えたら消える
 
@@ -272,12 +273,12 @@ export type UserCourseWithDetails = OfficialCourseWithDetails | CustomCourseWith
 
 export type Categories = InferSelectModel<typeof categories>;
 
-// Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
 export type FlatSchedule = (Schedule | CustomSchedule) &
     Partial<Course> &
     Partial<CustomCourse> &
     Partial<UserCourseMetadata> & {
-    scheduleId: number;
+    id: string | number;
+    scheduleId: string | number;
     type: 'official' | 'custom';
 };
 
