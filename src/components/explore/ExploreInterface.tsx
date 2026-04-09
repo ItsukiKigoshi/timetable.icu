@@ -374,13 +374,13 @@ interface Props {
                         const loading = isSubmitting === course.id || !isInitialized;
 
                         return (
-                            <section key={course.id} className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+                            <section key={course.id} className="card bg-base-200 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
                                 <div className="card-body p-4 gap-3">
                                     {/* ヘッダーセクション: コード，言語，単位数，年度 */}
                                     <CourseHeader course={course} showYearTerm={true} />
 
                                     {/* アクションセクション */}
-                                    <nav className="card-actions flex justify-between items-center mt-2 pt-3 border-t border-base-100">
+                                    <nav className="card-actions flex justify-between items-center">
                                         <a target='_blank' rel="noopener noreferrer"
                                            href={getSyllabusUrl(course.rgNo, course.year, course.term)}
                                            className="btn btn-ghost btn-md gap-1.5 px-2 font-normal">
