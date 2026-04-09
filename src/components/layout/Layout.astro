@@ -37,11 +37,13 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
 <html lang={currentLang}>
 <head>
     <meta charset="UTF-8"/>
+    <title>{title}</title>
+    <meta property="og:title" content={title}/>
+    <meta property="og:site_name" content={t('site.title')}/>
     <meta name="application-name" content={title}>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="generator" content={Astro.generator}/>
 
-    <title>{title}</title>
     <meta name="description" content={description}/>
     <link rel="canonical" href={new URL(Astro.url.pathname, baseUrl).href}/>
 
@@ -49,12 +51,12 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
     <link rel="alternate" hreflang="en" href={enUrl}/>
     <link rel="alternate" hreflang="x-default" href={jaUrl}/>
 
-    <meta property="og:title" content={title}/>
+
     <meta property="og:description" content={description}/>
     <meta property="og:type" content={ogType}/>
     <meta property="og:url" content={Astro.url.href}/>
     <meta property="og:image" content={ogImage}/>
-    <meta property="og:site_name" content={t('site.title')}/>
+
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:image" content={ogImage}/>
@@ -65,11 +67,6 @@ const enUrl = new URL('/en' + purePath, baseUrl).href;
     <link rel="manifest" href="/manifest.webmanifest"/>
 </head>
 <body class="min-h-screen flex flex-col">
-<div style="display:none;">
-    <a href="/privacy">Privacy Policy</a>
-    <p>App Name: ICUのじかんわり</p>
-</div>
-
 {
     (!isLanding && dbError) && (
                 <div class="p-4 container mx-auto">
