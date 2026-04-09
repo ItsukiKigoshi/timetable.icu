@@ -36,10 +36,11 @@ ICU生の時間割・履修計画アプリの決定版
     - [ ] Share機能
       - [ ] 画像: 画面とロゴ，URL; アプリを知ってもらう機会にする
       - [ ] リンク: 「あなたもつくる？」の導線
--  [ ] 私が卒業しても自動で更新される状態にする
-  - [ ] 授業データを公開情報のみで構築する
-    - [ ] 教室情報は各自に打ち込んでもらえるように
-    - [ ] regnoはsyllabus公開後にリンクから取得
+-  [x] 私が卒業しても自動で更新される状態にする
+  - [x] 授業データを公開情報のみで構築する
+    - [x] 教室情報は各自に打ち込んでもらえるように
+    - [x] regnoはsyllabus公開後にリンクから取得
+  - [ ] GitHub CI/CD?
       
 # 大切にしたいこと
 
@@ -267,7 +268,6 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] 手動追加機能 Known Issues
       - [x] 削除がうまく働いていない
           - [x] toggleCourseがcustomCourseに関する操作を許容していない？
-          - [x] https://dev-timetable-icu.itsukikigoshi.workers.dev/api/user-coursesが404なのでテスト環境のAPIがDBへのアクセスが拒否されている？
           - [x] customCourseとscheduleがないcourseが消せない
       - [x] TimetableInterfaceのModalのopen管理で，複数が同時に開いてしまう
           - [x] ->remoteでcustomCourseとuserCoursesが同じidを持っているために起きているエラー．
