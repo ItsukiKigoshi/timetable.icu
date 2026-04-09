@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import type {Categories, CourseWithSchedules} from "@/db/schema";
+import type {Categories, OfficialCourseWithDetails} from "@/db/schema";
 import {
     ArrowDown01,
     CalendarCheck,
@@ -34,13 +34,13 @@ export interface SearchFilters {
         page: number;
     }
 
-    interface SearchResponse {
-        results: CourseWithSchedules[];
-        hasNextPage: boolean;
-    }
+interface SearchResponse {
+    results: OfficialCourseWithDetails[];
+    hasNextPage: boolean;
+}
 
-    interface Props {
-        initialResults: CourseWithSchedules[];
+interface Props {
+        initialResults: OfficialCourseWithDetails[];
         initialFilters: SearchFilters;
         isLoggedIn: boolean;
         categories: Categories[];
@@ -61,7 +61,7 @@ export interface SearchFilters {
         const {t, isJa} = createTranslationHelper(lang);
 
         // --- States ---
-        const [courses, setCourses] = useState<CourseWithSchedules[]>(initialResults);
+        const [courses, setCourses] = useState<OfficialCourseWithDetails[]>(initialResults);
         const [hasNextPage, setHasNextPage] = useState(initialHasNext);
         const [filters, setFilters] = useState<SearchFilters>(initialFilters);
         const [isFetching, setIsFetching] = useState(false);
@@ -98,7 +98,7 @@ export interface SearchFilters {
         /**
          * コースの追加/削除（トグル）処理
          */
-        const toggleCourse = async (course: CourseWithSchedules) => {
+        const toggleCourse = async (course: OfficialCourseWithDetails) => {
             const courseId = course.id;
             const isRegistered = registeredIds.has(courseId);
 
@@ -151,7 +151,7 @@ export interface SearchFilters {
             }
         };
 
-        const handleToggle = async (course: CourseWithSchedules) => {
+        const handleToggle = async (course: OfficialCourseWithDetails) => {
             if (isSubmitting === course.id || !isInitialized) return;
             setIsSubmitting(course.id);
             try {
@@ -174,14 +174,19 @@ export interface SearchFilters {
                 });
                 const res = await fetch(`/api/courses?${params.toString()}`);
                 const data = (await res.json()) as SearchResponse;
-                setCourses(data.results);
+                const typedResults = data.results.map(course => ({
+                    ...course,
+                    type: 'official' as const
+                }));
+
+                setCourses(typedResults);
                 setHasNextPage(data.hasNextPage);
             } catch (e) {
                 console.error("Failed to fetch courses:", e);
             } finally {
                 setIsFetching(false);
             }
-        };
+        }
 
         const update = (newParams: Partial<SearchFilters>) => {
             const nextFilters = {...filters, ...newParams};
@@ -369,13 +374,13 @@ export interface SearchFilters {
                         const loading = isSubmitting === course.id || !isInitialized;
 
                         return (
-                            <section key={course.id} className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+                            <section key={course.id} className="card bg-base-200 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
                                 <div className="card-body p-4 gap-3">
                                     {/* ヘッダーセクション: コード，言語，単位数，年度 */}
                                     <CourseHeader course={course} showYearTerm={true} />
 
                                     {/* アクションセクション */}
-                                    <nav className="card-actions flex justify-between items-center mt-2 pt-3 border-t border-base-100">
+                                    <nav className="card-actions flex justify-between items-center">
                                         <a target='_blank' rel="noopener noreferrer"
                                            href={getSyllabusUrl(course.rgNo, course.year, course.term)}
                                            className="btn btn-ghost btn-md gap-1.5 px-2 font-normal">

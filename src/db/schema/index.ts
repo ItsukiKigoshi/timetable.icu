@@ -16,6 +16,8 @@ export const daysEnum = [
     "Sun",
 ] as const;
 
+export const termsEnum = ["Spring", "Autumn", "Winter"] as const;
+
 // --- Courses ---
 // シラバスデータなどの基本情報を保持
 export const courses = sqliteTable(
@@ -25,7 +27,7 @@ export const courses = sqliteTable(
         year: integer("year").notNull(),
         rgNo: text("rg_no").notNull(),
         status: text("status", {enum: ["active", "cancelled"]}).default("active"),
-        term: text("term", {enum: ["Spring", "Autumn", "Winter"]}).notNull(),
+        term: text("term", {enum: termsEnum}).notNull(),
         courseCode: text("course_code").notNull(), // 例: GES001
         titleJa: text("title_ja").notNull(),
         titleEn: text("title_en").notNull(),
@@ -130,37 +132,40 @@ export const userCourses = sqliteTable(
 
 // --- カスタム科目 (他校・手打ち) ---
 // customCoursesは, userIdのユーザの持ち物
+// カスタムコース本体（メタ情報のみ）
 export const customCourses = sqliteTable("custom_courses", {
-    id: integer("id").primaryKey({autoIncrement: true}),
+    // idは/editページでユーザに見えるため，連番ではなくランダムな値に
+    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text("user_id")
         .notNull()
-        .references(() => user.id, {onDelete: "cascade"}),
+        .references(() => user.id, { onDelete: "cascade" }),
 
     title: text("title").notNull(),
     instructor: text("instructor"),
     room: text("room"),
-
     units: real("units").notNull().default(0),
 
-    dayOfWeek: text("day_of_week", {enum: daysEnum}).notNull(),
-    startTime: text("start_time").notNull(),
-    endTime: text("end_time").notNull(),
-
     year: integer("year").notNull(),
-    term: text("term").notNull(),
+    term: text("term", {enum: termsEnum}).notNull(),
 
-    isVisible: integer("is_visible", {mode: "boolean"}).notNull().default(true),
+    isVisible: integer("is_visible", { mode: "boolean" }).notNull().default(true),
     colorCustom: text("color_custom"),
     memo: text("memo"),
 
-    // 公式授業を上書きしたい場合
-    // どの公式授業を上書きしたかの参照（任意）
-    overriddenCourseId: integer("overridden_course_id").references(
-        () => courses.id,
-    ),
+    createdAt: integer("created_at").default(sql`(unixepoch())`),
+});
 
-    createdAt: integer("created_at").default(sql`(unixepoch()
-                                                 )`),
+// カスタムコースのスケジュール（1コースに対して複数レコード可）
+export const customCourseSchedules = sqliteTable("custom_course_schedules", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    customCourseId: text("custom_course_id")
+        .notNull()
+        .references(() => customCourses.id, { onDelete: "cascade" }), // 親が消えたら消える
+
+    dayOfWeek: text("day_of_week", { enum: daysEnum }).notNull(),
+    period: text("period"), // "昼" などが入る可能性を考慮して text
+    startTime: text("start_time").notNull(),
+    endTime: text("end_time").notNull(),
 });
 
 // --- Categories & Tags ---
@@ -175,18 +180,17 @@ export const courseToCategories = sqliteTable(
     {
         courseId: integer("course_id")
             .notNull()
-            .references(() => courses.id),
+            .references(() => courses.id, { onDelete: "cascade" }),
         categoryId: text("category_id")
             .notNull()
-            .references(() => categories.id),
+            .references(() => categories.id, { onDelete: "cascade" }),
     },
     (table) => [
-        primaryKey({columns: [table.courseId, table.categoryId]}),
+        primaryKey({ columns: [table.courseId, table.categoryId] }),
         index("category_id_idx").on(table.categoryId),
         index("category_search_idx").on(table.categoryId, table.courseId),
     ],
 );
-
 // --- User側からのリレーション ---
 // 1人のユーザーは「複数の履修登録(公式)」と「複数のカスタム科目」を持つ
 // Authのuserとのrelationもここでまとめる
@@ -208,8 +212,16 @@ export const userCoursesRelations = relations(userCourses, ({one}) => ({
 }));
 
 // --- customCourses (カスタム科目) のリレーション ---
-export const customCoursesRelations = relations(customCourses, ({one}) => ({
-    user: one(user, {fields: [customCourses.userId], references: [user.id]}),
+export const customCoursesRelations = relations(customCourses, ({ one, many }) => ({
+    user: one(user, { fields: [customCourses.userId], references: [user.id] }),
+    schedules: many(customCourseSchedules), // 1対多のリレーション
+}));
+
+export const customCourseSchedulesRelations = relations(customCourseSchedules, ({ one }) => ({
+    course: one(customCourses, {
+        fields: [customCourseSchedules.customCourseId],
+        references: [customCourses.id],
+    }),
 }));
 
 // --- courses (公式マスタ) とスケジュールのリレーション ---
@@ -233,7 +245,9 @@ export type Course = InferSelectModel<typeof courses>;
 export type Schedule = InferSelectModel<typeof courseSchedules>;
 export type UserCourse = InferSelectModel<typeof userCourses>;
 
-
+// カスタム科目のベース型
+export type CustomCourse = InferSelectModel<typeof customCourses>;
+export type CustomSchedule = InferSelectModel<typeof customCourseSchedules>;
 
 // --- Helper: メタデータ部分だけを抽出 ---
 // userId や createdAt などの不要なカラムを除いた「ユーザー設定」のみの型
@@ -243,18 +257,57 @@ export type UserCourseMetadata = Pick<
 >;
 
 // --- Final Types ---
-// リレーション込みの型
-export type CourseWithSchedules = Course & {
-    schedules: Schedule[];
+// 公式コース + ユーザーのカスタム設定 (isVisible, colorCustom など)
+export type OfficialCourseWithDetails = Course & UserCourseMetadata & {
+  schedules: Schedule[];
+  type: 'official';
 };
-// 詳細情報付きのユーザー履修科目
-export type UserCourseWithDetails = Course &
-    UserCourseMetadata & {
-    schedules: Schedule[]
+
+// カスタムコース (これ自体に isVisible や colorCustom が含まれているのでリレーションのみ)
+export type CustomCourseWithDetails = CustomCourse & {
+  schedules: CustomSchedule[];
+  type: 'custom';
 };
+
+export type UserCourseWithDetails = OfficialCourseWithDetails | CustomCourseWithDetails;
+
 export type Categories = InferSelectModel<typeof categories>;
 
-// Partial をつけることで、ゲストユーザー（UserCourseEntryがない状態）にも対応
-export type FlatSchedule = Schedule & Course & Partial<UserCourseMetadata> & {
-    scheduleId: number;
+export type FlatSchedule = (Schedule | CustomSchedule) &
+    Partial<Course> &
+    Partial<CustomCourse> &
+    Partial<UserCourseMetadata> & {
+    id: string | number;
+    scheduleId: string | number;
+    type: 'official' | 'custom';
 };
+
+export type DisplaySchedule = FlatSchedule & {
+    startMin: number;
+    endMin: number;
+    col: number;
+    groupMaxCols: number;
+    type: 'official' | 'custom';
+}
+
+
+// 利便性のための「共通アクセス用」型（EditorのFormなどで使用）
+export interface CourseFormInput {
+    id?: number | string;
+    courseId?: number | string; // hookから送られてくる別名
+    title: string;
+    instructor?: string | null;
+    room?: string | null;
+    units: number;
+    memo?: string | null;
+    colorCustom?: string | null;
+    year: number;
+    term: typeof termsEnum[number];
+    isVisible?: boolean;
+    schedules: {
+        dayOfWeek: typeof daysEnum[number];
+        period: string;
+        startTime: string;
+        endTime: string;
+    }[];
+}

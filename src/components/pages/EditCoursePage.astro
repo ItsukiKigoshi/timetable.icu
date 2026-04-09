@@ -1,0 +1,62 @@
+---
+import { drizzle } from "drizzle-orm/d1";
+import * as schema from "@/db/schema/index.ts";
+import Layout from "@/components/layout/Layout.astro";
+import CourseEditor from "@/components/timetable/CourseEditor";
+import { eq, and } from "drizzle-orm";
+import {env} from "cloudflare:workers";
+import {createTranslationHelper} from "@/lib/translation/utils.ts";
+
+interface Props {
+    lang: string;
+    targetId?: string;
+}
+
+const { lang, targetId } = Astro.props;
+const { selectedYear, selectedTerm, user } = Astro.locals;
+
+const db = drizzle(env.timetable_icu, { schema });
+
+let initialData = null;
+
+// ログイン済みならDBから取得
+if (user && db && targetId) {
+    const result = await db.query.customCourses.findFirst({
+        where: (cc) => and(
+            eq(cc.userId, user.id),
+            eq(cc.id, targetId)
+        ),
+        with: {
+            schedules: true
+        }
+    });
+
+    if (result) {
+        initialData = {
+            ...result,
+            schedules: result.schedules.map(s => ({
+                dayOfWeek: s.dayOfWeek,
+                period: s.period,
+                startTime: s.startTime,
+                endTime: s.endTime
+            }))
+        };
+    }
+}
+const {t} = createTranslationHelper(lang);
+---
+
+<Layout title=`${t('custom.edit')} | ${t('site.title')}`>
+    <div class="max-w-2xl mx-auto p-4">
+        <CourseEditor
+                client:only="react"
+                mode="edit"
+                lang={lang}
+                user={user}
+                targetId={targetId}
+                initialData={initialData}
+                selectedYear={selectedYear}
+                selectedTerm={selectedTerm}
+        />
+    </div>
+</Layout>

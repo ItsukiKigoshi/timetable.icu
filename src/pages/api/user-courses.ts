@@ -68,10 +68,11 @@ export const PATCH: APIRoute = async ({request, locals}) => {
     if (!user) return new Response(JSON.stringify({error: "Unauthorized"}), {status: 401});
 
     try {
-        const {courseId, isVisible, memo} = (await request.json()) as {
+        const {courseId, isVisible, colorCustom, memo} = (await request.json()) as {
             courseId: number;
             isVisible?: boolean;
-            memo?: string
+            colorCustom?: string | null;
+            memo?: string;
         };
 
         if (courseId === undefined) {
@@ -84,6 +85,7 @@ export const PATCH: APIRoute = async ({request, locals}) => {
         const updateData: any = {};
         if (isVisible !== undefined) updateData.isVisible = isVisible;
         if (memo !== undefined) updateData.memo = memo;
+        if (colorCustom !== undefined) updateData.colorCustom = colorCustom;
 
         const result = await db.update(schema.userCourses)
             .set(updateData)
@@ -102,5 +104,39 @@ export const PATCH: APIRoute = async ({request, locals}) => {
         return new Response(JSON.stringify({success: true, isVisible}), {status: 200});
     } catch (e) {
         return new Response(JSON.stringify({error: "Internal Server Error"}), {status: 500});
+    }
+};
+
+// --- DELETE (Explicit Removal) ---
+export const DELETE: APIRoute = async ({ request, locals }) => {
+    const user = locals.user;
+    if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+
+    try {
+        const { courseId } = (await request.json()) as { courseId: number };
+
+        if (!courseId) {
+            return new Response(JSON.stringify({ error: "Missing courseId" }), { status: 400 });
+        }
+
+        const db = drizzle(env.timetable_icu, { schema });
+
+        const result = await db
+            .delete(schema.userCourses)
+            .where(
+                and(
+                    eq(schema.userCourses.userId, user.id),
+                    eq(schema.userCourses.courseId, courseId)
+                )
+            )
+            .returning();
+
+        if (result.length === 0) {
+            return new Response(JSON.stringify({ error: "Course not found" }), { status: 404 });
+        }
+
+        return new Response(JSON.stringify({ success: true, action: "removed" }), { status: 200 });
+    } catch (e) {
+        return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
     }
 };

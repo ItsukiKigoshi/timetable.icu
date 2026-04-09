@@ -36,7 +36,11 @@ ICU生の時間割・履修登録ツールの決定版
     - [ ] Share機能
       - [ ] 画像: 画面とロゴ，URL; アプリを知ってもらう機会にする
       - [ ] リンク: 「あなたもつくる？」の導線
-
+-  [ ] 私が卒業しても自動で更新される状態にする
+  - [ ] 授業データを公開情報のみで構築する
+    - [ ] 教室情報は各自に打ち込んでもらえるように
+    - [ ] regnoはsyllabus公開後にリンクから取得
+      
 # 大切にしたいこと
 
 - [ ] とにかく時間割作成に使いやすいものである
@@ -76,7 +80,6 @@ ICU生の時間割・履修登録ツールの決定版
 
 # まだできないこと
 
-- [ ] マニュアル登録
 - [ ] Google Calendar / .icsエクスポート？
 - [ ] FeatureRequest/Feedback (他の人も見られる?)
     - [ ] Google Formにいかずとも簡単に送れるように
@@ -88,11 +91,13 @@ ICU生の時間割・履修登録ツールの決定版
     - [ ] 卒業要件PDF (ehandbook)
 - [ ] 授業評価（TES）を見ること (リンク貼る)
     - [ ] 見やすくして掲載は要検討
-    - [ ] TODO - Over Year TES解析 (RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python)
+    - [ ] TODO - Over Year TES解析
+        - [ ] RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python
         - [ ] 経年評価や同一講師の授業評価を可視化
 - [ ] オフラインで確認すること
     - [ ] 代わりに: Apple/Google Calendarへのエクスポート
     - [x] 代わりに: スクショしやすい画面配置
+- [x] マニュアル登録: できるようになった
 
 # 挑戦したいこと
 
@@ -136,30 +141,6 @@ ICU生の時間割・履修登録ツールの決定版
     - [Twitter](https://x.com/timetable4icu)
 
 ---
-
-# TODO
-- [ ] ELAを追加したい: 独自の開始/終了時間は認めずコマに収まる予定の追加機能？
-- [ ] 色選択
-- [ ] 理系の演習選択UI
-    - [ ] DBは設計済み
-    - [ ] フロントエンドの開発だけでいける
-      - [ ] 演習選択Dialog
-      - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
-- [ ] C-Week対応（？）
-- [ ] Calendar Export
-- [ ] 退会方法を提供
-- [ ] Refactor
-  - [ ] 関数やComponentにコメント（JS Docs）をつける
-- [ ] Test
-    - [ ] Vitest, Playwright
-    - [ ] さすがにType Errorだけでバグを見つける限界に来ている
-    - [ ] 全体
-        - [ ] 400-500番台と，白紙のHTMが出力されていないことを確認
-    - [ ] Explore
-        - [ ] 条件に合う検索結果か（取りこぼしがないか; exhaustかも検証）
-    - [ ] Timetable
-        - [ ] その学期のすべてのコースが表示されているか（Exhaust）
-
 # 工程表
 
 - [x] Astro App Initialise
@@ -219,7 +200,12 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)を3箇所でかける実装は危ない
     - [x] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧（displayCourses）も持つ必要がある
         - [x] displaySchedule(FlatSchedule[]型)のUserCourse[]型バージョン．
-    - [x] ~~実装ミスに気づけるようにCourse Headerに常にYear Termを表示~~
+    - [x] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
+    - [ ] 理系の演習選択UI
+      - [ ] DBは設計済み
+      - [ ] フロントエンドの開発だけでいける
+          - [ ] 演習選択Dialog
+          - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
 - [x] 授業検索
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!
@@ -237,14 +223,15 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] Issue: Co-Listに非対応; ehandbookを参照しながらColistが何かを解説
         - [x] ~~コマをクリックでその時間の授業を検索~~
         - [x] ~~授業詳細: Dialogueか個別ページ (Dynamic Routing)~~: とりあえず Not Planned
-    - [ ] 空きコマ検索: 現状の機能でも工夫次第で対応できるのでとりあえずは優先度低い
-         - [ ] slots(この名称もscheduleにするべき？)が2つ以上なら空きコマ検索モードにする？
-            - [ ] デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)」をチェックすると複数コマが選択できるようになる
-            - [ ] 既にコースが登録されていれば勝手にスケジュールを入れてくれる
-            - [ ] 「選択したスケジュールで履修できるコマを表示します」などヘルプメッセージを入れる
-        - [ ] 選択したコマ以外にscheduleを持たない授業を検索するオプション(「選択していないすべてのコマが，scheduleに含まれない」=「選択したコマだけがscheduleに含まれる」)
-        - [ ] もしくはdefaultではOR検索(使う場面あるか？)
-        - [ ] 時間割ページから飛べるように
+    - [x] ~~空きコマ検索: 現状の機能でも工夫次第で対応できるのでとりあえずは優先度低い~~: Not Planned
+         - [x] ~~slots(この名称もscheduleにするべき？)が2つ以上なら空きコマ検索モードにする？~~
+            - [x] ~~デフォルトでは1slotしかUIで選択出来ないようにし，「クリア」と「閉じる」の間の「□空きコマを探す(?)」をチェックすると複数コマが選択できるようになる~~
+            - [x] 既にコースが登録されていれば勝手にスケジュールを入れてくれる
+            - [x] ~~「選択したスケジュールで履修できるコマを表示します」などヘルプメッセージを入れる~~
+        - [x] ~~選択したコマ以外にscheduleを持たない授業を検索するオプション(「選択していないすべてのコマが，scheduleに含まれない」=「選択したコマだけがscheduleに含まれる」)~~
+        - [x] ~~もしくはdefaultではOR検索(使う場面あるか？)~~
+        - [x] ~~時間割ページから飛べるように~~
+    - [ ] I'm Feeling Lucky （ランダムなコースを2個ずつくらい表示する)
 - [x] 体育にも対応した単位数表示
     - [x] DB
         - [x] Schema追加
@@ -258,26 +245,35 @@ ICU生の時間割・履修登録ツールの決定版
     - [x] 時間割
         - [x] 表示
         - [x] 合計単位数表示（体育どうする！）
-- [ ] **独自スケジュール**
-    - [ ] そもそも必要？このアプリはスケジュール管理アプリではなく履修計画アプリ．
-      - [ ] スケジュール管理には外部のそれに特化したサービス（GCal, Apple Calendar等を使ってほしい） 
-    - [ ] しかし，ELAを追加したい需要は確実にある
-      - [ ] とりあえず独自の開始/終了時間は認めずコマに収まる予定の追加機能？
+- [x] 色選択
+    - [x] 色を表示する方法
+        - [x] 背景色: ちゃんとカラーパレットを設定すればいい感じになると思う
+        - [x] 棒（上）
+        - [x] 棒（左）
+- [x] 独自スケジュール
+    - [x] そもそも必要？このアプリはスケジュール管理アプリではなく履修計画アプリ．
+      - [x] スケジュール管理には外部のそれに特化したサービス（GCal, Apple Calendar等を使ってほしい） 
+    - [x] しかし，ELAを追加したい需要は確実にある
+      - [x] とりあえず独自の開始/終了時間は認めずコマに収まる予定の追加機能？
     - [x] DB定義
-    - [ ] 追加方法
-        - [ ] サイドドロワー？スマホで使いにくい？
-    - [ ] 表示方法
+    - [x] 追加方法
+        - [x] サイドドロワー？スマホで使いにくい？
+        - [ ] 別ページにするので落ち着いた
+    - [x] 表示方法
     - [x] メモ
-    - [ ] カスタム色追加
+    - [x] カスタム色追加
     - [x] 検索: Scheduleがない授業の追加を許可（Listがあるので現在でも追加して良いっちゃ良い）
-- [ ] 自動テスト
-    - [ ] 時間割
-        - [ ] 様々なデータで描画
-    - [ ] データ
-        - [ ] ローカルからのsync
-    - [ ] DB
-        - [ ] SQL Injection対策
-        - [ ] SQL EXPLAINで実行計画を管理（READ数が爆発しないように）
+    - [x] 手動追加機能 Known Issues
+      - [x] 削除がうまく働いていない
+          - [x] toggleCourseがcustomCourseに関する操作を許容していない？
+          - [x] https://dev-timetable-icu.itsukikigoshi.workers.dev/api/user-coursesが404なのでテスト環境のAPIがDBへのアクセスが拒否されている？
+          - [x] customCourseとscheduleがないcourseが消せない
+      - [x] TimetableInterfaceのModalのopen管理で，複数が同時に開いてしまう
+          - [x] ->remoteでcustomCourseとuserCoursesが同じidを持っているために起きているエラー．
+          - [x] 削除もID重複によるものかも．ID指定だけではtoggleCourseはできない
+          - [x] localStorageではcustomCourseのidに"custom-"のprefixがつくのでid重複（->Modal誤開閉や削除操作の失敗）は起きない
+          - [x] customCourseは"customCourseId"をもっているので，"id"は持たないようにするとか？いや，customCourseIdはschedulesが持っているもの
+      - [x] !userではCustomCourseにroomを追加しても表示されない in CourseHeader & TimetableGrid
 - [x] Catalogue.icuで移行を促すMessage
     - [ ] 移行機能 (直接新アプリのAPIを叩く?)
 - [x] Refactor
@@ -301,7 +297,7 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] フォント（こだわろう; 明朝?）
         - [ ] 他のAIみの少ないサイトを参照
             - [x] ICUで撮った写真をフォトフレームみたいにして入れると人間らしくなるのでは？
-            - [x] landingpageのみSSG?
+            - [x] landing pageのみSSG?
 - [ ] Landing Page
     - [x] 背景画像と言語選択のコントラスト
     - [x] 背景画像最適化: そもそもブラーをかけておく，画質落とす
@@ -319,14 +315,14 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] InteractiveなBalance Sheetのような
         - [ ] Cloudflare Registrar
           - [ ] InvoiceのPDF
-        - [ ]  寄付受付
+        - [x]  寄付受付
             - [ ] OpenCollective, Stripe
     - [ ] Members
         - [x] 自己紹介
         - [x] リンク
         - [x] Join the Team!
             - [x] 連絡用のメールアドレス
-                - [ ] 独自domain
+                - [x] 独自domain
             - [ ] Form?
 - [ ] ログイン時にユーザの操作でログインが中止された状態をフロントで拾う
 - [x] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
@@ -336,22 +332,34 @@ ICU生の時間割・履修登録ツールの決定版
 - [x] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
     - [x] Default localeをjaとenどっちにするか？
     - [x] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
-- [x] Google OAuthをpublesh
-    - 組織内アカウントなら審査なしでいける
-    - [x] Privacy Policy
-        - [ ] わかりやすく
-        - [ ] 将来の引き継ぎに備え，データの持ち出しが起きないようなチェック体制，コンプライアンス
-        - [ ] 時間割情報のE2E暗号化?: ユーザに秘密鍵を持たせて暗号化した情報をサーバに保存
-    - [x] 利用規約
-        - [ ] わかりやすく
-        - [ ] ポチポチして利用規約つくれるサイト？
-        - [ ] 卒業後のアカウント削除に関する規程
-            - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
-    - [x] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
-        - [x] [Google Search Console](https://search.google.com/search-console)
-- [ ] Known Issues: リリースまでに反映もしくは注意書き
-    - [ ] 退会方法を設ける
-    - [x] スケジュールがない授業を追加できない
+- [x] Google OAuthをpublish
+    - [x] 組織内アカウントなら審査なしでいける
+- [x] Privacy Policy
+    - [ ] わかりやすく
+      - [ ] 取得する情報
+        - [ ] ICUのGoogleアカウントログインで提供される最低限の情報
+          - [ ] 名前
+          - [ ] Email
+          - [ ] プロフィール写真
+          - [ ] （パスワードは保存されない）
+          - [ ] 管理者を除いて，他のユーザは閲覧不可
+          - [ ] ICUアカウントを必須にしているのは，教室情報などの学内情報にアクセスできる人を制限するため
+        - [ ] 登録した情報（データの復旧時のために平文で保持することはやむを得ないと判断）
+          - [ ] 授業コード
+          - [ ] メモ
+        - [ ] ログインしていない場合はユーザ・履修データが送信されない（統計情報は除く）
+        - [ ] 利用状況調査のために，ログイン情報とはまったく結びついていない利用統計（閲覧されたページ，時間，国，referer(どのサイトからアクセスしたか)，OS, ブラウザ）を取得している．
+          - [ ] Cloudflare AnalyticsはIPアドレスどこまで残してる？
+    - [ ] 将来の引き継ぎに備え，データの持ち出しが起きないようなチェック体制，コンプライアンス
+    - [ ] 時間割情報のE2E暗号化?: ユーザに秘密鍵を持たせて暗号化した情報をサーバに保存
+- [x] 利用規約
+    - [ ] わかりやすく
+    - [ ] ポチポチして利用規約つくれるサイト？
+    - [ ] 卒業後のアカウント削除に関する規程
+        - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
+  - [x] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
+      - [x] [Google Search Console](https://search.google.com/search-console)
+- [x] スケジュールがない授業を追加できない
 - [ ] SEO
     - [x] meta description
     - [ ] リッチリザルト
@@ -393,13 +401,66 @@ ICU生の時間割・履修登録ツールの決定版
         - [ ] Weekly Giants
         - [x] ~~選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？~~
     - [x] トップページのロード速度は落とさぬように．
+- [x] サポートボタンをログインボタンの下において分かりやすく
 - [ ] performance
     - [x] 画像最適化: 必要なピクセル数以下に抑える
-- [ ] 表示するコマが無いときに「Explore」へ促す
 - [ ] PR
     - [ ] Zenn記事
         - [ ] Drizzle, BetterAuth, D1
     - [ ] Weekly Giant寄稿
+    - [ ] 対面
+      - [ ] ちらし
+      - [ ] 部活
+- [x] Roomはicu.ac.jpを持つユーザのみ
+    - [x] 未ログインユーザーにはAPIからも返さない!!
+    - [x] LocalStorageからroomは消した
+- [x] ICUを卒業しても更新できる環境を整える
+    - [x] OAuthで組織外のものを用意する
+        - [x] これは準備しておいて，いつでも切り替えられるようにしておくべき
+        - [x] OAuthクライアントを切り替えてもユーザのデータが引き継がれることを確認
+          - [x] 少なくともローカルではちゃんとデータが引き継げた
+        - [x] API側でドメイン制限をかける
+    - [x] シラバスのパースを公開データでかける
+        - [x] Room情報が取れないことが問題
+            - [x] ~~既存のデータに上書きできるようにする？~~
+                - [x] ~~CustomCourseで既存コースの上書きまで担当するとフロントエンドでの条件分岐が多くなりすぎるので，なるべくofficialCourseとcustomの世界は分けたい~~
+            - [x] メモに書いてもらう（「@」（全角半角どちらでも）から始めた行は画面にも表示されるようになるとか？）: これいいね！解決．
+            - [x] ~~Google Calendarに登録して，自分でやってもらう~~
+- [ ] Remoteに実験環境を用意する
+    - [ ] D1, Workersをもう1ペア作り，実験できるようにする，
+    - [ ] 既存のDBはまったく汚さず他の人も実験に参加出来るように．
+    - [ ] 実験環境ではDBのデータが消えてもいい
+- [ ] ログイン済みのユーザもlocalStorageにバックアップしておき，サーバ側をsource of truthとしつつ通信障害時などにローカルでデータが参照されるように
+    - [ ] 「オフラインです，インターネットに接続されると同期されます」
+- [ ] フロントエンドに緊急メンテナンス通知とAPIが関わる操作を禁止するモードを入れて，いざと言うときに簡単にONにできるようにしておかなければ．
+- [ ] 編集機能: オーバーライドしても表示されるのは1授業，
+- [ ] 時間割になにも授業が無ければExploreに誘導
+    - [ ] 手書き風&アニメーション?
+- [ ] 副産物
+    - [ ] 授業ヒートマップ
+- [ ] C-Week対応（？）
+- [ ] Refactor
+    - [ ] 関数やComponentにコメント（JS Docs）をつける
+- [ ] Test
+    - [ ] Vitest, Playwright
+    - [ ] さすがにType Errorだけでバグを見つける限界に来ている
+    - [ ] 全体
+        - [ ] 400-500番台と，白紙のHTMが出力されていないことを確認
+    - [ ] Explore
+        - [ ] 条件に合う検索結果か（取りこぼしがないか; exhaustかも検証）
+    - [ ] Timetable
+        - [ ] その学期のすべてのコースが表示されているか（Exhaust）
+        - [ ] toggleCourse
+            - [ ] フロントの状態
+            - [ ] DBの状態
+        - [ ] toggleVisiblety
+            - [ ] フロントの状態
+            - [ ] DBの状態
+    - [ ] 同期
+        - [ ] LocaStorageのデータがDBに確実に格納される
+    - [ ] DB
+        - [ ] SQL Injection対策
+        - [ ] SQL EXPLAINで実行計画を管理（READ数が爆発しないように）
 
 ## 課題
 
@@ -410,13 +471,6 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] 逆に現状だと，Passkeyを持っていれば卒業後も在学生以外にアクセスさせたくない情報 (Room)が見られてしまう
 - [ ] 最終手段は，3月と6月に全パスキーを削除
     - [ ] クライアント側にパスキーの残骸が残りよく無いので，卒業時期ごとにパスキーログイン後のGoogleアカウント認証を一度を求めるなどかな
-
-## Checklist
-
-- [x] Roomはicu.ac.jpを持つユーザのみ
-    - [ ] 未ログインユーザーにはAPIからも返さない!!
-    - [x] LocalStorageからroomは消した
-
 ---
 
 # Development
@@ -426,18 +480,22 @@ ICU生の時間割・履修登録ツールの決定版
 ### Frontend
 
 - Astro
+- React
 - Tailwindcss
 - DaisyUI
+- Typescript
 
 ### Backend
 
 - Astro
 - BetterAuth (Google OAuth/Passkey)
+- Drizzle ORM
+- Typescript
 
 ### Infra
 
-- Cloudflare Pages with Functions (Worker)
-- D1
+- Cloudflare Workers
+- Cloudflare D1
 
 ## 🚀 Project Structure
 
@@ -498,12 +556,21 @@ Create schema by Drizzle Kit
 bun x drizzle-kit generate
 ```
 
-Migration to D1 (--remote if applicable)
-Local->Remoteの順で1つずつ実行しないとエラーがでるときがある
+一度生成したmigrationファイルをなかったことにする
 
 ```bash
-bun wrangler d1 migrations apply timetable_icu
-bun wrangler d1 migrations apply timetable_icu --remote
+bun x drizzle-kit drop
+```
+
+Migration to D1
+Remoteは1度目は通らないことがあるが2回目やればいけるときがある
+
+```bash
+bun migrate:local
+```
+
+```bash
+bun migrate:remote
 ```
 
 もし外部キー制約が通らない場合
@@ -514,11 +581,17 @@ bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mo
 
 などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
 sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
+-->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，bun wrangler d1 executeでやらなければいけない場面もありそう．
 
 Debug with Cloudflare Environment
 
 ```bash
 bun run build && bun x wrangler dev
+```
+
+D1にSQL文を入れる例
+```bash
+bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 ```
 
 ### Corse data insertion

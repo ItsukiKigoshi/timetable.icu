@@ -1,19 +1,19 @@
-import {useEffect, useMemo, useState} from 'react';
-import type {FlatSchedule, UserCourseWithDetails} from "@/db/schema";
-import {computeDisplaySchedules} from "@/lib/timetable/utils.ts";
+import { useEffect, useMemo, useState } from 'react';
+import type { FlatSchedule, UserCourseWithDetails, CourseFormInput } from "@/db/schema";
+import { computeDisplaySchedules } from "@/lib/timetable/utils.ts";
 
 export function useTimetable({
-                                 initialCourses = [], // Astroから渡された UserCourseWithDetails[]
+                                 initialCourses = [],
                                  user,
                                  selectedYear,
                                  selectedTerm
                              }: {
     initialCourses?: UserCourseWithDetails[],
-    user: any
+    user: any,
     selectedYear: number,
     selectedTerm: string,
 }) {
-    // Source of Truth (詳細データを含むコース配列)
+    // Source of Truth (詳細データを含むコース配列すべてのデータはcoursesを参照すべし)
     const [courses, setCourses] = useState<UserCourseWithDetails[]>(initialCourses);
 
     // 初回マウント: LocalStorage(ゲスト) or Props(ログイン) から復元
@@ -24,7 +24,6 @@ export function useTimetable({
                 try {
                     setCourses(JSON.parse(cached));
                 } catch (e) {
-                    console.error("Failed to parse local timetable", e);
                     setCourses(initialCourses);
                 }
             }
@@ -33,106 +32,184 @@ export function useTimetable({
         }
     }, [user, initialCourses]);
 
-    // 全スケジュールを平坦化 (全コマ)
+    // 全スケジュールを平坦化
     const allSchedules = useMemo(() => {
         return courses.flatMap(course =>
-                course.schedules.map(s => ({
-                    ...course,
-                    ...s,
-                    scheduleId: s.id,
-                    id: course.id
-                } as FlatSchedule))
-            );
+            course.schedules.map(s => {
+                const { id: _unused, ...scheduleData } = s;
+                return {
+                    ...course,        // コース情報の展開
+                    ...scheduleData,  // スケジュール情報の展開
+                    id: course.id,    // コースID (string | number)
+                    scheduleId: s.id,  // スケジュール自身のID
+                    type: course.type // 'official' | 'custom'
+                } as unknown as FlatSchedule;
+            })
+        );
     }, [courses]);
 
     // 選択中の年と学期の授業一覧
     const displayCourses = useMemo(() => {
         return courses.filter(uc => uc.year === selectedYear && uc.term === selectedTerm);
-    }, [courses]);
+    }, [courses, selectedYear, selectedTerm]);
 
-    // 描画用のデータ (isVisible=trueかつ選択中の年と学期のみ、かつ位置計算済み)
+    // 描画用のデータ（isVisible=trueかつ選択中の年と学期のみ）
     const displaySchedules = useMemo(() => {
         const visibleOnly = allSchedules
             .filter(uc => uc.year === selectedYear && uc.term === selectedTerm)
             .filter(s => s.isVisible !== false);
         return computeDisplaySchedules(visibleOnly);
-    }, [allSchedules]);
+    }, [allSchedules, selectedYear, selectedTerm]);
 
-    // 登録済みIDのSet（ボタンの表示判定用）
-    const registeredIds = useMemo(() => {
-        return new Set(courses.map(c => c.id));
+    // 登録済み判定用：IDとTypeの組み合わせでSetを作る
+    const registeredKeys = useMemo(() => {
+        return new Set(courses.map(c => `${c.type}-${c.id}`));
     }, [courses]);
 
-    // ヘルパー: ローカルストレージ同期
     const syncLocalStorage = (nextCourses: UserCourseWithDetails[]) => {
         if (user) return;
         localStorage.setItem('guest_timetable', JSON.stringify(nextCourses));
     };
 
     // --- ハンドラー ---
-    // 削除・追加 (Timetable画面では基本的に「削除」がメイン)
-    const toggleCourse = async (course: UserCourseWithDetails) => {
-        const targetCourseId = course.id;
-        const isRegistered = registeredIds.has(targetCourseId);
+    // CustomCourseの保存（フォーム入力から）
+    const saveCustomCourse = async (formData: CourseFormInput, mode: 'create' | 'edit') => {
+        const isNew = mode === 'create';
 
-        // 状態更新 (削除なら消す、追加なら入れる)
-        const nextCourses = isRegistered
-            ? courses.filter(c => c.id !== targetCourseId)
-            : [...courses, { ...course, isVisible: true }];
+        // IDの確定
+        const tempId = isNew ? `custom-${Date.now()}` : formData.id;
+
+        const newCourse: UserCourseWithDetails = {
+            ...formData,
+            id: tempId as any,
+            type: 'custom',
+            isVisible: true,
+            year: selectedYear,
+            term: selectedTerm as any,
+            schedules: formData.schedules.map((s, idx) => ({ ...s, id: idx })),
+        } as UserCourseWithDetails;
+
+        // 更新または追加
+        const nextCourses = !isNew
+            ? courses.map(c => (c.type === 'custom' && String(c.id) === String(formData.id)) ? newCourse : c)
+            : [...courses, newCourse];
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
             try {
-                await fetch('/api/user-courses', {
-                    method: 'POST',
+                const method = isNew ? 'POST' : 'PATCH';
+                const response = await fetch('/api/custom-courses', {
+                    method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ courseId: targetCourseId }),
+                    body: JSON.stringify({ ...formData, id: isNew ? undefined : formData.id }),
                 });
-                // 失敗時のロールバック処理を入れる場合はここに追加
+
+                if (isNew && response.ok) {
+                    const data = (await response.json()) as { success: boolean; id: number };
+                    if (data.id) {
+                        setCourses(prev => prev.map(c => {
+                            if (c.id === tempId) {
+                                return { ...c, id: data.id } as UserCourseWithDetails;
+                            }
+                            return c;
+                        }));
+                    }
+                }
             } catch (e) {
-                console.error("Sync failed", e);
+                console.error("Failed to save custom course", e);
             }
         }
     };
 
-    // 表示/非表示の切り替え
-    const toggleVisibility = async (courseId: number) => {
-        const target = courses.find(c => c.id === courseId);
-        if (!target) return;
+    // 削除・追加
+    const toggleCourse = async (course: UserCourseWithDetails) => {
+        const { id, type } = course;
+        const courseKey = `${type}-${id}`;
+        const isRegistered = registeredKeys.has(courseKey);
 
-        const nextVisible = !target.isVisible;
+        let nextCourses: UserCourseWithDetails[];
+        if (isRegistered) {
+            nextCourses = courses.filter(c => `${c.type}-${c.id}` !== courseKey);
+        } else {
+            nextCourses = [...courses, { ...course, isVisible: true }];
+        }
+
+        setCourses(nextCourses);
+        syncLocalStorage(nextCourses);
+
+        if (user) {
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
+            // 公式もカスタムも、登録済みなら削除リクエストを送る
+            const method = isRegistered ? 'DELETE' : 'POST';
+
+            await fetch(endpoint, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, courseId: id }),
+            });
+        }
+    };
+
+    // 表示/非表示
+    const toggleVisibility = async (course: UserCourseWithDetails) => {
+        const { id, type, isVisible } = course;
+        const nextVisible = !isVisible;
+
         const nextCourses = courses.map(c =>
-            c.id === courseId ? { ...c, isVisible: nextVisible } : c
+            (c.id === id && c.type === type) ? { ...c, isVisible: nextVisible } : c
         );
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses', {
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
+            await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, isVisible: nextVisible })
+                body: JSON.stringify({ id, courseId: id, isVisible: nextVisible })
+            });
+        }
+    };
+
+    // 色の更新
+    const updateColor = async (course: UserCourseWithDetails, nextColor: string | null) => {
+        const { id, type } = course;
+        const nextCourses = courses.map(c =>
+            (c.id === id && c.type === type) ? { ...c, colorCustom: nextColor } : c
+        );
+
+        setCourses(nextCourses);
+        syncLocalStorage(nextCourses);
+
+        if (user) {
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
+            await fetch(endpoint, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, courseId: id, colorCustom: nextColor })
             });
         }
     };
 
     // メモの更新
-    const updateMemo = async (courseId: number, nextMemo: string) => {
+    const updateMemo = async (course: UserCourseWithDetails, nextMemo: string) => {
+        const { id, type } = course;
         const nextCourses = courses.map(c =>
-            c.id === courseId ? { ...c, memo: nextMemo } : c
+            (c.id === id && c.type === type) ? { ...c, memo: nextMemo } : c
         );
 
         setCourses(nextCourses);
         syncLocalStorage(nextCourses);
 
         if (user) {
-            await fetch('/api/user-courses', {
+            const endpoint = (type === 'custom') ? '/api/custom-courses' : '/api/user-courses';
+            await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, memo: nextMemo })
+                body: JSON.stringify({ id, courseId: id, memo: nextMemo })
             });
         }
     };
@@ -142,8 +219,10 @@ export function useTimetable({
         schedules: allSchedules,
         displayCourses,
         displaySchedules,
+        saveCustomCourse,
         toggleCourse,
         toggleVisibility,
+        updateColor,
         updateMemo,
     };
 }

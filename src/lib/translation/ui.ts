@@ -1,8 +1,8 @@
 const ja = {
   "site.title": "ICUのじかんわり",
-  "site.tagline": "ICU生の時間割・履修登録ツールの決定版",
+  "site.tagline": "ICU生の時間割アプリ・履修計画ツールの決定版",
   "site.description":
-    "ICU生のための時間割・履修登録ツールの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期など，ICUでの学生生活をより快適に．ICU '27が愛を込めて開発中！",
+    "ICU生の時間割アプリ・履修計画ツールの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期で，国際基督教大学での学生生活をより快適に．ICU '27が愛を込めて開発中だよん．",
 
   "auth.login": "ログイン",
   "auth.logout": "ログアウト",
@@ -27,6 +27,8 @@ const ja = {
   "header.hi": "Hi! {name}",
   "header.synced": "同期済み",
   "header.login_to_sync": "ログインして同期",
+  "header.support": "サポートに連絡する",
+
   "term.Spring": "春学期",
   "term.Autumn": "秋学期",
   "term.Winter": "冬学期",
@@ -47,7 +49,7 @@ const ja = {
 
   // --- ランディングページ ---
   // Hero
-  "lp.hero.description": "ICU生の時間割・履修登録ツールの決定版",
+  "lp.hero.description": "ICU生の時間割・履修計画アプリの決定版",
   "lp.nav.explore": "コースを探す",
   "lp.nav.timetable": "時間割を見る",
 
@@ -61,15 +63,14 @@ const ja = {
     "Long 4, 5, 6, 7など、ICUならではのコマ割りも表示",
   "lp.features.can.sync.title": "マルチデバイス同期",
   "lp.features.can.sync.desc":
-    "ログインしてすべてのデバイスで最新の時間割を共有",
+    "ログインしてすべてのデバイスで最新の時間割を/共有",
 
   // 検討中
   "lp.features.todo.label": "検討中の機能",
   "lp.features.todo.offline.title": "オフライン表示",
   "lp.features.todo.offline.desc": "現状閲覧にはインターネット接続が必要",
-  "lp.features.todo.custom.title": "独自コースの追加",
-  "lp.features.todo.custom.desc":
-    "現在は公式提供コースのみ。カスタム追加機能も検討中",
+  "lp.features.todo.custom.title": "独自コースの追加 [試験提供中]",
+  "lp.features.todo.custom.desc": "カスタムコース追加機能を試験提供中",
   "lp.features.todo.calendar.title": "カレンダー連携",
   "lp.features.todo.calendar.desc": "外部カレンダーへの書き出し機能を検討中",
 
@@ -104,15 +105,34 @@ const ja = {
   "timetable.list_view": "リスト",
   "timetable.my_courses": "授業一覧",
   "timetable.no_courses": "授業が追加されていません",
+  'timetable.color.select': '色を選択',
+  'timetable.color.reset': 'リセット',
+  'timetable.color.default': 'Default',
+  'timetable.color.custom': 'Custom',
   "timetable.memo": "メモ",
-  "timetable.memo.content":"課題や試験に関するメモ...",
+  "timetable.memo.content":"課題や試験に関するメモ．\n\"@場所\"と書いて時間割に表示する教室をカスタマイズ．",
   "timetable.period": "{period}限",
   "timetable.close": "閉じる",
   "timetable.remove": "削除",
   "timetable.syllabus": "シラバス",
+  "timetable.edit": "編集",
   "timetable.units": "単位",
   "timetable.show": "表示",
   "timetable.hide": "隠す",
+
+  "custom.create": "カスタムコースを作成",
+  "custom.edit": "コースを編集",
+  "custom.loading": "データを読み込み中...",
+  "custom.necessary": "必須",
+  "custom.schedule": "スケジュール",
+  "custom.title": "タイトル",
+  "custom.room": "教室・場所",
+  "custom.instructor": "教員名",
+  "custom.units": "単位数",
+  "custom.save": "保存する",
+  "custom.cancel": "キャンセル",
+  "custom.alert.schedule.null": "スケジュールを1つ以上選択してください",
+  "custom.alert.save.failed": "保存に失敗しました",
 
   "days.mon": "月",
   "days.tue": "火",
@@ -136,7 +156,7 @@ const en = {
   "site.title": "Timetable.icu",
   "site.tagline": "The Ultimate Academic Planning Tool for ICU",
   "site.description":
-    "The ultimate academic planning tool for ICU students. Easily search all official courses, manage ICU-specific schedules like Long 4-7, and sync your timetable across all your devices. Plan your campus life with ease!",
+    "The ultimate academic planning tool for ICU students. Easily search all official courses, manage ICU-specific schedules like Long 4-7, and sync your timetable across all your devices. Plan your campus life at International Christian University with ease!",
 
   // Auth
   "auth.login": "Login",
@@ -168,6 +188,8 @@ const en = {
   "header.hi": "Hi, {name}!",
   "header.synced": "Synced",
   "header.login_to_sync": "Login to sync",
+  "header.support": "Contact Support",
+
   "term.Spring": "Spring",
   "term.Autumn": "Autumn",
   "term.Winter": "Winter",
@@ -199,14 +221,14 @@ const en = {
   "lp.features.can.sync.desc":
     "Login to sync your latest timetable across all your devices.",
 
-  // Features - Todo
+  // Features
   "lp.features.todo.label": "Planned Features",
   "lp.features.todo.offline.title": "Offline Support",
   "lp.features.todo.offline.desc":
     "An internet connection is currently required to view courses.",
-  "lp.features.todo.custom.title": "Custom Course Entry",
+  "lp.features.todo.custom.title": "[Beta]Custom Course Entry",
   "lp.features.todo.custom.desc":
-    "Currently official courses only. Custom entry is being planned.",
+    "Currently official courses + testflighting with custom entry.",
   "lp.features.todo.calendar.title": "Calendar Export",
   "lp.features.todo.calendar.desc":
     "Exporting to external calendars (Google, etc.) is under consideration.",
@@ -242,15 +264,35 @@ const en = {
   "timetable.list_view": "List",
   "timetable.my_courses": "Courses",
   "timetable.no_courses": "No Course is Added",
+  'timetable.color.select': 'Choose Colour',
+  'timetable.color.reset': 'Reset',
+  'timetable.color.default': 'Default',
+  'timetable.color.custom': 'Custom',
   "timetable.memo": "Notes",
-  "timetable.memo.content":"Notes on exam, homework, etc...",
+  "timetable.memo.content":"Notes on exam, homework, etc. \nWrite \"@Room\" to customise location.",
   "timetable.period": "Period {period}",
   "timetable.close": "Close",
   "timetable.remove": "Remove",
   "timetable.syllabus": "Syllabus",
+  "timetable.edit": "Edit",
   "timetable.units": "Units",
   "timetable.show": "Show",
   "timetable.hide": "Hide",
+
+  "custom.create": "Create Custom Course",
+  "custom.edit": "Edit Course",
+  "custom.loading": "Loading...",
+  "custom.necessary": "Necessary",
+  "custom.schedule": "Schedule",
+  "custom.title": "Title",
+  "custom.room": "Room/Location",
+  "custom.instructor": "Instructor",
+  "custom.units": "Units",
+  "custom.save": "Save",
+  "custom.cancel": "Cancel",
+  "custom.alert.schedule.null": "Select at least 1 schedule",
+  "custom.alert.save.failed": "Failed to save",
+
 
   "days.mon": "Mon",
   "days.tue": "Tue",

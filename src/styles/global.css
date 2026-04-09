@@ -36,11 +36,3 @@
     --color-error: oklch(71% 0.194 13.428);
     --color-error-content: oklch(27% 0.105 12.094);
 }
-html {
-    line-height: 1.6; /* 言語によらず一定の倍率を保つ */
-}
-
-:root {
-    /* 日本語でも英語でも違和感の少ないフォントスタック */
-    font-family: "Inter", "Helvetica Neue", "Arial", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
-}

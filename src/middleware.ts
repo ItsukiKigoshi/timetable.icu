@@ -32,7 +32,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // --- 2. Session Management ---
     try {
         // リクエストごとの runtimeEnv を使用
-        const auth = getAuth(env);
+        const auth = getAuth(env, context.request);
         const sessionData = await auth.api.getSession({
             headers: request.headers,
         });

@@ -16,18 +16,48 @@ export function useSync(user: any) {
             }
 
             setSyncStatus('syncing');
-            const res = await fetch('/api/user-courses/sync', {
+            const res = await fetch('/api/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ courseItems: items }),
             });
 
-            if (!res.ok) throw new Error();
+            if (!res.ok) throw new Error("Server responded with an error");
 
-            setSyncStatus('done');
-            localStorage.removeItem('guest_timetable');
-            setTimeout(() => window.location.reload(), 2000);
+            // レスポンスを解析して、実際に処理された件数を確認
+            const result = await res.json() as {
+                success: boolean,
+                syncedNormal: number,
+                syncedCustom: number
+            };
+
+            // 少なくとも1件以上の処理が成功している、または空でないことを確認
+            if (result.success) {
+                // --- バックアップ処理 (最新1件のみ残す) ---
+                // 1. 古いバックアップを削除
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('guest_timetable_bak_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+
+                // 2. 新しいバックアップを保存 (タイムスタンプ付き)
+                const timestamp = new Date().getTime();
+                localStorage.setItem(`guest_timetable_bak_${timestamp}`, guestData);
+
+                // 3. 元のデータを削除
+                localStorage.removeItem('guest_timetable');
+
+                setSyncStatus('done');
+
+                // データの整合性を保つため、少し待ってからリロード
+                setTimeout(() => window.location.reload(), 2000);
+            } else {
+                throw new Error("Sync was not successful according to API");
+            }
+
         } catch (e) {
+            console.error("Sync process failed:", e);
             setSyncStatus('error');
         }
     };
@@ -38,4 +68,3 @@ export function useSync(user: any) {
 
     return { syncStatus };
 }
-

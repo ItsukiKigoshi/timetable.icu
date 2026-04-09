@@ -1,4 +1,4 @@
--- wrangler d1 execute timetable_icu --remote --file=./src/db/seed_categories.sql
+-- wrangler d1 execute timetable_icu --remote --file=./src/db/data/seed_categories.sql
 INSERT OR REPLACE INTO categories (id, name_ja, name_en) VALUES 
 ('C001', 'ELA (英語教育)', 'English for Liberal Arts'),
 ('C002', 'JLP (日本語教育)', 'Japanese Language Program'),
