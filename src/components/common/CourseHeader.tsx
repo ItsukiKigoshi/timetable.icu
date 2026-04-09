@@ -25,20 +25,6 @@ const CourseHeader = ({
     // 2. 公式科目かカスタム科目かの判定（型ガード）
     const isOfficial = course.type === 'official';
 
-    // 3. タイトルの決定 (型安全にアクセス)
-    const displayTitle = useMemo(() => {
-        // 1. 公式コースの処理
-        if (course.type === 'official') {
-            const ja = course.titleJa;
-            const en = course.titleEn;
-            return isJa ? (ja || en) : (en || ja);
-        }
-
-        // 2. カスタムコースの処理
-        // カスタムコースは CustomCourse 型を継承しており title プロパティを持つ
-        return (course as any).title || "No Title";
-    }, [isJa, course]);
-
     return (
         <div className="flex gap-3 w-full">
             {/*カラーバー*/}
@@ -79,7 +65,7 @@ const CourseHeader = ({
 
                 {/* 2. 中段: タイトル */}
                 <h2 className="text-sm sm:text-base font-bold leading-tight line-clamp-2 text-base-content">
-                    {displayTitle}
+                    {isJa ? ((course as any).titleJa || (course as any).title) : ((course as any).titleEn || (course as any).title)}
                 </h2>
 
                 {/* 3. 下段: 教員名 (共通プロパティ) */}
