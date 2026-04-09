@@ -216,7 +216,7 @@ export default function TimetableInterface({
 
 
                 {/* 右側: カスタムコース追加ボタン*/}
-                <nav className="fixed bottom-16 right-2 z-50">
+                <nav className="fixed lg:bottom-18 bottom-16 right-2 z-50">
                     <a href={l('/new')}
                        className="btn btn-sm btn-primary shadow-xl border-2 border-primary rounded-full h-14 w-14 lg:w-auto lg:px-6 flex items-center justify-center lg:justify-start gap-2"
                        aria-label="Create new course"
