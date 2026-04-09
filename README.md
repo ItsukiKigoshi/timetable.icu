@@ -150,7 +150,6 @@ ICU生の時間割・履修登録ツールの決定版
 - [ ] サポートボタンをログインボタンの下において分かりやすく
 - [ ] ログイン済みのユーザもlocalStorageにバックアップしておき，サーバ側をsource of truthとしつつ通信障害時などにローカルでデータが参照されるように
   - [ ] 「オフラインです，インターネットに接続されると同期されます」
-- [ ] !userではCustomCourseにroomを追加しても表示されない in CourseHeader & TimetableGrid
 - [ ] フロントエンドに緊急メンテナンス通知とAPIが関わる操作を禁止するモードを入れて，いざと言うときに簡単にONにできるようにしておかなければ．
 - [ ] 編集機能: オーバーライドしても表示されるのは1授業，
 - [ ] 時間割になにも授業が無ければExploreに誘導
@@ -311,6 +310,7 @@ ICU生の時間割・履修登録ツールの決定版
           - [x] 削除もID重複によるものかも．ID指定だけではtoggleCourseはできない
           - [x] localStorageではcustomCourseのidに"custom-"のprefixがつくのでid重複（->Modal誤開閉や削除操作の失敗）は起きない
           - [x] customCourseは"customCourseId"をもっているので，"id"は持たないようにするとか？いや，customCourseIdはschedulesが持っているもの
+      - [x] !userではCustomCourseにroomを追加しても表示されない in CourseHeader & TimetableGrid
 - [ ] 自動テスト
     - [ ] 時間割
         - [ ] 様々なデータで描画
