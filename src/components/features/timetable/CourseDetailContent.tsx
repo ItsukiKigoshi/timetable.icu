@@ -20,7 +20,7 @@ const CourseDetailContent = ({
     updateColor: (course: UserCourseWithDetails, color: string | null) => void;
     isSubmitting: number | string | null
 }) => {
-    const {t} = useTranslation();
+    const {t,l} = useTranslation();
     const cId = course.id;
     const isCustom = typeof course.id === 'string';
 
@@ -75,7 +75,7 @@ const CourseDetailContent = ({
                         <span className="truncate">{t('timetable.syllabus')}</span>
                     </a>
                 ):(
-                    <a href={`/edit/${course.id}`}
+                    <a href={l(`/edit/${course.id}`)}
                        className="btn btn-md normal-case flex gap-2 col-span-2 border-base-300">
                         <Pencil size={16} />
                         {t('timetable.edit')}
