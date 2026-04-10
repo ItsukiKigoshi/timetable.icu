@@ -167,6 +167,10 @@ ICU生の時間割・履修計画アプリの決定版
             - [x] 開始時間->CorseID タイトル->場所かな
             - [x] Roomを表示するのはログイン済みユーザだけ！
         - [ ] 理系の選択式の演習UI: 優先度低し
+          - [ ] DBは設計済み
+          - [ ] フロントエンドの開発だけでいける
+            - [ ] 演習選択Dialog
+            - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
     - [ ] 現在の曜日を強調，現在時刻に赤線?（もしくはその日に線）
     - [x] 保存機能
         - [x] Drizzle ORM
@@ -176,7 +180,10 @@ ICU生の時間割・履修計画アプリの決定版
           - [ ] データが消えないように細心の注意を払う必要がある
           - [ ] よほどlatencyが目立たないかぎり，公式移行機能がつくまで待つという手もある
         - [x] 未ログインユーザはLocalStorageへ
-            - [x] LocalStorageがSaveされたときに通知
+            - [x] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
+              - [x] Snack通知
+              - [ ] update_atの値が最新の方を使うようにする
+              - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
     - [x] ログインしてるなら時間割にRoomを出す！
     - [x] lg未満ではコースタイトルを出さずコースナンバーとルームだけ！
     - [x] show/hide機能
@@ -202,11 +209,6 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧（displayCourses）も持つ必要がある
         - [x] displaySchedule(FlatSchedule[]型)のUserCourse[]型バージョン．
     - [x] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
-    - [ ] 理系の演習選択UI
-      - [ ] DBは設計済み
-      - [ ] フロントエンドの開発だけでいける
-          - [ ] 演習選択Dialog
-          - [ ] 選択式の演習であることをCourseHeaderのScheduleに表示
 - [x] 授業検索
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!
@@ -217,8 +219,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [ ] Foundation, Area Majorの絞り込み
         - [ ] CourseCodeを「アルファベット」(String 3-4文字）と「数字」（0-999; 数字として保存してフロントで3文字に加工）の方が良い？
         - [ ] そもそも100から始まればfoundation, 2-300から始まればarea major?そのルールは絶対？
-        - [ ] SELECT * FROM courses WHERE course_code GLOB '[A-Z][A-Z][A-Z]1[0-9][0-9]';
-          のようにGLOBを使えばワイルドカードで100番台は持ってこられる
+        - [ ] GLOBを使えばワイルドカードで100番台は持ってこられる
         - [ ] 一番確実なのは公式の結果をそのまま挿入することだが，なるべくやりたくない: colistはこれをやらざるをえないかも
     - [x] メジャーとそれ以外を分離, もしくはタグ形式で
     - [x] Issue: Co-Listに非対応; ehandbookを参照しながらColistが何かを解説
@@ -260,7 +261,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] DB定義
     - [x] 追加方法
         - [x] サイドドロワー？スマホで使いにくい？
-        - [ ] 別ページにするので落ち着いた
+        - [x] 別ページにするので落ち着いた
     - [x] 表示方法
     - [x] メモ
     - [x] カスタム色追加
@@ -276,7 +277,7 @@ ICU生の時間割・履修計画アプリの決定版
           - [x] customCourseは"customCourseId"をもっているので，"id"は持たないようにするとか？いや，customCourseIdはschedulesが持っているもの
       - [x] !userではCustomCourseにroomを追加しても表示されない in CourseHeader & TimetableGrid
 - [x] Catalogue.icuで移行を促すMessage
-    - [ ] 移行機能 (直接新アプリのAPIを叩く?)
+    - [x] ~~移行機能 (直接新アプリのAPIを叩く?)~~: Not Planned
 - [x] Refactor
     - [x] Componentの役割の明確化
       - [x] Astro: APIを叩く，データを撮ってくるなどの操作
@@ -317,6 +318,7 @@ ICU生の時間割・履修計画アプリの決定版
         - [ ] Cloudflare Registrar
           - [ ] InvoiceのPDF
         - [x]  寄付受付
+            - [ ] GitHub Sponsors
             - [ ] OpenCollective, Stripe
     - [ ] Members
         - [x] 自己紹介
@@ -326,10 +328,6 @@ ICU生の時間割・履修計画アプリの決定版
                 - [x] 独自domain
             - [ ] Form?
 - [ ] ログイン時にユーザの操作でログインが中止された状態をフロントで拾う
-- [x] LocalStorageから同期後の通知で，ちゃんとデータが統合されたことを明示
-    - [x] Snack通知
-    - [ ] update_atの値が最新の方を使うようにする
-    - [ ] 失敗時のログ（LocalStorageに格納）と手動同期ボタン
 - [x] [多言語対応](https://docs.astro.build/en/guides/internationalization/)
     - [x] Default localeをjaとenどっちにするか？
     - [x] おそらく利用者の母語はほとんど日本語だが，英語も分かる．逆に，一部に英語は分かるが日本語が苦手な人もいる．
@@ -359,7 +357,9 @@ ICU生の時間割・履修計画アプリの決定版
     - [ ] 卒業後のアカウント削除に関する規程
         - [ ] ログインの履歴とのれがPasskeyかGoogleかはlogで分かる？
   - [x] [サイトの所有権を確認する](https://support.google.com/webmasters/answer/9008080?hl=ja&sjid=3952852442816250357-NC)
-      - [x] [Google Search Console](https://search.google.com/search-console)
+    - [x] [Google Search Console](https://search.google.com/search-console)
+    - [x] [Bing Webmaster Tool](https://www.bing.com/webmasters): DuckDuckGo
+        - [ ] IndexNow
 - [x] スケジュールがない授業を追加できない
 - [ ] SEO
     - [x] meta description
@@ -372,9 +372,6 @@ ICU生の時間割・履修計画アプリの決定版
         - [x] og:url
         - [x] og:image
             - [x] よいもの？
-    - [x] [Google Search Console](https://search.google.com/search-console)
-    - [x] [Bing Webmaster Tool](https://www.bing.com/webmasters): DuckDuckGo
-        - [ ] IndexNow
     - [ ] Semantic HTML
         - [ ] div乱用をrefactor
 - [x] Deploy to Workers
@@ -434,7 +431,7 @@ ICU生の時間割・履修計画アプリの決定版
 - [ ] ログイン済みのユーザもlocalStorageにバックアップしておき，サーバ側をsource of truthとしつつ通信障害時などにローカルでデータが参照されるように
     - [ ] 「オフラインです，インターネットに接続されると同期されます」
 - [ ] フロントエンドに緊急メンテナンス通知とAPIが関わる操作を禁止するモードを入れて，いざと言うときに簡単にONにできるようにしておかなければ．
-- [ ] 編集機能: オーバーライドしても表示されるのは1授業，
+- [x] ~~編集機能: オーバーライドしても表示されるのは1授業~~: Not Planned, 場所のオーバーライドはメモ欄から．スケジュールは面倒だが独自スケジュールで
 - [ ] 時間割になにも授業が無ければExploreに誘導
     - [ ] 手書き風&アニメーション?
 - [ ] 副産物
@@ -551,7 +548,7 @@ Create schema for BetterAuth
 bun x auth@latest generate --config=./src/lib/auth/server.ts --output=./src/db/schema/auth.ts
 ```
 
-Create schema by Drizzle Kit
+Create migration file by Drizzle Kit
 
 ```bash
 bun x drizzle-kit generate
@@ -590,7 +587,7 @@ Debug with Cloudflare Environment
 bun run build && bun x wrangler dev
 ```
 
-D1にSQL文を入れる例
+D1でのSQL文実行例
 ```bash
 bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 ```
@@ -600,7 +597,8 @@ bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 Create JSON from HTML
 
 ```bash
-bun db:scrape
+bun db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
+bun db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
 ```
 
 Local DBにJSONからcourses/categoriesを入れる
