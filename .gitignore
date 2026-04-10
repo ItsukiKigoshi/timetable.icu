@@ -31,4 +31,8 @@ scripts/out/*.sql
 *.html
 !public/*.html
 
+# backup file
 backup/
+
+# python cache
+*.pyc

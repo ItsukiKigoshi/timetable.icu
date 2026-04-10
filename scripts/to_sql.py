@@ -32,7 +32,7 @@ def generate_sql():
     output = [
         "-- Auto-generated SQL for D1 Sync",
         "PRAGMA foreign_keys = OFF;",
-        "BEGIN TRANSACTION;",
+        # "BEGIN TRANSACTION;",
         # トランザクション開始時に、中途半端な空文字レコードがあれば一掃する
         "DELETE FROM courses WHERE rg_no IS NULL OR rg_no = '';"
     ]
@@ -104,7 +104,7 @@ def generate_sql():
             """
             output.append(sch_sql.strip())
 
-    output.append("COMMIT;")
+    # output.append("COMMIT;")
     output.append("PRAGMA foreign_keys = ON;")
 
     with open('scripts/out/sync_courses.sql', 'w', encoding='utf-8') as f:
