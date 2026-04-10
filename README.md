@@ -661,7 +661,7 @@ bun wrangler tail
     - day
     - start_at, end_at; or: period, isLong
 - schedule: 休校日など?
-  - [ ]exam?
+  - [ ] exam?
     - type (mid/final)
     - date
 - [x] categories
