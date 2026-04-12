@@ -416,7 +416,7 @@ ICU生の時間割・履修計画アプリの決定版
       - [ ] Passkey実装の漏れがないか確認（利用者いない, 優先度低し）
       - [ ] SQL Injection対策
     - [ ] 全体
-        - [ ] 400-500番台と，白紙のHTMが出力されていないことを確認
+        - [x] 400-500番台と，白紙のHTMLが出力されていないことを確認
     - [ ] カスタムコース
         - [ ] サーバ側のフォームバリデーション（スケジュール，タイトル，教員名等）
         - [ ] 存在しない/認証されていないコースを編集しようとしたときに「コースが存在しません」（2種類のエラーはユーザに区別させない）
@@ -507,6 +507,9 @@ ICU生の時間割・履修計画アプリの決定版
 - Cloudflare Workers
 - Cloudflare D1
 
+### Test
+- Playwright
+
 ## 🚀 Project Structure
 
 ```text
@@ -549,6 +552,11 @@ All commands are run from the root of the project, from a terminal:
 Run Test
 ```bash
 bun x playwright test
+```
+
+Format Code
+```bash
+bun x biome check --write
 ```
 
 Create types from wrangler.jsonc
