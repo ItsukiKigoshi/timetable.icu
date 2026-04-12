@@ -160,8 +160,7 @@ const en = {
   
   "site.title": "Timetable.icu",
   "site.tagline": "The Ultimate Academic Planning Tool for ICU",
-  "site.description":
-    "The ultimate academic planning tool for ICU students. Easily search all official courses, manage schedules with Long 4-7, and sync your timetable across all your devices. Plan your campus life at International Christian University with ease!",
+  "site.description": "The ultimate academic planning　tool for International Christian University students. Search official courses, manage Long 4-7 schedules, and sync your timetable across devices.",
 
   // Auth
   "auth.login": "Login",
