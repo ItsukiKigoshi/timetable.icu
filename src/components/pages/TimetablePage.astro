@@ -6,14 +6,12 @@ import Layout from "@/components/layout/Layout.astro";
 import TimetableInterface from "@/components/timetable/TimetableInterface";
 import { type Language } from "@/lib/translation/ui.ts"
 import {
-    courses,
-    userCourses,
     customCourses,
     type UserCourseWithDetails,
     type termsEnum, type Course
 } from "@/db/schema/index.ts";
 import { getTranslations } from "@/lib/translation/utils";
-import { and, exists, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 interface Props {
     lang: Language;

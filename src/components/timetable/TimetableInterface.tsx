@@ -31,7 +31,6 @@ export default function TimetableInterface({
     selectedTerm: string
 }) {
     const {
-        courses,       // コース単位のリスト
         schedules,     // 平坦化されたもの
         displayCourses,
         displaySchedules,

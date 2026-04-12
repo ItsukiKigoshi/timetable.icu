@@ -7,7 +7,7 @@ import Secret1 from "@/assets/secret1.webp";
 import Secret2 from "@/assets/secret2.webp";
 
 const lang = Astro.locals.lang || defaultLang;
-const {t, l} = createTranslationHelper(lang);
+const {t} = createTranslationHelper(lang);
 ---
 <Layout title={`404 - ${t('404.title')}`}>
     <main class="hero min-h-[85vh] relative overflow-hidden">
