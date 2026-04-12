@@ -1,15 +1,15 @@
 ---
-import {CalendarDays, Telescope} from "lucide-astro";
-import {createTranslationHelper} from "@/lib/translation/utils.ts";
+import { CalendarDays, Telescope } from "lucide-astro";
+import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang;
-const {t, l} = createTranslationHelper(lang);
+const { t, l } = createTranslationHelper(lang);
 
-const {pathname} = Astro.url;
+const { pathname } = Astro.url;
 
 const isActive = (path: string) => {
-    const translatedPath = l(path);
-    return pathname === translatedPath || pathname === `${translatedPath}/`;
+	const translatedPath = l(path);
+	return pathname === translatedPath || pathname === `${translatedPath}/`;
 };
 ---
 <footer class="z-50">

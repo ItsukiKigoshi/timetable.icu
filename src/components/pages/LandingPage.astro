@@ -1,26 +1,26 @@
 ---
-import {Image} from "astro:assets";
-import Layout from "@/components/layout/Layout.astro";
-import Logo from "@/assets/Logo.svg";
-import ProfileImg from "@/assets/profile.webp";
+import { Image } from "astro:assets";
+import {
+	Bug,
+	CalendarArrowUp,
+	CalendarCheck2,
+	CalendarDays,
+	CalendarPlus,
+	RefreshCcw,
+	Search,
+	Telescope,
+	ThumbsUp,
+} from "lucide-astro";
+import { WifiOff } from "lucide-react";
 import Cover1 from "@/assets/cover1.webp";
 import Cover2 from "@/assets/cover2.webp";
-import {
-    Bug,
-    CalendarCheck2,
-    CalendarPlus,
-    Search,
-    Telescope,
-    RefreshCcw,
-    ThumbsUp,
-    CalendarDays,
-    CalendarArrowUp
-} from "lucide-astro";
-import {WifiOff} from "lucide-react";
-import {createTranslationHelper} from "@/lib/translation/utils.ts";
+import Logo from "@/assets/Logo.svg";
+import ProfileImg from "@/assets/profile.webp";
+import Layout from "@/components/layout/Layout.astro";
+import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang;
-const {t, l, currentLang} = createTranslationHelper(lang);
+const { t, l, currentLang } = createTranslationHelper(lang);
 ---
 
 <Layout title=`${t('site.title')} | ${t('site.tagline')}` isLanding={true}>

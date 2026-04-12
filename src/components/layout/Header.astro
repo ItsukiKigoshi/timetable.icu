@@ -1,19 +1,20 @@
 ---
+import Logo from "@/assets/Logo.svg";
 import LoginButton from "@/components/common/LoginButton.tsx";
 import PasskeyButton from "@/components/common/PasskeyButton.tsx";
-import {SELECTABLE_YEARS, SELECTABLE_TERMS} from "@/constants/time.ts";
-import Logo from '@/assets/Logo.svg';
-import {createTranslationHelper} from "@/lib/translation/utils.ts";
-import {defaultLang} from "@/lib/translation/ui.ts";
+import { SELECTABLE_TERMS, SELECTABLE_YEARS } from "@/constants/time.ts";
+import { defaultLang } from "@/lib/translation/ui.ts";
+import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang || defaultLang;
-const {t, l} = createTranslationHelper(lang);
+const { t, l } = createTranslationHelper(lang);
 
-const {user, selectedYear, selectedTerm, dbError} = Astro.locals;
+const { user, selectedYear, selectedTerm, dbError } = Astro.locals;
 const isLoggedIn = !!user;
 
 const currentUrl = Astro.url.href;
-const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform";
+const baseUrl =
+	"https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform";
 const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(currentUrl)}`;
 ---
 

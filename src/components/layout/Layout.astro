@@ -1,39 +1,40 @@
 ---
 import Logo from "@/assets/Logo.svg";
 import "@/styles/global.css";
-import Header from "@/components/layout/Header.astro";
-import Footer from "@/components/layout/Footer.astro";
+import { TriangleAlert } from "lucide-astro";
 import Toast from "@/components/common/Toast.tsx";
-import {TriangleAlert} from "lucide-astro";
-import {createTranslationHelper} from "@/lib/translation/utils.ts";
+import Footer from "@/components/layout/Footer.astro";
+import Header from "@/components/layout/Header.astro";
+import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const locals = Astro.locals ?? {};
 const user = locals.user ?? null;
 const dbError = locals.dbError || false;
 
-const {t, l, currentLang} = createTranslationHelper(locals.lang);
+const { t, l, currentLang } = createTranslationHelper(locals.lang);
 
 const {
-    title = t('site.title'),
-    description = t('site.description'),
-    ogImage = "https://timetable.icu/ogp.png",
-    ogType = "website",
-    isLanding = false,
+	title = t("site.title"),
+	description = t("site.description"),
+	ogImage = "https://timetable.icu/ogp.png",
+	ogType = "website",
+	isLanding = false,
 } = Astro.props;
 
-const {pathname, href} = Astro.url;
+const { pathname, href } = Astro.url;
 
 // /en/explore -> /explore
 // /en -> /
 // / -> /
-let purePath = pathname.replace(/^\/en(\/|$)/, '$1');
-if (!purePath.startsWith('/')) purePath = '/' + purePath;
+let purePath = pathname.replace(/^\/en(\/|$)/, "$1");
+if (!purePath.startsWith("/")) purePath = "/" + purePath;
 
 const baseUrl = "https://timetable.icu";
 const jaUrl = new URL(purePath, baseUrl).href;
-const enUrl = new URL('/en' + purePath, baseUrl).href;
+const enUrl = new URL("/en" + purePath, baseUrl).href;
 
-const baseFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform";
+const baseFormUrl =
+	"https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform";
 const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(href)}`;
 ---
 <!doctype html>

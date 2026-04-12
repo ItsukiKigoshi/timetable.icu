@@ -1,25 +1,26 @@
 ---
 import { env } from "cloudflare:workers";
+import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import * as schema from "@/db/schema/index.ts";
 import Layout from "@/components/layout/Layout.astro";
 import TimetableInterface from "@/components/timetable/TimetableInterface";
-import { type Language } from "@/lib/translation/ui.ts"
+import * as schema from "@/db/schema/index.ts";
 import {
-    customCourses,
-    type UserCourseWithDetails,
-    type termsEnum, type Course
+	type Course,
+	customCourses,
+	type termsEnum,
+	type UserCourseWithDetails,
 } from "@/db/schema/index.ts";
+import type { Language } from "@/lib/translation/ui.ts";
 import { getTranslations } from "@/lib/translation/utils";
-import { and, eq } from "drizzle-orm";
 
 interface Props {
-    lang: Language;
+	lang: Language;
 }
 
 const { user, selectedTerm, selectedYear } = Astro.locals;
 const { lang } = Astro.props;
-const viewParam = Astro.url.searchParams.get('view') || 'grid';
+const viewParam = Astro.url.searchParams.get("view") || "grid";
 
 const t = getTranslations(lang);
 
@@ -30,52 +31,55 @@ const termVal = selectedTerm as (typeof termsEnum)[number];
 let initialCourses: UserCourseWithDetails[] = [];
 
 if (user) {
-    const db = drizzle(env.timetable_icu, { schema });
+	const db = drizzle(env.timetable_icu, { schema });
 
-    // 1. 公式コース
-    const results = await db.query.userCourses.findMany({
-        where: (uc, { eq }) => eq(uc.userId, user.id),
-        with: {
-            course: {
-                with: {
-                    schedules: true
-                }
-            }
-        }
-    });
+	// 1. 公式コース
+	const results = await db.query.userCourses.findMany({
+		where: (uc, { eq }) => eq(uc.userId, user.id),
+		with: {
+			course: {
+				with: {
+					schedules: true,
+				},
+			},
+		},
+	});
 
-    // 2. カスタムコース
-    const customResults = await db.query.customCourses.findMany({
-        where: () => and(
-            eq(customCourses.userId, user.id),
-            eq(customCourses.year, yearNum),
-            eq(customCourses.term, termVal)
-        ),
-        with: {
-            schedules: true
-        }
-    });
+	// 2. カスタムコース
+	const customResults = await db.query.customCourses.findMany({
+		where: () =>
+			and(
+				eq(customCourses.userId, user.id),
+				eq(customCourses.year, yearNum),
+				eq(customCourses.term, termVal),
+			),
+		with: {
+			schedules: true,
+		},
+	});
 
-    // 3. データの整形
-    const officialMapped = results
-        .filter((uc): uc is typeof uc & { course: NonNullable<typeof uc.course> } => {
-            return uc.course !== null;
-        })
-        .map(uc => ({
-            ...uc.course,
-            isVisible: uc.isVisible,
-            selectedAltGroupId: uc.selectedAltGroupId,
-            colorCustom: uc.colorCustom,
-            memo: uc.memo,
-            type: 'official' as const,
-        }));
-    
-    const customMapped = customResults.map((cc) => ({
-        ...cc,
-        type: 'custom' as const,
-    }));
+	// 3. データの整形
+	const officialMapped = results
+		.filter(
+			(uc): uc is typeof uc & { course: NonNullable<typeof uc.course> } => {
+				return uc.course !== null;
+			},
+		)
+		.map((uc) => ({
+			...uc.course,
+			isVisible: uc.isVisible,
+			selectedAltGroupId: uc.selectedAltGroupId,
+			colorCustom: uc.colorCustom,
+			memo: uc.memo,
+			type: "official" as const,
+		}));
 
-    initialCourses = [...officialMapped, ...customMapped];
+	const customMapped = customResults.map((cc) => ({
+		...cc,
+		type: "custom" as const,
+	}));
+
+	initialCourses = [...officialMapped, ...customMapped];
 }
 ---
 <Layout title={`${t('timetable.title')} | ${t('site.title')}`}>

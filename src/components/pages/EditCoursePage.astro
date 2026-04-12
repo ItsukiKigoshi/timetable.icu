@@ -1,15 +1,15 @@
 ---
+import { env } from "cloudflare:workers";
+import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import * as schema from "@/db/schema/index.ts";
 import Layout from "@/components/layout/Layout.astro";
 import CourseEditor from "@/components/timetable/CourseEditor";
-import { eq, and } from "drizzle-orm";
-import {env} from "cloudflare:workers";
-import {createTranslationHelper} from "@/lib/translation/utils.ts";
+import * as schema from "@/db/schema/index.ts";
+import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 interface Props {
-    lang: string;
-    targetId?: string;
+	lang: string;
+	targetId?: string;
 }
 
 const { lang, targetId } = Astro.props;
@@ -21,29 +21,26 @@ let initialData = null;
 
 // ログイン済みならDBから取得
 if (user && db && targetId) {
-    const result = await db.query.customCourses.findFirst({
-        where: (cc) => and(
-            eq(cc.userId, user.id),
-            eq(cc.id, targetId)
-        ),
-        with: {
-            schedules: true
-        }
-    });
+	const result = await db.query.customCourses.findFirst({
+		where: (cc) => and(eq(cc.userId, user.id), eq(cc.id, targetId)),
+		with: {
+			schedules: true,
+		},
+	});
 
-    if (result) {
-        initialData = {
-            ...result,
-            schedules: result.schedules.map(s => ({
-                dayOfWeek: s.dayOfWeek,
-                period: s.period,
-                startTime: s.startTime,
-                endTime: s.endTime
-            }))
-        };
-    }
+	if (result) {
+		initialData = {
+			...result,
+			schedules: result.schedules.map((s) => ({
+				dayOfWeek: s.dayOfWeek,
+				period: s.period,
+				startTime: s.startTime,
+				endTime: s.endTime,
+			})),
+		};
+	}
 }
-const {t} = createTranslationHelper(lang);
+const { t } = createTranslationHelper(lang);
 ---
 
 <Layout title=`${t('custom.edit')} | ${t('site.title')}`>

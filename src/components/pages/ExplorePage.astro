@@ -1,60 +1,63 @@
 ---
-import {drizzle} from 'drizzle-orm/d1';
-import {eq} from 'drizzle-orm';
-import * as schema from '@/db/schema';
-import ExploreInterface from '@/components/explore/ExploreInterface';
+import { env } from "cloudflare:workers";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/d1";
+import ExploreInterface from "@/components/explore/ExploreInterface";
 import Layout from "@/components/layout/Layout.astro";
-import {env} from "cloudflare:workers";
-import {limitPerPage} from "@/constants/config.ts";
-import {getCourseSearchConfig} from "@/lib/course/query.ts";
-import {createTranslationHelper} from "@/lib/translation/utils.ts";
-import {type Language} from "@/lib/translation/ui.ts";
-import type {OfficialCourseWithDetails} from "@/db/schema";
+import { limitPerPage } from "@/constants/config.ts";
+import type { OfficialCourseWithDetails } from "@/db/schema";
+import * as schema from "@/db/schema";
+import { getCourseSearchConfig } from "@/lib/course/query.ts";
+import type { Language } from "@/lib/translation/ui.ts";
+import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 interface Props {
-    lang: Language;
+	lang: Language;
 }
 
-const {user, selectedYear, selectedTerm, lang} = Astro.locals;
-const db = drizzle(env.timetable_icu, {schema});
-const {t, currentLang} = createTranslationHelper(lang)
+const { user, selectedYear, selectedTerm, lang } = Astro.locals;
+const db = drizzle(env.timetable_icu, { schema });
+const { t, currentLang } = createTranslationHelper(lang);
 
 const url = new URL(Astro.request.url);
-if (!url.searchParams.has('year')) url.searchParams.set('year', selectedYear.toString());
-if (!url.searchParams.has('term')) url.searchParams.set('term', selectedTerm);
+if (!url.searchParams.has("year"))
+	url.searchParams.set("year", selectedYear.toString());
+if (!url.searchParams.has("term")) url.searchParams.set("term", selectedTerm);
 
-const {where, page, filters} = getCourseSearchConfig(url, db);
+const { where, page, filters } = getCourseSearchConfig(url, db);
 
 const [allCategories, rawResults] = await Promise.all([
-    db.select().from(schema.categories).all(),
-    db.query.courses.findMany({
-        where,
-          with: {schedules: true},
-        orderBy: (courses, {asc}) => [asc(courses.courseCode)], // courseCode順, ELAが最初にでないように
-        limit: limitPerPage + 1,
-        offset: (page - 1) * limitPerPage,
-    }),
+	db.select().from(schema.categories).all(),
+	db.query.courses.findMany({
+		where,
+		with: { schedules: true },
+		orderBy: (courses, { asc }) => [asc(courses.courseCode)], // courseCode順, ELAが最初にでないように
+		limit: limitPerPage + 1,
+		offset: (page - 1) * limitPerPage,
+	}),
 ]);
 
 const hasNextPage = rawResults.length > limitPerPage;
-const slicedResults = hasNextPage ? rawResults.slice(0, limitPerPage) : rawResults;
+const slicedResults = hasNextPage
+	? rawResults.slice(0, limitPerPage)
+	: rawResults;
 
-const results = slicedResults.map(course => ({
-    ...course,
-    type: 'official' as const,
+const results = slicedResults.map((course) => ({
+	...course,
+	type: "official" as const,
 }));
 
 let userCourseIds: number[] = [];
 if (user) {
-    const userCoursesData = await db
-        .select({id: schema.userCourses.courseId})
-        .from(schema.userCourses)
-        .where(eq(schema.userCourses.userId, user.id))
-        .all();
-    userCourseIds = userCoursesData.map(uc => uc.id);
+	const userCoursesData = await db
+		.select({ id: schema.userCourses.courseId })
+		.from(schema.userCourses)
+		.where(eq(schema.userCourses.userId, user.id))
+		.all();
+	userCourseIds = userCoursesData.map((uc) => uc.id);
 }
 
-Astro.response.headers.set('Content-Type', 'text/html; charset=utf-8');
+Astro.response.headers.set("Content-Type", "text/html; charset=utf-8");
 ---
 
 <Layout title=`${t('explore.title')} | ${t('site.title')}`>
