@@ -2,6 +2,7 @@ import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
+import { testUtils } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "@/db/schema";
@@ -32,7 +33,10 @@ export const getAuth = (env: Env, request: Request) => {
 		advanced: {
 			cookiePrefix: "timetable-icu-auth",
 		},
-		plugins: [passkey()],
+		plugins: [
+			passkey(),
+			...(process.env.NODE_ENV === "test" ? [testUtils()] : []),
+		],
 		socialProviders: {
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,

@@ -1,30 +1,20 @@
 {
-  "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*",
-    "./worker-configuration.d.ts"
-  ],
-  "exclude": [
-    "dist"
-  ],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    // または "node"
-    "types": [
-      "bun"
-    ],
-    "strict": true,
-    "skipLibCheck": true
-  }
+	"extends": "astro/tsconfigs/strict",
+	"include": [".astro/types.d.ts", "**/*", "./worker-configuration.d.ts"],
+	"exclude": ["dist"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"]
+		},
+		"jsx": "react-jsx",
+		"jsxImportSource": "react",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		// または "node"
+		"types": ["bun"],
+		"strict": true,
+		"skipLibCheck": true
+	}
 }
