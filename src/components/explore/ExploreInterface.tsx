@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
+import Modal from "@/components/common/Modal";
 import { SELECTABLE_DAYS } from "@/constants/time.ts";
 import courseUpdateInfo from "@/db/data/course-last-update.json";
 import type {
@@ -72,6 +73,8 @@ export default function ExploreInterface({
 	const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 	const [isFetching, setIsFetching] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
+
+	const [isSlotModalOpen, setSlotModalOpen] = useState<boolean>(false);
 
 	// 1. 初期化フラグ（LocalStorage読み込み完了を待つ）
 	const [isInitialized, setIsInitialized] = useState(false);
@@ -351,12 +354,12 @@ export default function ExploreInterface({
 					{/* スロット選択 */}
 					<button
 						type="button"
-						className={`btn btn-md flex items-center gap-2 w-fit max-w-xs pl-2 bg-base-100/50 backdrop-blur-md shadow-sm font-normal text-base-content transition-all ${
+						className={`btn btn-md flex items-center gap-2 px-2 w-fit max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm font-normal text-base-content transition-all ${
 							(filters.slots?.length ?? 0) > 0
-								? "border-primary border-2 shadow-primary/20"
+								? "border-primary border-2"
 								: "border-white/20"
 						}`}
-						onClick={() => (window as any).slot_modal.showModal()}
+						onClick={() => setSlotModalOpen(true)}
 					>
 						<CalendarCheck
 							className={(filters.slots?.length ?? 0) > 0 ? "text-primary" : ""}
@@ -567,84 +570,52 @@ export default function ExploreInterface({
 
 				{/* 時限モーダル */}
 				{/*TODO-Modal Componentにまとめる？*/}
-				<dialog id="slot_modal" className="modal modal-bottom">
-					<div className="modal-box p-0 overflow-hidden bg-base-100/95 border border-white/10 shadow-2xl sm:max-w-2xl md:max-w-3xl mx-auto">
-						<div className="p-4 sm:p-6">
-							<div className="overflow-x-auto rounded-xl border border-base-300 shadow-sm bg-base-100">
-								<table className="table table-fixed w-full text-center">
-									<thead>
-										<tr className="bg-base-200/50">
-											<th className="w-12 bg-base-200/80"></th>
-											{SELECTABLE_DAYS.map((d) => (
-												<th key={d} className="font-bold">
-													{d}
-												</th>
-											))}
-										</tr>
-									</thead>
-									<tbody>
-										{[1, 2, 3, 4, 5, 6, 7].map((p) => (
-											<tr key={p}>
-												<th className="bg-base-200/80 font-bold">{p}</th>
-												{SELECTABLE_DAYS.map((day) => {
-													const isSelected = filters.slots?.includes(
-														`${day}-${p}`,
-													);
-													return (
-														<td
-															key={`${day}-${p}`}
-															className={`cursor-pointer border border-base-300 h-14 transition-all ${
-																isSelected
-																	? "bg-primary text-primary-content"
-																	: "hover:bg-primary/10"
-															}`}
-															onClick={() => toggleSlot(day, p)}
-														>
-															{isSelected && (
-																<span className="flex justify-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		width="18"
-																		height="18"
-																		viewBox="0 0 24 24"
-																		fill="none"
-																		stroke="currentColor"
-																		strokeWidth="3"
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																	>
-																		<polyline points="20 6 9 17 4 12" />
-																	</svg>
-																</span>
-															)}
-														</td>
-													);
-												})}
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-
-							<div className="modal-action flex justify-between items-center mt-6">
-								<button
-									className="btn btn-ghost btn-sm text-error"
-									onClick={() => update({ slots: [] })}
-								>
-									{t("explore.clear_selection")}
-								</button>
-								<form method="dialog">
-									<button className="btn btn-outline border-base-100/40 px-10 shadow-lg">
-										{t("explore.close")}
-									</button>
-								</form>
-							</div>
-						</div>
+				<Modal
+					isOpen={isSlotModalOpen}
+					onClose={() => setSlotModalOpen(false)}
+					title={t("explore.select_slots")}
+					lang={lang}
+				>
+					<div className="rounded-xl shadow-sm bg-base-100">
+						<table className="table table-fixed w-full text-center">
+							<thead>
+								<tr className="bg-base-200/50">
+									<th className="w-12 bg-base-200/80"></th>
+									{SELECTABLE_DAYS.map((d) => (
+										<th key={d} className="font-bold">
+											{d.slice(0, 2)}
+										</th>
+									))}
+								</tr>
+							</thead>
+							<tbody>
+								{[1, 2, 3, 4, 5, 6, 7].map((p) => (
+									<tr key={p}>
+										<th className="bg-base-200/80 font-bold">{p}</th>
+										{SELECTABLE_DAYS.map((day) => {
+											const isSelected = filters.slots?.includes(`${day}-${p}`);
+											return (
+												<td
+													key={`${day}-${p}`}
+													className={`cursor-pointer border border-base-300 h-14 transition-all ${
+														isSelected ? "bg-primary text-primary-content" : ""
+													}`}
+													onClick={() => toggleSlot(day, p)}
+												>
+													{isSelected && (
+														<div className={"text-primary-content font-bold"}>
+															✓
+														</div>
+													)}
+												</td>
+											);
+										})}
+									</tr>
+								))}
+							</tbody>
+						</table>
 					</div>
-					<form method="dialog" className="modal-backdrop">
-						<button>close</button>
-					</form>
-				</dialog>
+				</Modal>
 			</div>
 		</LanguageProvider>
 	);

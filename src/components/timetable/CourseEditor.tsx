@@ -261,7 +261,7 @@ const CourseEditor = ({
 										<th className="w-12 p-0"></th>
 										{SELECTABLE_DAYS.map((d) => (
 											<th key={d} className="p-2 text-xs">
-												{d}
+												{d.slice(0, 2)}
 											</th>
 										))}
 									</tr>
@@ -286,7 +286,9 @@ const CourseEditor = ({
 														key={`${day}-${p.label}`}
 														onClick={() => toggleSchedule(day, p.label)}
 														className={`border border-base-300 cursor-pointer transition-colors p-0 h-10 ${
-															isSelected ? "bg-primary" : "hover:bg-base-200"
+															isSelected
+																? "bg-primary text-primary-content"
+																: ""
 														}`}
 													>
 														{isSelected && (

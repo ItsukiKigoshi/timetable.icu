@@ -46,7 +46,7 @@ export default function Modal({
 				)}
 
 				{/*コンテンツ*/}
-				<div className="px-8 overflow-y-auto flex-1 custom-scrollbar">
+				<div className="px-4 overflow-y-auto flex-1 custom-scrollbar">
 					{children}
 				</div>
 

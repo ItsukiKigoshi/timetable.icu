@@ -324,7 +324,7 @@ export default function TimetableInterface({
 				>
 					{coursesInSelectedSlot.length === 0 && (
 						// --- 選択されたスロットに授業が存在しない場合：コース追加へ誘導 ---
-						<div className="flex flex-col items-center justify-center gap-4 text-center">
+						<div className="flex flex-col items-center justify-center p-4 gap-4 text-center">
 							<p className="text-sm opacity-60 font-medium">
 								{isJa
 									? "この時間に登録されている予定はありません"
