@@ -113,13 +113,11 @@ export default function TimetableInterface({
 
 			// Slotの同期 (例: ?slot=Mon-1)
 			const slotParam = params.get("slot");
-			if (slotParam) {
-				const [day, period] = slotParam.split("-");
-				// 注意: start/end時間を厳密に復元するにはPERIODS定数から検索する等の処理が必要
-				setSelectedSlot({ day, period, start: "", end: "" });
-			} else {
-				setSelectedSlot(null);
-			}
+			const [day, label] = slotParam?.split("-") ?? [];
+			const p = PERIODS.find((item) => item.label === label);
+			setSelectedSlot(
+				p ? { day, period: p.label, start: p.start, end: p.end } : null,
+			);
 
 			// Courseの同期 (例: ?courseId=123)
 			const courseId = params.get("courseId");
