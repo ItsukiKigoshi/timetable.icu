@@ -12,9 +12,9 @@ ICU生の時間割・履修計画アプリの決定版
 ## Screenshots
 | Page | Screenshots |
 | :---: | :---: |
-| Home | ![Home](https://github.com/user-attachments/assets/6a72522b-9cac-4cfd-b476-a549256d3047) |
-| Explore |![Explore](https://github.com/user-attachments/assets/c0ea0f77-279b-453b-a05d-9ea478228678) |
-| Timetable |    ![Timetable](https://github.com/user-attachments/assets/d5e83f98-1985-4e1e-8e8c-111ca760d31b) |
+| Home | ![Home](https://github.com/user-attachments/assets/d062fdb7-510c-4afc-a1c8-652ae829f114) |
+| Explore | ![Explore](https://github.com/user-attachments/assets/5437ed9d-1a27-4388-af14-3d7da11b1664) |
+| Timetable | ![Timetable](https://github.com/user-attachments/assets/85e6b9db-0b51-4e0a-b9dd-9c7ae13d9a74) |
 
 # 目標
 
