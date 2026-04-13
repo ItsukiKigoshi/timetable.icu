@@ -102,7 +102,7 @@ export default function TimetableInterface({
 		}
 	}, [displayCourses, selectedCourse]);
 
-	// Modalの状態をSearchParamに反映し，ブラウザバックが効くように
+	// modeをSearchParamに反映し，ブラウザバックが効くように
 	useEffect(() => {
 		const handlePopState = () => {
 			const params = new URLSearchParams(window.location.search);
@@ -110,23 +110,6 @@ export default function TimetableInterface({
 			// ViewModeの同期
 			const mode = (params.get("view") as "grid" | "list") || "grid";
 			setViewMode(mode);
-
-			// Slotの同期 (例: ?slot=Mon-1)
-			const slotParam = params.get("slot");
-			const [day, label] = slotParam?.split("-") ?? [];
-			const p = PERIODS.find((item) => item.label === label);
-			setSelectedSlot(
-				p ? { day, period: p.label, start: p.start, end: p.end } : null,
-			);
-
-			// Courseの同期 (例: ?courseId=123)
-			const courseId = params.get("courseId");
-			if (courseId) {
-				const course = displayCourses.find((c) => String(c.id) === courseId);
-				if (course) setSelectedCourse(course);
-			} else {
-				setSelectedCourse(null);
-			}
 		};
 
 		window.addEventListener("popstate", handlePopState);
@@ -175,23 +158,9 @@ export default function TimetableInterface({
 		}
 	};
 
-	// ---状態をParamに反映---
-	const updateUrlParams = (newParams: Record<string, string | null>) => {
-		const url = new URL(window.location.href);
-		Object.entries(newParams).forEach(([key, value]) => {
-			if (value) {
-				url.searchParams.set(key, value);
-			} else {
-				url.searchParams.delete(key);
-			}
-		});
-		window.history.pushState({}, "", url.pathname + url.search);
-	};
-
 	// スロットクリック時
 	const handleSlotClick = (day: string, p: any) => {
 		setSelectedSlot({ day, period: p.label, start: p.start, end: p.end });
-		updateUrlParams({ slot: `${day}-${p.label}` });
 	};
 
 	// モバイルでList/Gridの表示を切り替えたらSearch Paramにも反映する関数
@@ -314,7 +283,6 @@ export default function TimetableInterface({
 					onClose={() => {
 						setSelectedSlot(null); // スロット選択をリセット
 						setExpandedCourseId(null); // 個別授業の選択もリセット
-						updateUrlParams({ slot: null }); // URLから削除
 					}}
 					title={
 						selectedSlot
@@ -442,7 +410,6 @@ export default function TimetableInterface({
 					isOpen={!!currentSelectedCourse}
 					onClose={() => {
 						setSelectedCourse(null);
-						updateUrlParams({ courseId: null });
 					}}
 				>
 					{currentSelectedCourse && (
