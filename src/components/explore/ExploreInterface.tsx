@@ -351,7 +351,7 @@ export default function ExploreInterface({
 						</select>
 					</label>
 
-					{/* スロット選択 */}
+					{/* 時限選択 */}
 					<button
 						type="button"
 						className={`btn btn-md flex items-center gap-2 px-2 w-fit max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm font-normal text-base-content transition-all ${
@@ -364,14 +364,7 @@ export default function ExploreInterface({
 						<CalendarCheck
 							className={(filters.slots?.length ?? 0) > 0 ? "text-primary" : ""}
 						/>
-						<span className="grow text-left">
-							{t("explore.select_slots")}
-							<span
-								className={`ml-2 text-xs ${(filters.slots?.length ?? 0) > 0 ? "font-bold" : "opacity-50"}`}
-							>
-								({filters.slots?.length ?? 0})
-							</span>
-						</span>
+						{t("explore.select_slots")}
 					</button>
 
 					{/* 単位数 */}
