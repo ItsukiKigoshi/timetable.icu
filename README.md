@@ -77,7 +77,6 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] 絵文字を多用するAI-Designに負けない!
 - [x] ちゃんとランディングページを作る: Astroのいいところ
 - [x] SEO
-    - [ ] リッチリザルト?
 
 # まだできないこと
 
@@ -342,6 +341,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] meta description
     - [ ] リッチリザルト
         - [ ] パンくず
+        - [ ] [テスト](https://search.google.com/test/rich-results/)
     - [x] タイトルつける
     - [x] OGP
         - [x] og:title
