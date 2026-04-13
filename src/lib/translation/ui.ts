@@ -305,8 +305,8 @@ const en = {
 	"days.fri": "Fri",
 	"days.sat": "Sat",
 
-	"period.lunch": "L",
-	"period.night": "N",
+	"period.lunch": "Lunch",
+	"period.night": "Night",
 
 	// 404
 	"404.title": "PageNotFound",

@@ -54,7 +54,7 @@ const TimetableGrid = ({
 								{p.start}
 							</span>
 							<span className="font-bold text-xs mx-auto">
-								{translatePeriod(p.label)}
+								{translatePeriod(p.label).slice(0,1)}
 							</span>
 						</div>
 					);
