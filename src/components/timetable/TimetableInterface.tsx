@@ -102,6 +102,40 @@ export default function TimetableInterface({
 		}
 	}, [displayCourses, selectedCourse]);
 
+	// Modalの状態をSearchParamに反映し，ブラウザバックが効くように
+	useEffect(() => {
+		const handlePopState = () => {
+			const params = new URLSearchParams(window.location.search);
+
+			// ViewModeの同期
+			const mode = (params.get("view") as "grid" | "list") || "grid";
+			setViewMode(mode);
+
+			// Slotの同期 (例: ?slot=Mon-1)
+			const slotParam = params.get("slot");
+			if (slotParam) {
+				const [day, period] = slotParam.split("-");
+				// 注意: start/end時間を厳密に復元するにはPERIODS定数から検索する等の処理が必要
+				setSelectedSlot({ day, period, start: "", end: "" });
+			} else {
+				setSelectedSlot(null);
+			}
+
+			// Courseの同期 (例: ?courseId=123)
+			const courseId = params.get("courseId");
+			if (courseId) {
+				const course = displayCourses.find((c) => String(c.id) === courseId);
+				if (course) setSelectedCourse(course);
+			} else {
+				setSelectedCourse(null);
+			}
+		};
+
+		window.addEventListener("popstate", handlePopState);
+		handlePopState(); // 初回読み込み時にも実行
+		return () => window.removeEventListener("popstate", handlePopState);
+	}, [displayCourses]);
+
 	// モバイルで表示中のモードをSearch Parameterで管理
 	useEffect(() => {
 		const handlePopState = () => {
@@ -143,9 +177,23 @@ export default function TimetableInterface({
 		}
 	};
 
-	// クリックハンドラーはステートの更新だけ
+	// ---状態をParamに反映---
+	const updateUrlParams = (newParams: Record<string, string | null>) => {
+		const url = new URL(window.location.href);
+		Object.entries(newParams).forEach(([key, value]) => {
+			if (value) {
+				url.searchParams.set(key, value);
+			} else {
+				url.searchParams.delete(key);
+			}
+		});
+		window.history.pushState({}, "", url.pathname + url.search);
+	};
+
+	// スロットクリック時
 	const handleSlotClick = (day: string, p: any) => {
 		setSelectedSlot({ day, period: p.label, start: p.start, end: p.end });
+		updateUrlParams({ slot: `${day}-${p.label}` });
 	};
 
 	// モバイルでList/Gridの表示を切り替えたらSearch Paramにも反映する関数
@@ -268,38 +316,40 @@ export default function TimetableInterface({
 					onClose={() => {
 						setSelectedSlot(null); // スロット選択をリセット
 						setExpandedCourseId(null); // 個別授業の選択もリセット
+						updateUrlParams({ slot: null }); // URLから削除
 					}}
 					title={
 						selectedSlot
-							? `${translateDay(selectedSlot.day)} ${t("timetable.period").replace("{period}", translatePeriod(selectedSlot.period) ?? "")}`
+							? `${translateDay(selectedSlot.day)} ${translatePeriod(selectedSlot.period)}`
 							: ""
 					}
 				>
 					{coursesInSelectedSlot.length === 0 && (
 						// --- 選択されたスロットに授業が存在しない場合：コース追加へ誘導 ---
-						<div className="flex flex-col items-center justify-center gap-6 text-center">
-							{/* メッセージ：控えめなフォントサイズと色 */}
+						<div className="flex flex-col items-center justify-center gap-4 text-center">
 							<p className="text-sm opacity-60 font-medium">
 								{isJa
-									? "この時間に登録されているコースはありません"
-									: "No courses registered for this slot."}
+									? "この時間に登録されている予定はありません"
+									: "No schedule registered for this slot."}
 							</p>
 
-							<div className="flex flex-col w-full gap-5">
-								{/* コースを探すボタン */}
-								<a
-									href={l(
-										`/explore?slots=${selectedSlot?.day}-${selectedSlot?.period}`,
+							<div className="flex flex-col w-full gap-4">
+								{/* コースを探すボタン：periodが数字の場合のみ表示 */}
+								{selectedSlot?.period &&
+									!isNaN(Number(selectedSlot.period)) && (
+										<a
+											href={l(
+												`/explore?slots=${selectedSlot?.day}-${selectedSlot?.period}`,
+											)}
+											className="btn btn-primary btn-lg flex items-center justify-center gap-3 w-full"
+											aria-label={t("explore.title")}
+										>
+											<Telescope size={20} className="shrink-0" />
+											<span className="text-sm font-bold tracking-tight">
+												{t("explore.title")}
+											</span>
+										</a>
 									)}
-									className="btn btn-primary btn-lg flex items-center justify-center gap-3 w-full"
-									aria-label={t("explore.title")}
-								>
-									<Telescope size={20} className="shrink-0" />
-									<span className="text-sm font-bold tracking-tight">
-										{t("explore.title")}
-									</span>
-								</a>
-
 								{/* カスタムコース作成ボタン */}
 								<a
 									href={l(
@@ -392,7 +442,10 @@ export default function TimetableInterface({
 				<Modal
 					lang={currentLang}
 					isOpen={!!currentSelectedCourse}
-					onClose={() => setSelectedCourse(null)}
+					onClose={() => {
+						setSelectedCourse(null);
+						updateUrlParams({ courseId: null });
+					}}
 				>
 					{currentSelectedCourse && (
 						<section className="flex flex-col gap-2">

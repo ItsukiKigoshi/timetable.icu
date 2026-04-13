@@ -8,7 +8,7 @@ interface CourseListProps {
 	padding?: boolean;
 	isJa: boolean;
 	t: any;
-	setSelectedCourse: (course: UserCourseWithDetails) => void;
+	setSelectedCourse: (course: UserCourseWithDetails　| null) => void;
 	toggleVisibility: (course: UserCourseWithDetails) => void;
 	handleToggle: (course: UserCourseWithDetails) => void;
 	isSubmitting: number | string | null;
@@ -22,7 +22,26 @@ const CourseList = ({
 	handleToggle,
 	isSubmitting,
 }: CourseListProps) => {
-	const { t } = useTranslation();
+  const { t } = useTranslation();
+	
+  // コース選択時 (CourseListなどで)
+	const handleCourseSelect = (course: UserCourseWithDetails | null) => {
+     setSelectedCourse(course);
+     
+     // URLを更新 (?courseId=xxx)
+     const url = new URL(window.location.href);
+     if (course) {
+         url.searchParams.set("courseId", String(course.id));
+     } else {
+         url.searchParams.delete("courseId");
+     }
+     window.history.pushState({}, "", url.pathname + url.search);
+ 
+     // モーダルを開く (HTML Dialog APIを使う場合)
+     if (course) {
+         (document.getElementById("single_course_modal") as HTMLDialogElement)?.showModal();
+     }
+ };
 	return (
 		<div className={`flex flex-col gap-2 w-full ${padding ? "p-2" : ""}`}>
 			{items.map((course) => {
@@ -34,14 +53,7 @@ const CourseList = ({
 						{/* 左側：クリックで詳細モーダルへ */}
 						<div
 							className="flex-1 min-w-0 cursor-pointer"
-							onClick={() => {
-								setSelectedCourse(course);
-								(
-									document.getElementById(
-										"single_course_modal",
-									) as HTMLDialogElement
-								)?.showModal();
-							}}
+							onClick={() => handleCourseSelect(course)}
 						>
 							<CourseHeader
 								course={course}

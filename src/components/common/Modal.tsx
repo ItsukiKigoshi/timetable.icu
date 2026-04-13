@@ -38,18 +38,20 @@ export default function Modal({
 			<div className="modal-box p-0 flex flex-col max-h-[90vh] sm:max-h-[85vh] relative overflow-hidden">
 				{/* タイトル */}
 				{title && (
-					<div className="px-6 py-4 flex justify-between items-center bg-base-100 shrink-0">
-						<h3 className="font-bold text-lg truncate pr-8">{title}</h3>
+					<div className="px-6 py-4 flex justify-center items-center bg-base-100 shrink-0 relative">
+						<h3 className="font-bold text-lg truncate w-full text-center px-4">
+							{title}
+						</h3>
 					</div>
 				)}
 
 				{/*コンテンツ*/}
-				<div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+				<div className="px-8 overflow-y-auto flex-1 custom-scrollbar">
 					{children}
 				</div>
 
 				{/* 閉じるボタン */}
-				<div className="p-4">
+				<div className="py-4 px-4">
 					<button className="btn btn-block" type="button" onClick={onClose}>
 						{t("meta.close")}
 					</button>
