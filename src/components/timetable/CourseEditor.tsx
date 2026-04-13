@@ -188,23 +188,23 @@ const CourseEditor = ({
 					disabled={isSubmitting}
 					className="flex flex-col gap-6 border-none p-0 m-0"
 				>
+					{/* タイトル（必須） */}
+					<div className="form-control">
+						<label className="label font-bold">
+							{t("custom.title")} ({t("custom.necessary")})
+						</label>
+						<input
+							type="text"
+							name="title"
+							className="input input-bordered w-full"
+							value={formData.title}
+							onChange={handleChange}
+							required
+							autoComplete="off"
+						/>
+					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						{/* 科目名（必須） */}
-						<div className="form-control">
-							<label className="label font-bold">
-								{t("custom.title")} ({t("custom.necessary")})
-							</label>
-							<input
-								type="text"
-								name="title"
-								className="input input-bordered w-full"
-								value={formData.title}
-								onChange={handleChange}
-								required
-								autoComplete="off"
-							/>
-						</div>
-
+						{/*教室/場所*/}
 						<div className="form-control">
 							<label className="label font-bold">{t("custom.room")}</label>
 							<input
@@ -215,10 +215,9 @@ const CourseEditor = ({
 								onChange={handleChange}
 							/>
 						</div>
-					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<div className="form-control">
+						{/*教員名: 要素を絞るため敢えて非表示 */}
+						{/*<div className="form-control">
 							<label className="label font-bold">
 								{t("custom.instructor")}
 							</label>
@@ -229,8 +228,9 @@ const CourseEditor = ({
 								value={formData.instructor}
 								onChange={handleChange}
 							/>
-						</div>
+						</div>*/}
 
+						{/*単位数*/}
 						<div className="form-control">
 							<label className="label font-bold">{t("custom.units")}</label>
 							<select
