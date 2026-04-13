@@ -2,6 +2,7 @@ import type { User } from "better-auth";
 import {
 	ArrowDown01,
 	CalendarCheck,
+	Info,
 	Languages,
 	ListFilter,
 	Plus,
@@ -271,7 +272,7 @@ export default function ExploreInterface({
 					<button
 						className="join-item btn btn-sm sm:btn-md"
 						disabled={filters.page <= 1}
-						onClick={() => update({ page: filters.page - 1 })}
+						onClick={goToPrev}
 					>
 						«
 					</button>
@@ -281,7 +282,7 @@ export default function ExploreInterface({
 					<button
 						className="join-item btn btn-sm sm:btn-md"
 						disabled={!hasNextPage}
-						onClick={() => update({ page: filters.page + 1 })}
+						onClick={goToNext}
 					>
 						»
 					</button>
@@ -586,15 +587,82 @@ export default function ExploreInterface({
 					</section>
 				)}
 
-				{isJa ? (
-					<p className="mb-2">データ更新日: {lastUpdateStr} (JST)</p>
-				) : (
-					<p className="mb-2">Last Updated at {lastUpdateStr} (JST)</p>
-				)}
-				<Pagination />
+				<div className="flex items-center group gap-1">
+					{/* 更新日時の表示 */}
+					<p className="text-sm opacity-80">
+						{isJa
+							? `データ更新日: ${lastUpdateStr} (JST)`
+							: `Last Updated: ${lastUpdateStr} (JST)`}
+					</p>
 
+					<div className="dropdown dropdown-top dropdown-end">
+    <div
+        tabIndex={0}
+        role="button"
+        className="btn btn-ghost btn-circle btn-sm min-h-0 opacity-80"
+        // クリックした瞬間にすでにフォーカスがある場合は、blurして閉じる
+        onClick={(e) => {
+            if (document.activeElement === e.currentTarget) {
+                (e.currentTarget as HTMLElement).blur();
+            }
+        }}
+    >
+        <Info size={18} />
+    </div>
+
+    <div
+        tabIndex={0}
+        className="dropdown-content bg-base-100 rounded-box z-10 w-64 p-4 shadow-xl border border-base-200"
+    >
+						{isJa ? (
+							// 日本語コンテンツ
+							<div className="space-y-2">
+								<p className="text-sm leading-relaxed">
+									最新の授業情報は
+									<a
+										href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
+										target="_blank"
+										rel="noopener"
+										className="link font-semibold mx-1"
+									>
+										公式シラバス
+									</a>
+									をご確認ください．
+								</p>
+								<div className="pt-2 border-t border-base-content/10">
+									<p className="text-xs opacity-60">
+										※休講および Co-Listing 科目は表示されません．
+									</p>
+								</div>
+							</div>
+						) : (
+							// 英語コンテンツ
+							<div className="space-y-2">
+								<p className="text-sm leading-relaxed">
+									Please refer to the
+									<a
+										href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
+										target="_blank"
+										rel="noopener"
+										className="link font-semibold mx-1"
+									>
+										Official Course Offerings
+									</a>
+									for latest information.
+								</p>
+								<div className="pt-2 border-t border-base-content/10">
+									<p className="text-xs opacity-60">
+										*Cancelled and Co-Listing courses are not shown here.
+									</p>
+								</div>
+							</div>
+						)}
+            </div>
+					</div>
+				</div>
+
+				<Pagination />
 				{/* 時限モーダル */}
-				{/*TODO-Modal Componentにまとめる？*/}
 				<Modal
 					isOpen={isSlotModalOpen}
 					onClose={() => setSlotModalOpen(false)}
