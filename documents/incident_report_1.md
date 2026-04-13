@@ -2,6 +2,10 @@
 文責: 木越 斎 (itsukikigoshi@gmail.com)
 
 時刻はすべてUTC
+## 起こったこと
+- Migration時にproduction DBのuser_courses, session, passkeyデータが消失した
+- Time Travel機能で復旧した
+
 ## 以下のmigrationが怪しい
 18	0017_moaning_blonde_phantom.sql	2026-04-03 07:13:02
 19	0018_past_franklin_richards.sql	2026-04-07 08:53:52
