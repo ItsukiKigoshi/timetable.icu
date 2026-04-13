@@ -50,14 +50,16 @@ export default function Modal({
 
 				{/* 閉じるボタン */}
 				<div className="p-4">
-					<button className="btn btn-block" onClick={onClose}>
+					<button className="btn btn-block" type="button" onClick={onClose}>
 						{t("meta.close")}
 					</button>
 				</div>
 			</div>
 
 			<form method="dialog" className="modal-backdrop">
-				<button onClick={onClose}>close</button>
+				<button type="button" onClick={onClose}>
+					close
+				</button>
 			</form>
 		</dialog>
 	);

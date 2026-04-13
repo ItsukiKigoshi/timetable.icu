@@ -1,3 +1,4 @@
+import type { User } from "better-auth";
 import {
 	ArrowDown01,
 	CalendarCheck,
@@ -13,7 +14,11 @@ import { useEffect, useMemo, useState } from "react";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
 import { SELECTABLE_DAYS } from "@/constants/time.ts";
 import courseUpdateInfo from "@/db/data/course-last-update.json";
-import type { Categories, OfficialCourseWithDetails } from "@/db/schema";
+import type {
+	Categories,
+	OfficialCourseWithDetails,
+	UserCourseWithDetails,
+} from "@/db/schema";
 import { getSyllabusUrl } from "@/lib/course/utils.ts";
 import { LanguageProvider } from "@/lib/translation/context.tsx";
 import { defaultLang } from "@/lib/translation/ui.ts";
@@ -45,7 +50,7 @@ interface Props {
 	isLoggedIn: boolean;
 	categories: Categories[];
 	initialUserCourseIds: number[];
-	user?: any;
+	user?: User;
 	hasNextPage: boolean;
 	lang?: string;
 }
@@ -83,7 +88,7 @@ export default function ExploreInterface({
 			if (cached) {
 				try {
 					const localCourses = JSON.parse(cached);
-					const localIds = localCourses.map((c: any) => c.id);
+					const localIds = localCourses.map((c: UserCourseWithDetails) => c.id);
 					// サーバーから渡された初期IDとLocalStorageのIDを合算
 					setRegisteredIdList((prev) =>
 						Array.from(new Set([...prev, ...localIds])),
@@ -150,7 +155,9 @@ export default function ExploreInterface({
 			let currentCourses = cached ? JSON.parse(cached) : [];
 
 			if (isRegistered) {
-				currentCourses = currentCourses.filter((c: any) => c.id !== courseId);
+				currentCourses = currentCourses.filter(
+					(c: UserCourseWithDetails) => c.id !== courseId,
+				);
 			} else {
 				const newCourse = {
 					...course,

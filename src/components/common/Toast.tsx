@@ -1,8 +1,9 @@
+import type { User } from "better-auth";
 import { useEffect, useState } from "react";
 import { useSync } from "@/lib/course/hooks.ts";
 import { getTranslations } from "@/lib/translation/utils";
 
-export default function Toast({ user, lang }: { user?: any; lang: string }) {
+export default function Toast({ user, lang }: { user?: User; lang: string }) {
 	const t = getTranslations(lang);
 
 	const [status, setStatus] = useState<"idle" | "domain_error">("idle");
@@ -19,7 +20,6 @@ export default function Toast({ user, lang }: { user?: any; lang: string }) {
 		const params = new URLSearchParams(window.location.search);
 		if (params.get("error") === "INVALID_DOMAIN") {
 			setShow(true);
-			console.log(status);
 			setStatus("domain_error");
 
 			// URLを綺麗にする
@@ -30,7 +30,7 @@ export default function Toast({ user, lang }: { user?: any; lang: string }) {
 			// 8秒後に消す
 			setTimeout(() => setShow(false), 8000);
 		}
-	}, []);
+	}, [status]);
 
 	if (!show) return null;
 

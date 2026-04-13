@@ -27,11 +27,11 @@ const { pathname, href } = Astro.url;
 // /en -> /
 // / -> /
 let purePath = pathname.replace(/^\/en(\/|$)/, "$1");
-if (!purePath.startsWith("/")) purePath = "/" + purePath;
+if (!purePath.startsWith("/")) purePath = `/${purePath}`;
 
 const baseUrl = "https://timetable.icu";
 const jaUrl = new URL(purePath, baseUrl).href;
-const enUrl = new URL("/en" + purePath, baseUrl).href;
+const enUrl = new URL(`/en${purePath}`, baseUrl).href;
 
 /* Rich Results */
 // パンくずのアイテムを定義

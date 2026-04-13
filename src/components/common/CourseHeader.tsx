@@ -81,9 +81,9 @@ const CourseHeader = ({
 				{/* 4. 最下段: スケジュール (共通プロパティ) */}
 				<div className="flex flex-wrap gap-1 mt-0.5">
 					{course.schedules && course.schedules.length > 0 ? (
-						course.schedules.map((s, i) => (
+						course.schedules.map((s) => (
 							<span
-								key={i}
+								key={s.id}
 								className="px-1.5 py-0.5 rounded bg-base-200 text-[10px] font-mono font-bold uppercase border border-base-300"
 							>
 								{s.dayOfWeek.slice(0, 2)}
