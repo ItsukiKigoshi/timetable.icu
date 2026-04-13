@@ -269,7 +269,7 @@ const CourseEditor = ({
 								<tbody>
 									{PERIODS.map((p) => (
 										<tr key={p.label}>
-											<th className="bg-base-200/50 p-0 text-xs flex flex-col items-center justify-center h-8">
+											<th className="bg-base-200/50 p-0 text-xs flex flex-col items-center justify-center h-10">
 												<span className="text-[8px] font-normal opacity-50">
 													{p.start}
 												</span>
@@ -285,7 +285,7 @@ const CourseEditor = ({
 													<td
 														key={`${day}-${p.label}`}
 														onClick={() => toggleSchedule(day, p.label)}
-														className={`border border-base-300 cursor-pointer transition-colors p-0 h-8 ${
+														className={`border border-base-300 cursor-pointer transition-colors p-0 h-10 ${
 															isSelected ? "bg-primary" : "hover:bg-base-200"
 														}`}
 													>
