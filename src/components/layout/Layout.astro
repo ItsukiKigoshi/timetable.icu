@@ -33,6 +33,39 @@ const baseUrl = "https://timetable.icu";
 const jaUrl = new URL(purePath, baseUrl).href;
 const enUrl = new URL("/en" + purePath, baseUrl).href;
 
+/* Rich Results */
+// パンくずのアイテムを定義
+const breadcrumbItems = [
+	{
+		name: t("site.title"),
+		item: currentLang === "ja" ? baseUrl : `${baseUrl}/en`,
+	},
+];
+
+if (purePath.includes("explore")) {
+	breadcrumbItems.push({
+		name: t("explore.title"),
+		item: new URL(pathname, baseUrl).href,
+	});
+} else if (purePath.includes("timetable")) {
+	breadcrumbItems.push({
+		name: t("timetable.title"),
+		item: new URL(pathname, baseUrl).href,
+	});
+}
+
+const breadcrumbSchema = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	itemListElement: breadcrumbItems.map((it, index) => ({
+		"@type": "ListItem",
+		position: index + 1,
+		name: it.name,
+		item: it.item,
+	})),
+};
+
+/*フォーム*/
 const baseFormUrl =
 	"https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform";
 const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(href)}`;
@@ -70,6 +103,10 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
     <link rel="manifest" href="/manifest.webmanifest"/>
+    
+    {breadcrumbItems.length > 1 && (
+          <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+        )}
 </head>
 <body class="min-h-screen flex flex-col">
 {
