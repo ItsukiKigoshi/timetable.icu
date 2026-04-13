@@ -218,15 +218,6 @@ export default function TimetableInterface({
 				{/* 右側：表示モード切り替え (Grid/List) */}
 				<nav className="lg:hidden fixed bottom-16 right-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
 					<button
-						onClick={() => updateViewMode("grid")}
-						className={`btn btn-xs btn-square h-11 w-11 rounded-full border-none transition-all ${
-							viewMode === "grid" ? "btn-primary shadow-md" : "btn-ghost"
-						}`}
-						title={t("timetable.title")}
-					>
-						<LayoutGrid size={20} />
-					</button>
-					<button
 						onClick={() => updateViewMode("list")}
 						className={`btn btn-sm btn-square h-11 w-11 rounded-full border-none transition-all ${
 							viewMode === "list" ? "btn-primary shadow-md" : "btn-ghost"
@@ -234,6 +225,15 @@ export default function TimetableInterface({
 						title={t("timetable.list_view")}
 					>
 						<List size={20} />
+					</button>
+					<button
+						onClick={() => updateViewMode("grid")}
+						className={`btn btn-xs btn-square h-11 w-11 rounded-full border-none transition-all ${
+							viewMode === "grid" ? "btn-primary shadow-md" : "btn-ghost"
+						}`}
+						title={t("timetable.title")}
+					>
+						<LayoutGrid size={20} />
 					</button>
 				</nav>
 
