@@ -156,27 +156,16 @@ const TimetableGrid = ({
 						const nextP = PERIODS[index + 1];
 						// 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
 						const visualEndMin = nextP ? timeToMin(nextP.start) : pEndMin;
-						const isOccupied = displaySchedules.some(
-							(s) =>
-								s.dayOfWeek === day &&
-								s.isVisible && // 表示されているもののみ
-								// 授業の開始がスロット終了より前、かつ授業の終了がスロット開始より後
-								s.startMin < visualEndMin &&
-								s.endMin > pStartMin,
-						);
 						return (
 							<div
 								key={`slot-${p.label}`}
-								className={`absolute w-full z-10 ${
-									isOccupied
-										? "cursor-pointer pointer-events-auto"
-										: "pointer-events-none"
-								}`}
+								className={"absolute w-full z-10 cursor-pointer pointer-events-auto"
+								}
 								style={{
 									top: getTop(pStartMin),
 									height: getHeight(visualEndMin - pStartMin),
 								}}
-								onClick={() => isOccupied && handleSlotClick(day, p)}
+								onClick={() => handleSlotClick(day, p)}
 							/>
 						);
 					})}

@@ -4,9 +4,29 @@
 import Layout from "@/components/layout/Layout.astro";
 import CourseEditor from "@/components/timetable/CourseEditor";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
+import { PERIODS } from "@/constants/time.ts";
 
 const { lang, user, selectedYear, selectedTerm } = Astro.locals;
 const { t } = createTranslationHelper(lang);
+
+const slotsParam = Astro.url.searchParams.get("slots"); // "Tue-4"
+let initialData = null;
+
+if (slotsParam) {
+    const [day, pLabel] = slotsParam.split("-");
+    const periodData = PERIODS.find((p) => p.label === pLabel);
+    
+    if (day && periodData) {
+        initialData = {
+            schedules: [{
+                dayOfWeek: day,
+                period: pLabel,
+                startTime: periodData.start,
+                endTime: periodData.end,
+            }]
+        };
+    }
+}
 ---
 
 <Layout title=`${t('custom.create')} | ${t('site.title')}`>
@@ -18,6 +38,7 @@ const { t } = createTranslationHelper(lang);
                 user={user}
                 selectedYear={selectedYear}
                 selectedTerm={selectedTerm}
+                initialData={initialData}
         />
     </div>
 </Layout>

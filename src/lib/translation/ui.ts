@@ -71,8 +71,8 @@ const ja = {
 	"lp.features.todo.label": "検討中の機能",
 	"lp.features.todo.offline.title": "オフライン表示",
 	"lp.features.todo.offline.desc": "現状閲覧にはインターネット接続が必要",
-	"lp.features.todo.custom.title": "独自コースの追加 [試験提供中]",
-	"lp.features.todo.custom.desc": "カスタムコース追加機能を試験提供中",
+	"lp.features.todo.custom.title": "独自コースの追加",
+	"lp.features.todo.custom.desc": "試験提供中！",
 	"lp.features.todo.calendar.title": "カレンダー連携",
 	"lp.features.todo.calendar.desc": "外部カレンダーへの書き出し機能を検討中",
 
@@ -112,8 +112,8 @@ const ja = {
 	"timetable.color.default": "Default",
 	"timetable.color.custom": "Custom",
 	"timetable.memo": "メモ",
-	"timetable.memo.content":
-		'課題や試験に関するメモ．\n"@場所"と書いて時間割に表示する教室をカスタマイズ．',
+  "timetable.memo.content": "課題や試験に関するメモ.",
+  "timetable.memo.location": '"@場所"で教室/場所をカスタマイズ',
 	"timetable.period": "{period}限",
 	"timetable.close": "閉じる",
 	"timetable.remove": "削除",
@@ -122,10 +122,10 @@ const ja = {
 	"timetable.units": "単位",
 	"timetable.show": "表示",
 	"timetable.hide": "隠す",
-	"timetable.create.custom": "カスタムコースを作成",
+	"timetable.create.custom": "授業/予定を作成",
 
-	"custom.create": "カスタムコースを作成",
-	"custom.edit": "コースを編集",
+	"custom.create": "授業/予定を作成",
+	"custom.edit": "授業/予定を編集",
 	"custom.loading": "データを読み込み中...",
 	"custom.necessary": "必須",
 	"custom.schedule": "スケジュール",
@@ -232,9 +232,8 @@ const en = {
 	"lp.features.todo.offline.title": "Offline Support",
 	"lp.features.todo.offline.desc":
 		"An internet connection is currently required to view courses.",
-	"lp.features.todo.custom.title": "[Beta] Custom Course Entry",
-	"lp.features.todo.custom.desc":
-		"Currently testflighting custom entry feature.",
+	"lp.features.todo.custom.title": "Custom Course Entry",
+	"lp.features.todo.custom.desc": "Beta Testing Now!",
 	"lp.features.todo.calendar.title": "Calendar Export",
 	"lp.features.todo.calendar.desc":
 		"Exporting to external calendars (Google, etc.) is under consideration.",
@@ -275,8 +274,8 @@ const en = {
 	"timetable.color.default": "Default",
 	"timetable.color.custom": "Custom",
 	"timetable.memo": "Notes",
-	"timetable.memo.content":
-		'Notes on exam, homework, etc. \nWrite "@Room" to customise location.',
+	"timetable.memo.content": "Notes on exam, homework, etc.",
+    "timetable.memo.location": 'Write "@Room" to customise location.',
 	"timetable.period": "Period {period}",
 	"timetable.close": "Close",
 	"timetable.remove": "Remove",
@@ -285,10 +284,10 @@ const en = {
 	"timetable.units": "Units",
 	"timetable.show": "Show",
 	"timetable.hide": "Hide",
-	"timetable.create.custom": "Create Custom Course",
+	"timetable.create.custom": "Create Course/Schedule",
 
-	"custom.create": "Create Custom Course",
-	"custom.edit": "Edit Course",
+	"custom.create": "Create Course/Schedule",
+	"custom.edit": "Edit Course/Schedule",
 	"custom.loading": "Loading...",
 	"custom.necessary": "Necessary",
 	"custom.schedule": "Schedule",

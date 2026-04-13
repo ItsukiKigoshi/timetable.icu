@@ -208,6 +208,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] useTimetableのなかでcoursesをsource of truthとして持ちつつuseEffectで表示するコース一覧（displayCourses）も持つ必要がある
         - [x] displaySchedule(FlatSchedule[]型)のUserCourse[]型バージョン．
     - [x] 実装ミスに気づけるようにCourse Headerに常にYear Termを表示
+    - [ ] コース追加の導線を整理: コースが無ければ新規コースを追加
 - [x] 授業検索
     - [x] 全体の条件クリアボタン（year, term以外）
     - [x] キーワード検索にCourse ID, regidを含む!
@@ -339,13 +340,13 @@ ICU生の時間割・履修計画アプリの決定版
 - [x] スケジュールがない授業を追加できない
 - [ ] SEO
     - [x] meta description
-    - [ ] リッチリザルト
-        - [ ] パンくず
-        - [ ] [テスト](https://search.google.com/test/rich-results/)
+    - [x] リッチリザルト
+        - [x] パンくず
+        - [x] [テスト](https://search.google.com/test/rich-results)
     - [x] タイトルつける
     - [x] OGP
         - [x] og:title
-        - [x] og:description
+        - [x] og:descriptionhttps://timetable.icu/explore
         - [x] og:url
         - [x] og:image
             - [x] よいもの？

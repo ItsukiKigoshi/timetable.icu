@@ -58,9 +58,9 @@ const CourseEditor = ({
 
 	// 2. フォームデータ
 	const [formData, setFormData] = useState(() => {
-		if (mode === "create" || initialData) {
-			return normalizeInitialData(initialData);
-		}
+	  if (initialData) {
+        return normalizeInitialData(initialData);
+    }
 		return normalizeInitialData(null);
 	});
 
@@ -68,22 +68,23 @@ const CourseEditor = ({
 
 	// マウント時とデータ取得時の同期
 	useEffect(() => {
-		setIsMounted(true); // ブラウザ側で実行開始された証
+    setIsMounted(true);
 
-		if (isInitialized || mode === "create") return;
+    if (isInitialized) return;
 
-		let foundData = null;
-		if (initialData) {
-			foundData = initialData;
-		} else if (mode === "edit" && targetId && courses.length > 0) {
-			foundData = courses.find((c) => String(c.id) === String(targetId));
-		}
-
-		if (foundData) {
-			setFormData(normalizeInitialData(foundData));
-			setIsInitialized(true);
-		}
-	}, [initialData, courses, targetId, mode, isInitialized]);
+    let foundData = null;
+    if (initialData) {
+        foundData = initialData;
+    } else if (mode === "edit" && targetId && courses.length > 0) {
+        foundData = courses.find((c) => String(c.id) === String(targetId));
+    }
+    if (foundData) {
+        setFormData(normalizeInitialData(foundData));
+        setIsInitialized(true);
+    } else if (mode === "create") {
+        setIsInitialized(true);
+    }
+}, [initialData, courses, targetId, mode, isInitialized]);
 
 	// --- ハンドラー ---
 	const handleChange = (
@@ -187,60 +188,6 @@ const CourseEditor = ({
 					disabled={isSubmitting}
 					className="flex flex-col gap-6 border-none p-0 m-0"
 				>
-					<div className="form-control">
-						<label className="label font-bold">
-							{t("custom.schedule")} ({t("custom.necessary")})
-						</label>
-						<div className="overflow-x-auto rounded-lg border border-base-300">
-							<table className="table table-fixed w-full text-center">
-								<thead>
-									<tr className="bg-base-200">
-										<th className="w-12 p-0"></th>
-										{SELECTABLE_DAYS.map((d) => (
-											<th key={d} className="p-2 text-xs">
-												{d}
-											</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{PERIODS.map((p) => (
-										<tr key={p.label}>
-											<th className="bg-base-200/50 p-0 text-xs flex flex-col items-center justify-center h-12">
-												<span className="text-[8px] font-normal opacity-50">
-													{p.start}
-												</span>
-												<span>{p.label}</span>
-											</th>
-											{SELECTABLE_DAYS.map((day) => {
-												const isSelected = formData.schedules.some(
-													(s: any) =>
-														s.dayOfWeek === day && s.period === p.label,
-												);
-
-												return (
-													<td
-														key={`${day}-${p.label}`}
-														onClick={() => toggleSchedule(day, p.label)}
-														className={`border border-base-300 cursor-pointer transition-colors p-0 h-12 ${
-															isSelected ? "bg-primary" : "hover:bg-base-200"
-														}`}
-													>
-														{isSelected && (
-															<div className={"text-primary-content font-bold"}>
-																✓
-															</div>
-														)}
-													</td>
-												);
-											})}
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					</div>
-
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						{/* 科目名（必須） */}
 						<div className="form-control">
@@ -301,7 +248,62 @@ const CourseEditor = ({
 								))}
 							</select>
 						</div>
+          </div>
+					
+         	<div className="form-control">
+						<label className="label font-bold">
+							{t("custom.schedule")} ({t("custom.necessary")})
+						</label>
+						<div className="overflow-x-auto rounded-lg border border-base-300">
+							<table className="table table-fixed w-full text-center">
+								<thead>
+									<tr className="bg-base-200">
+										<th className="w-12 p-0"></th>
+										{SELECTABLE_DAYS.map((d) => (
+											<th key={d} className="p-2 text-xs">
+												{d}
+											</th>
+										))}
+									</tr>
+								</thead>
+								<tbody>
+									{PERIODS.map((p) => (
+										<tr key={p.label}>
+											<th className="bg-base-200/50 p-0 text-xs flex flex-col items-center justify-center h-8">
+												<span className="text-[8px] font-normal opacity-50">
+													{p.start}
+												</span>
+												<span>{p.label}</span>
+											</th>
+											{SELECTABLE_DAYS.map((day) => {
+												const isSelected = formData.schedules.some(
+													(s: any) =>
+														s.dayOfWeek === day && s.period === p.label,
+												);
+     
+												return (
+													<td
+														key={`${day}-${p.label}`}
+														onClick={() => toggleSchedule(day, p.label)}
+														className={`border border-base-300 cursor-pointer transition-colors p-0 h-8 ${
+															isSelected ? "bg-primary" : "hover:bg-base-200"
+														}`}
+													>
+														{isSelected && (
+															<div className={"text-primary-content font-bold"}>
+																✓
+															</div>
+														)}
+													</td>
+												);
+											})}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
 					</div>
+
 
 					<div className="flex gap-2 mt-4">
 						<button
