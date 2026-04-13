@@ -234,29 +234,61 @@ export default function ExploreInterface({
 		fetchData(nextFilters);
 	};
 
-	const Pagination = () => (
-		<nav className="flex justify-center py-6">
-			<div className="join shadow-sm">
-				<button
-					className="join-item btn btn-sm sm:btn-md"
-					disabled={filters.page <= 1}
-					onClick={() => update({ page: filters.page - 1 })}
-				>
-					«
-				</button>
-				<button className="join-item btn btn-sm sm:btn-md no-animation cursor-default pointer-events-none font-mono">
-					Page {filters.page}
-				</button>
-				<button
-					className="join-item btn btn-sm sm:btn-md"
-					disabled={!hasNextPage}
-					onClick={() => update({ page: filters.page + 1 })}
-				>
-					»
-				</button>
-			</div>
-		</nav>
-	);
+	const Pagination = () => {
+		// ページ更新用の関数
+		const goToNext = () => {
+			if (hasNextPage) update({ page: filters.page + 1 });
+		};
+		const goToPrev = () => {
+			if (filters.page > 1) update({ page: filters.page - 1 });
+		};
+		// キーボードイベントの登録
+		useEffect(() => {
+			const handleKeyDown = (event: KeyboardEvent) => {
+				if (event.target instanceof HTMLElement) {
+					if (
+						event.target.tagName === "INPUT" ||
+						event.target.tagName === "TEXTAREA"
+					)
+						return;
+				}
+				if (event.key === "ArrowLeft") {
+					goToPrev();
+				} else if (event.key === "ArrowRight") {
+					goToNext();
+				}
+			};
+			window.addEventListener("keydown", handleKeyDown);
+			// クリーンアップ関数（コンポーネントが消える時にイベントを解除）
+			return () => {
+				window.removeEventListener("keydown", handleKeyDown);
+			};
+		}, [filters.page, hasNextPage]); // 依存配列に状態を含める
+
+		return (
+			<nav className="flex justify-center py-6">
+				<div className="join shadow-sm">
+					<button
+						className="join-item btn btn-sm sm:btn-md"
+						disabled={filters.page <= 1}
+						onClick={() => update({ page: filters.page - 1 })}
+					>
+						«
+					</button>
+					<button className="join-item btn btn-sm sm:btn-md no-animation cursor-default pointer-events-none font-mono">
+						Page {filters.page}
+					</button>
+					<button
+						className="join-item btn btn-sm sm:btn-md"
+						disabled={!hasNextPage}
+						onClick={() => update({ page: filters.page + 1 })}
+					>
+						»
+					</button>
+				</div>
+			</nav>
+		);
+	};
 
 	const toggleSlot = (day: string, period: number) => {
 		const slotStr = `${day}-${period}`;
