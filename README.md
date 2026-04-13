@@ -346,7 +346,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] タイトルつける
     - [x] OGP
         - [x] og:title
-        - [x] og:descriptionhttps://timetable.icu/explore
+        - [x] og:description
         - [x] og:url
         - [x] og:image
             - [x] よいもの？

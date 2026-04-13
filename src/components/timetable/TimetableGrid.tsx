@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import {
 	PERIODS,
 	SELECTABLE_DAYS,
@@ -156,18 +157,32 @@ const TimetableGrid = ({
 						const nextP = PERIODS[index + 1];
 						// 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
 						const visualEndMin = nextP ? timeToMin(nextP.start) : pEndMin;
+						const isOccupied = displaySchedules.some(
+							(s) =>
+								s.dayOfWeek === day &&
+								s.isVisible && // 表示されているもののみ
+								// 授業の開始がスロット終了より前、かつ授業の終了がスロット開始より後
+								s.startMin < visualEndMin &&
+								s.endMin > pStartMin,
+						);
+
 						return (
 							<div
 								key={`slot-${p.label}`}
-								className={
-									"absolute w-full z-10 cursor-pointer pointer-events-auto"
-								}
+								className="absolute w-full z-10 cursor-pointer pointer-events-auto flex items-center justify-center group"
 								style={{
 									top: getTop(pStartMin),
 									height: getHeight(visualEndMin - pStartMin),
 								}}
 								onClick={() => handleSlotClick(day, p)}
-							/>
+							>
+								{!isOccupied && (
+									<Plus
+										className="text-base-content opacity-0 group-hover:opacity-60 transition-opacity"
+										size={20}
+									/>
+								)}
+							</div>
 						);
 					})}
 				</div>
