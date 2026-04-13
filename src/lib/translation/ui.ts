@@ -103,7 +103,7 @@ const ja = {
 	"explore.no_schedule": "スケジュールなし",
 
 	// 時間割
-	"timetable.title": "時間割",
+	"timetable.title": "時間割を見る",
 	"timetable.list_view": "リスト",
 	"timetable.my_courses": "授業一覧",
 	"timetable.no_courses": "授業が追加されていません",
@@ -266,7 +266,7 @@ const en = {
 	"explore.no_schedule": "No Schedule",
 
 	// Timetable
-	"timetable.title": "Timetable",
+	"timetable.title": "View Timetable",
 	"timetable.list_view": "List",
 	"timetable.my_courses": "Courses",
 	"timetable.no_courses": "No Course is Added",
