@@ -304,8 +304,8 @@ export default function ExploreInterface({
 	return (
 		<LanguageProvider lang={lang}>
 			<div className="space-y-6">
-        {/* フィルターセクション */}
-        {/* 単語検索（CourseNo, regNo,タイトル，教員名） */}
+				{/* フィルターセクション */}
+				{/* 単語検索（CourseNo, regNo,タイトル，教員名） */}
 				<div className="flex flex-wrap gap-3 items-center">
 					<label className="input input-bordered flex items-center gap-2 w-full max-w-xs shadow-sm bg-base-100/50 backdrop-blur-md">
 						<Search />
@@ -321,7 +321,9 @@ export default function ExploreInterface({
 					</label>
 
 					{/* カテゴリ選択 */}
-					<label className={`input input-bordered flex items-center gap-2 w-full max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm group ${filters.categoryId ? "border-primary border-2" : ""}`}>
+					<label
+						className={`input input-bordered flex items-center gap-2 w-full max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm group ${filters.categoryId ? "border-primary border-2" : ""}`}
+					>
 						<ListFilter className={filters.categoryId ? "text-primary" : ""} />
 						<select
 							className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none"
@@ -344,17 +346,21 @@ export default function ExploreInterface({
 								))}
 							</optgroup>
 						</select>
-          </label>
-					
-          {/* スロット選択 */}
+					</label>
+
+					{/* スロット選択 */}
 					<button
 						type="button"
 						className={`btn btn-md flex items-center gap-2 w-fit max-w-xs pl-2 bg-base-100/50 backdrop-blur-md shadow-sm font-normal text-base-content transition-all ${
-              (filters.slots?.length ?? 0) > 0 ? "border-primary border-2 shadow-primary/20" : "border-white/20"
-          }`}
+							(filters.slots?.length ?? 0) > 0
+								? "border-primary border-2 shadow-primary/20"
+								: "border-white/20"
+						}`}
 						onClick={() => (window as any).slot_modal.showModal()}
 					>
-						<CalendarCheck className={(filters.slots?.length ?? 0) > 0 ? "text-primary" : ""} />
+						<CalendarCheck
+							className={(filters.slots?.length ?? 0) > 0 ? "text-primary" : ""}
+						/>
 						<span className="grow text-left">
 							{t("explore.select_slots")}
 							<span
@@ -366,8 +372,10 @@ export default function ExploreInterface({
 					</button>
 
 					{/* 単位数 */}
-					<label className={`input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group transition-all ${filters.units ? "border-primary border-2" : ""}`}>
-					  <ArrowDown01 className={filters.units ? "text-primary" : ""} />
+					<label
+						className={`input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group transition-all ${filters.units ? "border-primary border-2" : ""}`}
+					>
+						<ArrowDown01 className={filters.units ? "text-primary" : ""} />
 						<select
 							className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none font-medium"
 							value={filters.units || ""}
@@ -384,7 +392,9 @@ export default function ExploreInterface({
 					</label>
 
 					{/*言語選択*/}
-					<label className={`input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group transition-all ${filters.language ? "border-primary border-2" : ""}`}>
+					<label
+						className={`input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group transition-all ${filters.language ? "border-primary border-2" : ""}`}
+					>
 						<Languages className={filters.language ? "text-primary" : ""} />
 						<select
 							className="select border-none focus:ring-0 focus:outline-none bg-transparent w-full h-full min-h-0 pl-0 appearance-none font-medium"

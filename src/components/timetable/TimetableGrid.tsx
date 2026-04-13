@@ -159,7 +159,8 @@ const TimetableGrid = ({
 						return (
 							<div
 								key={`slot-${p.label}`}
-								className={"absolute w-full z-10 cursor-pointer pointer-events-auto"
+								className={
+									"absolute w-full z-10 cursor-pointer pointer-events-auto"
 								}
 								style={{
 									top: getTop(pStartMin),

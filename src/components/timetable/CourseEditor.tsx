@@ -58,9 +58,9 @@ const CourseEditor = ({
 
 	// 2. フォームデータ
 	const [formData, setFormData] = useState(() => {
-	  if (initialData) {
-        return normalizeInitialData(initialData);
-    }
+		if (initialData) {
+			return normalizeInitialData(initialData);
+		}
 		return normalizeInitialData(null);
 	});
 
@@ -68,23 +68,23 @@ const CourseEditor = ({
 
 	// マウント時とデータ取得時の同期
 	useEffect(() => {
-    setIsMounted(true);
+		setIsMounted(true);
 
-    if (isInitialized) return;
+		if (isInitialized) return;
 
-    let foundData = null;
-    if (initialData) {
-        foundData = initialData;
-    } else if (mode === "edit" && targetId && courses.length > 0) {
-        foundData = courses.find((c) => String(c.id) === String(targetId));
-    }
-    if (foundData) {
-        setFormData(normalizeInitialData(foundData));
-        setIsInitialized(true);
-    } else if (mode === "create") {
-        setIsInitialized(true);
-    }
-}, [initialData, courses, targetId, mode, isInitialized]);
+		let foundData = null;
+		if (initialData) {
+			foundData = initialData;
+		} else if (mode === "edit" && targetId && courses.length > 0) {
+			foundData = courses.find((c) => String(c.id) === String(targetId));
+		}
+		if (foundData) {
+			setFormData(normalizeInitialData(foundData));
+			setIsInitialized(true);
+		} else if (mode === "create") {
+			setIsInitialized(true);
+		}
+	}, [initialData, courses, targetId, mode, isInitialized]);
 
 	// --- ハンドラー ---
 	const handleChange = (
@@ -248,9 +248,9 @@ const CourseEditor = ({
 								))}
 							</select>
 						</div>
-          </div>
-					
-         	<div className="form-control">
+					</div>
+
+					<div className="form-control">
 						<label className="label font-bold">
 							{t("custom.schedule")} ({t("custom.necessary")})
 						</label>
@@ -280,7 +280,7 @@ const CourseEditor = ({
 													(s: any) =>
 														s.dayOfWeek === day && s.period === p.label,
 												);
-     
+
 												return (
 													<td
 														key={`${day}-${p.label}`}
@@ -303,7 +303,6 @@ const CourseEditor = ({
 							</table>
 						</div>
 					</div>
-
 
 					<div className="flex gap-2 mt-4">
 						<button

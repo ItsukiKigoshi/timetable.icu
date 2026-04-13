@@ -13,19 +13,21 @@ const slotsParam = Astro.url.searchParams.get("slots"); // "Tue-4"
 let initialData = null;
 
 if (slotsParam) {
-    const [day, pLabel] = slotsParam.split("-");
-    const periodData = PERIODS.find((p) => p.label === pLabel);
-    
-    if (day && periodData) {
-        initialData = {
-            schedules: [{
-                dayOfWeek: day,
-                period: pLabel,
-                startTime: periodData.start,
-                endTime: periodData.end,
-            }]
-        };
-    }
+	const [day, pLabel] = slotsParam.split("-");
+	const periodData = PERIODS.find((p) => p.label === pLabel);
+
+	if (day && periodData) {
+		initialData = {
+			schedules: [
+				{
+					dayOfWeek: day,
+					period: pLabel,
+					startTime: periodData.start,
+					endTime: periodData.end,
+				},
+			],
+		};
+	}
 }
 ---
 
