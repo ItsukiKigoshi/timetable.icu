@@ -334,7 +334,7 @@ export default function TimetableInterface({
 					)}
 					{coursesInSelectedSlot.length === 1 && (
 						// --- 1つの場合：即座に詳細を表示 ---
-						<section className="flex flex-col gap-2 p-2">
+						<section className="flex flex-col gap-2 p-4">
 							<div className="mb-2 border-b pb-4">
 								<CourseHeader
 									course={coursesInSelectedSlot[0]}
