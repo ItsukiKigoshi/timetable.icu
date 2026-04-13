@@ -38,7 +38,7 @@ export default function Modal({
 			<div className="modal-box p-0 flex flex-col max-h-[90vh] sm:max-h-[85vh] relative overflow-hidden">
 				{/* タイトル */}
 				{title && (
-					<div className="px-6 py-4 flex justify-center items-center bg-base-100 shrink-0 relative">
+					<div className="px-6 pt-4 flex justify-center items-center bg-base-100 shrink-0 relative">
 						<h3 className="font-bold text-lg truncate w-full text-center px-4">
 							{title}
 						</h3>

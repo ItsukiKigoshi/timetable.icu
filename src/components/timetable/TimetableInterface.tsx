@@ -292,14 +292,14 @@ export default function TimetableInterface({
 				>
 					{coursesInSelectedSlot.length === 0 && (
 						// --- 選択されたスロットに授業が存在しない場合：コース追加へ誘導 ---
-						<div className="flex flex-col items-center justify-center p-4 gap-4 text-center">
+						<div className="flex flex-col items-center justify-center px-4 gap-4 text-center">
 							<p className="text-sm opacity-60 font-medium">
 								{isJa
 									? "この時間に登録されている予定はありません"
 									: "No schedule registered for this slot."}
 							</p>
 
-							<div className="flex flex-col w-full gap-4">
+							<div className="flex flex-col w-full gap-4 py-4">
 								{/* コースを探すボタン：periodが数字の場合のみ表示 */}
 								{selectedSlot?.period &&
 									!isNaN(Number(selectedSlot.period)) && (
@@ -334,7 +334,7 @@ export default function TimetableInterface({
 					)}
 					{coursesInSelectedSlot.length === 1 && (
 						// --- 1つの場合：即座に詳細を表示 ---
-						<section className="flex flex-col gap-2">
+						<section className="flex flex-col gap-2 p-2">
 							<div className="mb-2 border-b pb-4">
 								<CourseHeader
 									course={coursesInSelectedSlot[0]}
