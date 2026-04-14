@@ -44,9 +44,9 @@ ICU生の時間割・履修計画アプリの決定版
       
 # 大切にしたいこと
 
-- [ ] とにかく時間割作成に使いやすいものである
+- [x] とにかく時間割作成に使いやすいものである
     - [x] long時間割対応 (しょうもないことだがアイデンティティ)
-    - [ ] 軽量 (めざせ 全ページPageSpeedInsights 100)
+    - [x] 軽量 (めざせ 全ページPageSpeedInsights 100): 全ページ97点以上達成，充分だろう
 - [ ] ICUらしくある
     - [ ] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
     <!-- - [x] 隠し要素 --> 
@@ -286,7 +286,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] Long4まわりの表示をSophisticate, refactor
     - [x] useTimetableの挙動: そもそもHooks必要?
     - [x] ~~WorkersならPreactの方が良い？~~: 資料の多さを鑑みてとりあえずReactにとどまる
-- [ ] Design
+- [x] Design
     - [x] カラーテーマ当てる
     - [x] コンポーネントの丸みなど調整する
     - [x] ~~Storybookなどcomponent test?~~: not planned with storybook
@@ -320,7 +320,7 @@ ICU生の時間割・履修計画アプリの決定版
         - [x]  寄付受付
             - [x] GitHub Sponsors
             - [ ] OpenCollective, Stripe
-    - [ ] Members
+    - [x] Members
         - [x] 自己紹介
         - [x] リンク
         - [x] Join the Team!
