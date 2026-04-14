@@ -289,17 +289,16 @@ export default function TimetableInterface({
 							? `${translateDay(selectedSlot.day)} ${translatePeriod(selectedSlot.period)}`
 							: ""
 					}
+					subtitle={
+						coursesInSelectedSlot.length === 0
+							? t("timetable.no_courses.in_the_slot")
+							: ""
+					}
 				>
 					{coursesInSelectedSlot.length === 0 && (
 						// --- 選択されたスロットに授業が存在しない場合：コース追加へ誘導 ---
 						<div className="flex flex-col items-center justify-center px-4 gap-4 text-center">
-							<p className="text-sm opacity-60 font-medium">
-								{isJa
-									? "この時間に登録されている予定はありません"
-									: "No schedule registered for this slot."}
-							</p>
-
-							<div className="flex flex-col w-full gap-4 py-4">
+							<div className="flex flex-col w-full gap-4">
 								{/* コースを探すボタン：periodが数字の場合のみ表示 */}
 								{selectedSlot?.period &&
 									!isNaN(Number(selectedSlot.period)) && (

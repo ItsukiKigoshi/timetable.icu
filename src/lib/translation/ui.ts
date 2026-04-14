@@ -107,6 +107,8 @@ const ja = {
 	"timetable.list_view": "リスト",
 	"timetable.my_courses": "授業一覧",
 	"timetable.no_courses": "授業が追加されていません",
+	"timetable.no_courses.in_the_slot":
+		"この時間に登録されている予定はありません",
 	"timetable.color.select": "色を選択",
 	"timetable.color.reset": "リセット",
 	"timetable.color.default": "Default",
@@ -268,6 +270,7 @@ const en = {
 	"timetable.list_view": "List",
 	"timetable.my_courses": "Courses",
 	"timetable.no_courses": "No Course is Added",
+	"timetable.no_courses.in_the_slot": "No schedule registered for this slot.",
 	"timetable.color.select": "Choose Colour",
 	"timetable.color.reset": "Reset",
 	"timetable.color.default": "Default",
