@@ -141,6 +141,13 @@
 			"when": 1775729251308,
 			"tag": "0019_absent_medusa",
 			"breakpoints": true
+		},
+		{
+			"idx": 20,
+			"version": "6",
+			"when": 1776269318815,
+			"tag": "0020_loud_moon_knight",
+			"breakpoints": true
 		}
 	]
 }

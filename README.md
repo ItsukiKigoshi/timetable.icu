@@ -592,11 +592,11 @@ Migration to D1
 Remoteは1度目は通らないことがあるが2回目やればいけるときがある
 
 ```bash
-bun migrate:local
+bun db:migrate:local
 ```
 
 ```bash
-bun migrate:remote
+bun db:migrate:remote
 ```
 
 もし外部キー制約が通らない場合
