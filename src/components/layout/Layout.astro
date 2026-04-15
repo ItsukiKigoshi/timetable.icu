@@ -18,7 +18,9 @@ const {
 	description = t("site.description"),
 	ogImage = "https://timetable.icu/ogp.png",
 	ogType = "website",
-	isLanding = false,
+	showHeader = true,
+	showFooter = true,
+	showDBError = true,
 } = Astro.props;
 
 const { pathname, href } = Astro.url;
@@ -110,7 +112,7 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
 </head>
 <body class="min-h-screen flex flex-col">
 {
-    (!isLanding && dbError) && (
+    (showDBError && dbError) && (
                 <div class="p-4 container mx-auto">
                     <div role="alert" class="alert alert-warning shadow-lg">
                         <TriangleAlert/>
@@ -125,11 +127,11 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
     )
 }
 <Toast user={user} lang={currentLang} client:load />
-{!isLanding && <Header user={user}/>}
+{showHeader && <Header user={user}/>}
 <main class="grow min-h-0">
     <slot/>
 </main>
-{!isLanding
+{showFooter
     ? <Footer/>
     : (
         <footer class="footer md:footer-horizontal bg-neutral text-neutral-content p-10">

@@ -127,7 +127,7 @@ ICU生の時間割・履修計画アプリの決定版
     - 不明
   - 2代目「ICUTTABLE#2」: [ICU生向け時間割アプリ「ICUTTABLE#2」開発者インタビュー](http://weeklygiants.co/?p=1805)
     - 新井友朗さん（ID17-18か？）
-  - 3代目「Timetable4ICU」:  [私の芽―ICU時間割アプリを作る](http://weeklygiants.co/?p=8872)
+  - 3代目「Timetable For ICU」:  [私の芽―ICU時間割アプリを作る](http://weeklygiants.co/?p=8872)
     - 千葉彌平さん（ID19; お会いしたことある, 確か平島大先生のご紹介?） 
         - 課題: Apple Developers Programの登録料を賄えない
     - [GitHub](https://github.com/YasuChiba/TimeTableForICU-ios-public)
@@ -448,18 +448,19 @@ ICU生の時間割・履修計画アプリの決定版
 - [ ] Refactor
     - [ ] 関数やComponentにコメント（JS Docs）をつける
 - [ ] 法務
-  - [ ] 文体を統一
+  - [ ] 文体・構成を統一
+  - [ ] MarkdownにもStyleを当てる（Header&Footer）
   - [x] Privacy Policy
       - [ ] 更新しやすい，かつかこの差分が見やすいように基盤を整える（Gitベースで構築できたらが楽か？）
       - [ ] わかりやすく
-        - [ ] 取得する情報
+        - [ ] 取得する情報（例付きで）
           - [ ] ICUのGoogleアカウントログインで提供される最低限の情報
             - [ ] 名前
             - [ ] Email
             - [ ] プロフィール写真
             - [ ] （パスワードは保存されない）
             - [ ] 管理者を除いて，他のユーザは閲覧不可
-            - [ ] ICUアカウントを必須にしているのは，教室情報などの学内情報にアクセスできる人を制限するため
+            - [ ] 目的を明示: ICUアカウントを必須にしているのは，教室情報などの学内情報にアクセスできる人を制限するため
           - [ ] 登録した情報（データの復旧時のために平文で保持することはやむを得ないと判断）
             - [ ] 授業コード
             - [ ] メモ
