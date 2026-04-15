@@ -150,43 +150,46 @@ const { t, l, currentLang } = createTranslationHelper(lang);
                 </li>
             </ul>
     </section>
-
-        <section
-                class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-10"
-        >
-            <Image
-                    src={ProfileImg}
-                    alt="Itsuki Kigoshi"
-                    width={256}
-                    height={256}
-                    format="webp"
-                    quality={80}
-                    class="w-32 h-32 rounded-3xl ring overflow-hidden shadow-2xl"
-            />
-            <address class="text-center md:text-left flex-1 not-italic">
-                <h4 class="text-2xl font-black mb-4 items-center gap-2">
-                    <span>{t('lp.profile.made_with')}</span>
-                    <a
-                            href="https://itsukikigoshi.github.io/"
-                            target="_blank"
-                            class="underline"
-                    >
-                        Itsuki Kigoshi
+    <section class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-8">
+        <div class="avatar-group -space-x-12 rtl:space-x-reverse">
+            
+            <div class="avatar border-none z-30">
+                <div class="w-20 h-20 md:w-28 md:h-28 rounded-full">
+                    <a href="https://itsukikigoshi.github.io/" target="_blank">
+                        <img src={ProfileImg.src} alt="Itsuki Kigoshi" />
                     </a>
-                </h4>
-                <p class="text-sm md:text-base leading-relaxed opacity-80 mb-6">
-                    {t('lp.profile.description.top')} <br/>
-                    {t('lp.profile.description.middle')}<br/>
-                    {t('lp.profile.description.bottom')}
-                    <a
-                            class="inline-flex items-center gap-1 underline transition-colors"
-                            target="_blank"
-                            href="https://discord.gg/2gmKTs4ezk"
-                    >{t('lp.profile.contact')}</a>{t('lp.profile.dot')}<br/>
-                    <a target="_blank" class="link" href="https://github.com/sponsors/ItsukiKigoshi">{t('lp.profile.support')}</a>
-                    </p>
-
-            </address>
-        </section>
+                </div>
+            </div>
+    
+            <div class="avatar border-none placeholder z-20">
+                <div class="bg-sky-200 w-20 h-20 md:w-28 md:h-28 rounded-full">
+                </div>
+            </div>
+    
+            <div class="avatar border-none placeholder z-10">
+                <div class="bg-gray-400 w-20 h-20 md:w-28 md:h-28 rounded-full">
+                </div>
+            </div>
+    
+        </div>
+    
+        <address class="text-center md:text-left flex-1 not-italic">
+            <h4 class="text-2xl font-black mb-2 flex flex-wrap justify-center md:justify-start items-center gap-2">
+                Made with ♥ by ICU Students Team!
+            </h4>
+            <p class="text-sm md:text-base leading-relaxed opacity-80 mb-4">
+                {t('lp.profile.description.top')} <br/>
+                {t('lp.profile.description.bottom')}
+                <a class="inline-flex items-center gap-1 underline font-medium"
+                   target="_blank" 
+                   href="https://discord.gg/2gmKTs4ezk">
+                   {t('lp.profile.contact')}
+                </a>
+                {t('lp.profile.dot')}<br/>
+                <a target="_blank" class="link" href="https://github.com/sponsors/ItsukiKigoshi">
+                    {t('lp.profile.support')}
+                </a>
+            </p>
+        </address>
     </section>
 </Layout>

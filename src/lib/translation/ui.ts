@@ -68,14 +68,13 @@ const ja = {
 	"lp.features.custom.desc": "ELA, JLP, ミーティングも時間割に表示",
 
 	// プロフィール
-	"lp.profile.made_with": "Made with ♥ by",
-	"lp.profile.description.top": "ICU '27が愛を込めてお届け🏔️",
+	"lp.profile.description.top": "ICU生のチームが愛を込めてお届け🏔️",
 	"lp.profile.description.middle": "開発協力者を募集中！",
 	"lp.profile.description.bottom":
 		"デザイン，広報，コーディング，貢献などに興味がある方は",
 	"lp.profile.contact": "Discord",
-	"lp.profile.dot": "で議論しましょう！",
-	"lp.profile.support": "ご寄付も受付中．",
+	"lp.profile.dot": "へ!",
+	"lp.profile.support": "寄付も受付中",
 
 	// 探す
 	"explore.title": "コースを探す",
@@ -221,9 +220,7 @@ const en = {
 	"lp.features.custom.desc": "You can add ELA, JLP, Meetings on your schedule!",
 
 	// Profile
-	"lp.profile.made_with": "Made with ♥ by",
-	"lp.profile.description.top": "Developed by ICU '27 🏔️",
-	"lp.profile.description.middle": "We are looking for contributors!",
+	"lp.profile.description.top": "Developed by ICU Students🏔️",
 	"lp.profile.description.bottom":
 		"If you are interested in design, PR, coding, or funding, ",
 	"lp.profile.contact": "Join Discord",
