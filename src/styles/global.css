@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@plugin "@tailwindcss/typography";
 @source "../src";
 @plugin "daisyui";
 /*Light Theme*/

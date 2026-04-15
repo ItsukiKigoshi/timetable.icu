@@ -56,35 +56,26 @@ const ja = {
 	"lp.nav.timetable": "時間割を見る",
 
 	// できること
-	"lp.features.can.label": "できること",
-	"lp.features.can.search.title": "あなたにピッタリのコースを見つける",
-	"lp.features.can.search.desc":
-		"公式授業一覧から取得されたすべてのコースを検索",
-	"lp.features.can.schedule.title": "完璧な時間割を組む",
-	"lp.features.can.schedule.desc":
-		"Long 4, 5, 6, 7など、ICUならではのコマ割りも表示",
-	"lp.features.can.sync.title": "マルチデバイス同期",
-	"lp.features.can.sync.desc":
-		"ログインしてすべてのデバイスで最新の時間割を/共有",
-
-	// 検討中
-	"lp.features.todo.label": "検討中の機能",
-	"lp.features.todo.offline.title": "オフライン表示",
-	"lp.features.todo.offline.desc": "現状閲覧にはインターネット接続が必要",
-	"lp.features.todo.custom.title": "独自コースの追加",
-	"lp.features.todo.custom.desc": "試験提供中！",
-	"lp.features.todo.calendar.title": "カレンダー連携",
-	"lp.features.todo.calendar.desc": "外部カレンダーへの書き出し機能を検討中",
+	"lp.features.label": "できること",
+	"lp.features.search.title": "あなたにピッタリのコースを見つける",
+	"lp.features.search.desc": "公式授業一覧から取得されたすべてのコースを検索",
+	"lp.features.schedule.title": "完璧な時間割を組む",
+	"lp.features.schedule.desc":
+		"Long 4-7に対応．同時間帯の授業を時間割に追加して比較",
+	"lp.features.sync.title": "すべてのデバイスで同期",
+	"lp.features.sync.desc": "ログインしてすべてのデバイスで最新の時間割を同期",
+	"lp.features.custom.title": "独自コースの追加",
+	"lp.features.custom.desc": "ELA, JLP, ミーティングも時間割に表示",
 
 	// プロフィール
 	"lp.profile.made_with": "Made with ♥ by",
 	"lp.profile.description.top": "ICU '27が愛を込めてお届け🏔️",
 	"lp.profile.description.middle": "開発協力者を募集中！",
 	"lp.profile.description.bottom":
-		"デザイン，広報，コーディング，貢献などに興味がある方はぜひ",
-	"lp.profile.contact": "ご連絡",
-	"lp.profile.dot": "を．",
-	"lp.profile.support": "ご寄付にもご協力ください!",
+		"デザイン，広報，コーディング，貢献などに興味がある方は",
+	"lp.profile.contact": "Discord",
+	"lp.profile.dot": "で議論しましょう！",
+	"lp.profile.support": "ご寄付も受付中．",
 
 	// 探す
 	"explore.title": "コースを探す",
@@ -216,37 +207,27 @@ const en = {
 	"lp.nav.explore": "Explore Courses",
 	"lp.nav.timetable": "View Timetable",
 
-	// Features - Can
-	"lp.features.can.label": "Features",
-	"lp.features.can.search.title": "Find the perfect course for you",
-	"lp.features.can.search.desc":
-		"Search through every course retrieved from the official syllabus.",
-	"lp.features.can.schedule.title": "Create your ideal timetable",
-	"lp.features.can.schedule.desc":
-		"Support for ICU-unique periods like Long 4, 5, 6, and 7.",
-	"lp.features.can.sync.title": "Multi-Device Sync",
-	"lp.features.can.sync.desc":
-		"Login to sync your latest timetable across all your devices.",
-
 	// Features
-	"lp.features.todo.label": "Planned Features",
-	"lp.features.todo.offline.title": "Offline Support",
-	"lp.features.todo.offline.desc":
-		"An internet connection is currently required to view courses.",
-	"lp.features.todo.custom.title": "Custom Course Entry",
-	"lp.features.todo.custom.desc": "Beta Testing Now!",
-	"lp.features.todo.calendar.title": "Calendar Export",
-	"lp.features.todo.calendar.desc":
-		"Exporting to external calendars (Google, etc.) is under consideration.",
+	"lp.features.label": "Features",
+	"lp.features.search.title": "Find the perfect course for you",
+	"lp.features.search.desc":
+		"Search through every course retrieved from the official syllabus.",
+	"lp.features.schedule.title": "Create your ideal timetable",
+	"lp.features.schedule.desc": "Support for Long 4-7. Add multiple courses in one slot and compare them!",
+	"lp.features.sync.title": "Multi-Device Sync",
+	"lp.features.sync.desc":
+		"Login to sync your latest timetable across all your devices.",
+	"lp.features.custom.title": "Custom Course Creation",
+	"lp.features.custom.desc": "You can add ELA, JLP, Meetings on your schedule!",
 
 	// Profile
 	"lp.profile.made_with": "Made with ♥ by",
 	"lp.profile.description.top": "Developed by ICU '27 🏔️",
 	"lp.profile.description.middle": "We are looking for contributors!",
 	"lp.profile.description.bottom":
-		"If you are interested in design, PR, coding, or funding, please ",
-	"lp.profile.contact": "contact us",
-	"lp.profile.dot": ".",
+		"If you are interested in design, PR, coding, or funding, ",
+	"lp.profile.contact": "Join Discord",
+	"lp.profile.dot": "!",
 	"lp.profile.support": "Also, support us!",
 
 	// Explore
