@@ -4,7 +4,7 @@ const ja = {
 	"site.title": "ICUのじかんわり",
 	"site.tagline": "ICU生の時間割・履修計画アプリの決定版",
 	"site.description":
-		"ICU生の時間割・履修計画アプリの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期で，国際基督教大学での学生生活をより快適に．ICU '27が愛を込めて開発中だよん．",
+		"ICU生の時間割・履修計画アプリの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期で，国際基督教大学での学生生活をより快適に．ICU学生チームが愛を込めて開発中だよん．",
 
 	"auth.login": "ログイン",
 	"auth.logout": "ログアウト",
@@ -212,7 +212,8 @@ const en = {
 	"lp.features.search.desc":
 		"Search through every course retrieved from the official syllabus.",
 	"lp.features.schedule.title": "Create your ideal timetable",
-	"lp.features.schedule.desc": "Support for Long 4-7. Add multiple courses in one slot and compare them!",
+	"lp.features.schedule.desc":
+		"Support for Long 4-7. Add multiple courses in one slot and compare them!",
 	"lp.features.sync.title": "Multi-Device Sync",
 	"lp.features.sync.desc":
 		"Login to sync your latest timetable across all your devices.",
