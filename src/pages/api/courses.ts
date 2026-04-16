@@ -8,7 +8,7 @@ import { getCourseSearchConfig } from "@/lib/course/query.ts";
 export const GET: APIRoute = async ({ request, locals }) => {
 	// localsを追加
 	const user = locals.user; // ログインユーザーの取得
-	const db = drizzle(env.timetable_icu, { schema });
+	const db = drizzle(env.timetable_icu, { schema, logger: true });
 	const { where, page } = getCourseSearchConfig(new URL(request.url), db);
 
 	const results = await db.query.courses.findMany({
