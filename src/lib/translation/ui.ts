@@ -69,7 +69,6 @@ const ja = {
 
 	// プロフィール
 	"lp.profile.description.top": "ICU生のチームが愛を込めてお届け🏔️",
-	"lp.profile.description.middle": "開発協力者を募集中！",
 	"lp.profile.description.bottom":
 		"デザイン，広報，コーディング，貢献などに興味がある方は",
 	"lp.profile.contact": "Discord",
@@ -226,7 +225,7 @@ const en = {
 		"If you are interested in design, PR, coding, or funding, ",
 	"lp.profile.contact": "Join Discord",
 	"lp.profile.dot": "!",
-	"lp.profile.support": "Also, support us!",
+	"lp.profile.support": "Donate　to Support",
 
 	// Explore
 	"explore.title": "Explore Courses",
