@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import {
 	CalendarCheck2,
 	CalendarDays,
@@ -9,11 +8,7 @@ import {
 	Telescope,
 	ThumbsUp,
 } from "lucide-astro";
-import Cover1 from "@/assets/cover1.webp";
-import Cover2 from "@/assets/cover2.webp";
 import Logo from "@/assets/Logo.svg";
-import ItsukiKigoshi from "@/assets/ItsukiKigoshi.webp";
-import EnaMiura from "@/assets/EnaMiura.webp";
 import Layout from "@/components/layout/Layout.astro";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
@@ -24,22 +19,18 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 <Layout title=`${t('site.title')} | ${t('site.tagline')}` showHeader={false} showFooter={false} showDBError={false}>
     <!--背景画像-->
     <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
-        <Image
-                src={Cover1}
-                alt="Cover Page Photo 1 (ICU garden)"
+        <img
+                src="/images/cover1.webp"
+                alt="Cover Photo 1 (ICU garden)"
                 width={800}
                 sizes="(max-width: 768px) 400px, 800px"
-                quality={50}
-                format="webp"
                 class="absolute -top-10 -right-10 w-185 md:w-200 rotate-12"
         />
-        <Image
-                src={Cover2}
-                alt="Cover Page Photo 1 (ICU Chappel)"
+        <img
+                src="/images/cover2.webp"
+                alt="Cover Photo 1 (ICU Chappel)"
                 height={800}
                 sizes="(max-width: 768px) 400px, 800px"
-                quality={50}
-                format="webp"
                 class="absolute -bottom-40 -left-20 w-150 md:w-225 -rotate-12"
         />
     </aside>
@@ -149,14 +140,14 @@ const { t, l, currentLang } = createTranslationHelper(lang);
             </ul>
     </section>
     <section class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-8">
-        <div class="avatar-group -space-x-8 rtl:space-x-reverse">    
+        <div class="avatar-group -space-x-8 rtl:space-x-reverse">
             <a href="https://itsukikigoshi.github.io/" target="_blank" class="flex flex-col items-center">
-                <Image src={ItsukiKigoshi} alt="Itsuki Kigoshi" format="webp" class="avatar border-none z-30 w-28 h-28 rounded-full" /> 
+                <img src="/images/ItsukiKigoshi.webp" alt="Itsuki Kigoshi" class="avatar border-none z-30 w-28 h-28 rounded-full"/>
             <p class="text-xs font-medium mt-1">Itsuki Kigoshi</p>
             </a>
              <div class="flex flex-col items-center">
                 <div class="avatar border-none z-20 w-28 h-28 rounded-full">
-                    <Image src={EnaMiura} alt="Ena Miura" format="webp" />
+                    <img src="/images/EnaMiura.webp" alt="Ena Miura"/>
                 </div>
                 <p class="text-xs font-medium mt-1">Ena Miura</p>
             </div>
@@ -165,7 +156,7 @@ const { t, l, currentLang } = createTranslationHelper(lang);
                 </div>
             </div>
         </div>
-    
+
         <address class="text-center md:text-left flex-1 not-italic">
             <h4 class="text-2xl font-black mb-2 flex flex-wrap justify-center md:justify-start items-center gap-2">
                 Made with ♥ by ICU Students Team!
@@ -174,7 +165,7 @@ const { t, l, currentLang } = createTranslationHelper(lang);
                 {t('lp.profile.description.top')} <br/>
                 {t('lp.profile.description.bottom')}
                 <a class="inline-flex items-center gap-1 underline font-medium"
-                   target="_blank" 
+                   target="_blank"
                    href="https://discord.gg/2gmKTs4ezk">
                    {t('lp.profile.contact')}
                 </a>

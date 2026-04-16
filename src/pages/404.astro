@@ -1,7 +1,4 @@
 ---
-import { Image } from "astro:assets";
-import Secret1 from "@/assets/secret1.webp";
-import Secret2 from "@/assets/secret2.webp";
 import Layout from "@/components/layout/Layout.astro";
 import { defaultLang } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
@@ -15,7 +12,7 @@ export const prerender = true;
         <div class="hero-content text-center z-10 px-4">
             <section
                     class="card bg-base-100/80 backdrop-blur-lg shadow-xl max-w-xl border border-base-content/5 p-8 md:p-12">
-                <p class="text-xs font-mono opacity-50 mb-4">
+                <p class="text-md font-mono opacity-50 mb-4">
                     404_{t('404.title')}
                 </p>
 
@@ -36,20 +33,17 @@ export const prerender = true;
         </div>
 
         <aside aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
-            <div class="absolute inset-0 bg-base-100/30"></div>
-            <Image
-                    src={Secret2}
-                    alt="ICUの空"
-                    width={800}
-                    format="webp"
-                    class="absolute -top-4 -right-4 w-120 md:w-180 rotate-12 opacity-60"
-            />
-            <Image
-                    src={Secret1}
+            <img
+                    src="/images/secret1.webp"
                     alt="学生がいかだを作っている様子"
                     width={1200}
-                    format="webp"
                     class="absolute -bottom-4 -left-4 w-150 md:w-200 -rotate-12 opacity-60"
+            />
+            <img
+                    src="/images/secret2.webp"
+                    alt="ICUの空"
+                    width={800} 
+                    class="absolute -top-4 -right-4 w-120 md:w-180 rotate-12 opacity-60"
             />
         </aside>
     </main>

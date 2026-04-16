@@ -16,11 +16,11 @@ const { t, l, currentLang } = createTranslationHelper(locals.lang);
 const {
 	title = t("site.title"),
 	description = t("site.description"),
-	ogImage = "https://timetable.icu/ogp.png",
+	ogImage = "https://timetable.icu/images/ogp.png",
 	ogType = "website",
 	showHeader = true,
 	showFooter = true,
-	showDBError = true, // SSGではDBErrorを動的に判断できないのでオフにせよ．SSR時は問題なし．
+	showDBError = true, // SSGではDBErrorを動的に判断できないのでオフにする．SSR時は問題なし．
 } = Astro.props;
 
 const { pathname, href } = Astro.url;
@@ -126,7 +126,7 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
                 </div>
     )
 }
-<Toast user={user} lang={currentLang} client:load />
+<Toast user={user ?? undefined} lang={currentLang} client:load />
 {showHeader && <Header user={user}/>}
 <main class="grow min-h-0">
     <slot/>
