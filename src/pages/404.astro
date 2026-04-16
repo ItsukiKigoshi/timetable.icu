@@ -8,6 +8,7 @@ import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang || defaultLang;
 const { t } = createTranslationHelper(lang);
+export const prerender = true;
 ---
 <Layout title={`404 - ${t('404.title')}`}>
     <main class="hero min-h-[85vh] relative overflow-hidden">
