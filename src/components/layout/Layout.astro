@@ -20,7 +20,7 @@ const {
 	ogType = "website",
 	showHeader = true,
 	showFooter = true,
-	showDBError = true,
+	showDBError = true, // SSGではDBErrorを動的に判断できないのでオフにせよ．SSR時は問題なし．
 } = Astro.props;
 
 const { pathname, href } = Astro.url;
