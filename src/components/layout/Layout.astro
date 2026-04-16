@@ -31,6 +31,11 @@ const { pathname, href } = Astro.url;
 let purePath = pathname.replace(/^\/en(\/|$)/, "$1");
 if (!purePath.startsWith("/")) purePath = `/${purePath}`;
 
+// 英語版が存在しないパスのリスト
+const excludedPaths = ["/terms", "/privacy"];
+// 現在のパスが除外リストに含まれているかチェック
+const isExcluded = excludedPaths.includes(purePath);
+
 const baseUrl = "https://timetable.icu";
 const jaUrl = new URL(purePath, baseUrl).href;
 const enUrl = new URL(`/en${purePath}`, baseUrl).href;
@@ -87,9 +92,13 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
     <meta name="robots" content="index, follow, archive">
 
     <link rel="canonical" href={new URL(Astro.url.pathname, baseUrl).href}/>
-    <link rel="alternate" hreflang="ja" href={jaUrl}/>
-    <link rel="alternate" hreflang="en" href={enUrl}/>
-    <link rel="alternate" hreflang="x-default" href={jaUrl}/>
+    {!isExcluded && (
+        <>
+            <link rel="alternate" hreflang="ja" href={jaUrl}/>
+            <link rel="alternate" hreflang="en" href={enUrl}/>
+            <link rel="alternate" hreflang="x-default" href={jaUrl}/>
+        </>
+    )}
 
     <meta property="og:title" content={title}/>
     <meta property="og:description" content={description}/>
