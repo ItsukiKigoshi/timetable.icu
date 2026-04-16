@@ -12,7 +12,8 @@ import {
 import Cover1 from "@/assets/cover1.webp";
 import Cover2 from "@/assets/cover2.webp";
 import Logo from "@/assets/Logo.svg";
-import ProfileImg from "@/assets/profile.webp";
+import ItsukiKigoshi from "@/assets/ItsukiKigoshi.webp";
+import EnaMiura from "@/assets/EnaMiura.webp";
 import Layout from "@/components/layout/Layout.astro";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
@@ -148,22 +149,16 @@ const { t, l, currentLang } = createTranslationHelper(lang);
             </ul>
     </section>
     <section class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-8">
-        <div class="avatar-group -space-x-8 rtl:space-x-reverse">
-            
-            <nav class="flex flex-col items-center">
-                        <a class="avatar border-none z-30 w-28 h-28 rounded-full" href="https://itsukikigoshi.github.io/" target="_blank">
-                            <Image src={ProfileImg} alt="Itsuki Kigoshi" format="webp" />
-                        </a>
-                <p class="text-xs font-medium mt-1">Itsuki Kigoshi</p>
-            </nav>
-             <!-- <div class="flex flex-col items-center">
-                <div class="avatar border-none z-20 w-28 h-28 bg-sky-300 rounded-full">
+        <div class="avatar-group -space-x-8 rtl:space-x-reverse">    
+            <a href="https://itsukikigoshi.github.io/" target="_blank" class="flex flex-col items-center">
+                <Image src={ItsukiKigoshi} alt="Itsuki Kigoshi" format="webp" class="avatar border-none z-30 w-28 h-28 rounded-full" /> 
+            <p class="text-xs font-medium mt-1">Itsuki Kigoshi</p>
+            </a>
+             <div class="flex flex-col items-center">
+                <div class="avatar border-none z-20 w-28 h-28 rounded-full">
+                    <Image src={EnaMiura} alt="Ena Miura" format="webp" />
                 </div>
                 <p class="text-xs font-medium mt-1">Ena Miura</p>
-            </div> -->
-            <div class="avatar border-none placeholder z-20">
-                <div class="bg-sky-200 w-28 h-28 rounded-full">
-                </div>
             </div>
             <div class="avatar border-none placeholder z-10">
                 <div class="bg-gray-400 w-28 h-28 rounded-full">
