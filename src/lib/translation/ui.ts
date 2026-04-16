@@ -225,7 +225,7 @@ const en = {
 		"If you are interested in design, PR, coding, or funding, ",
 	"lp.profile.contact": "Join Discord",
 	"lp.profile.dot": "!",
-	"lp.profile.support": "Donate　to Support",
+	"lp.profile.support": "Donate to Support",
 
 	// Explore
 	"explore.title": "Explore Courses",
