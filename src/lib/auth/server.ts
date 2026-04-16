@@ -32,6 +32,9 @@ export const getAuth = (env: Env, request: Request) => {
 		secret: env.BETTER_AUTH_SECRET,
 		advanced: {
 			cookiePrefix: "timetable-icu-auth",
+			ipAddress: {
+				ipAddressHeaders: ["cf-connecting-ip"], // Cloudflare specific header
+			},
 		},
 		plugins: [
 			passkey(),
@@ -41,7 +44,7 @@ export const getAuth = (env: Env, request: Request) => {
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
-				// 以下の行を有効にすることで，名前とプロフィール写真を保存しないように．
+				// 以下の行を有効にすることで，名前とプロフィール写真を保存しないようにできる．
 				// 画面上で名前と顔写真を表示している部分が空白になるので，
 				// その部分の改修が必要
 				// mapProfileToUser: (profile) => {
