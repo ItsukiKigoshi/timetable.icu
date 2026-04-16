@@ -28,8 +28,8 @@ export const computeDisplaySchedules = (
 			const currentStart = timeToMin(current.startTime);
 			const target = merged.find((m) => {
 				const mEnd = timeToMin(m.endTime);
-				// rgNoが一致，かつ時間帯が10分以内であれば結合
-				return m.rgNo === current.rgNo && currentStart - mEnd <= 10;
+				// idが一致，かつ時間帯が10分以内であれば結合
+				return m.id === current.id && currentStart - mEnd <= 10;
 			});
 			if (target) {
 				target.endTime = current.endTime;
