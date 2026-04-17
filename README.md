@@ -447,6 +447,9 @@ ICU生の時間割・履修計画アプリの決定版
       - [ ] 「オフラインです，インターネットに接続されると同期されます」
 - [ ] Refactor
     - [ ] 関数やComponentにコメント（JS Docs）をつける
+    - [ ] D1最適化: ユーザが増えたら多少のパフォーマンスを犠牲にしてもRows Readを減らすためにqueryを見直そう
+      - [ ] UserCoursesの読み込み時に不要なschedule読み取りをなくす
+      - [ ] Courses検索時にscheduleやカテゴリで全件走査がかからないように
 - [x] 法務
   - [x] 文体・構成を統一
   - [x] MarkdownにもStyleを当てる（Header&Footer）
