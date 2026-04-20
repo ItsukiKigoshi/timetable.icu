@@ -1,6 +1,6 @@
 # [ICUのじかんわり | Timetable.icu](https://timetable.icu/)
 > [!NOTE]
-> [This Project has Moved to GitLab. This Repository will not be updated.](https://gitlab.com/ItsukiKigoshi/timetable.icu)
+> This Project has Moved to [GitLab](https://gitlab.com/ItsukiKigoshi/timetable.icu). Please Refer to GitLab for latest commits. This GitHub Repository will not be updated.
 
 ICU生の時間割・履修計画アプリの決定版
 
