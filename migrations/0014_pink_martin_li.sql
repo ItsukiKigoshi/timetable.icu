@@ -1,1 +1,0 @@
-CREATE INDEX `units_idx` ON `courses` (`units`);
